@@ -3,10 +3,10 @@ import React from 'react'
 
 const Players = ({ state }) => (
   <div>
-  {board.map(todo =>
-      <div>{state.players.name}<div/>
+  {state.players.map(player =>
+      <div>{player.name}<div/>
     )}
   </div>
 )
 
-export default Board
+export default Players

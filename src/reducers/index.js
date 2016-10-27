@@ -1,6 +1,6 @@
 let turn = 0;
 
-const boardApp = (state = [], action) => {
+const reducer = (state = [], action) => {
   switch (action.type) {
   	case 'INIT':
   	return {
@@ -41,4 +41,4 @@ const boardApp = (state = [], action) => {
   }
 }
 
-export default boardApp
+export default reducer

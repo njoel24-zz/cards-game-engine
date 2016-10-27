@@ -3,10 +3,8 @@ import React from 'react'
 
 const Common = ({ state }) => (
   <div>
-  {todos.map(todo =>
       <div>{state.cardsPlayed}<div/>
-    )}
   </div>
 )
 
-export default Board
+export default Common

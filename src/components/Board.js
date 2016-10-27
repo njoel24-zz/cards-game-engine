@@ -1,5 +1,6 @@
 import React from 'react'
-import Players from '../containers/Players'
+import Players from './Players'
+import Common from './Common'
 import StartMatch from '../containers/StartMatch'
 // {", "} a che serve?
 

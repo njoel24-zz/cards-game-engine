@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { startmatch } from '../actions'
+import { startMatch } from '../actions'
 
 let StartMatch = ({ dispatch }) => {
   let input
@@ -18,6 +18,5 @@ let StartMatch = ({ dispatch }) => {
     </div>
   )
 }
-AddTodo = connect()(AddTodo)
 
 export default StartMatch
