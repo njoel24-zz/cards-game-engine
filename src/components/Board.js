@@ -4,7 +4,7 @@ import Common from './Common'
 import StartMatch from '../containers/StartMatch'
 // {", "} a che serve?
 
-const Board = () => (
+const Board = (state) => (
   <div>
     <StartMatch />
     <Players players={state.players} />
