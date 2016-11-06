@@ -1,10 +1,10 @@
 import React from 'react'
 // {", "} a che serve?
-
-const Common = ({ state }) => (
-  <div>
-      <div>{state.cardsPlayed}<div/>
-  </div>
+const Common = ({ ps, onTodoClick }) => (
+  <ul>
+    {ps.map(p =>
+  		<li>p.cardsPlayed</li>
+    )}
+  </ul>
 )
-
 export default Common

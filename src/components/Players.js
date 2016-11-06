@@ -1,12 +1,10 @@
 import React from 'react'
 // {", "} a che serve?
-
-const Players = ({ state }) => (
-  <div>
-  {state.players.map(player =>
-      <div>{player.name}<div/>
+const Players = ({ players, onTodoClick }) => (
+  <ul>
+    {players.map(player =>
+  		<li>player.name</li>
     )}
-  </div>
+  </ul>
 )
-
 export default Players

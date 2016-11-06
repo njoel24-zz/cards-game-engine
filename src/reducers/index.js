@@ -28,12 +28,12 @@ const reducer = (state = [], action) => {
       return {
         ...state,
         winnerTurno: 1,
-        inTurno: winnerTurno
+        inTurno: 1
       }
     case 'PLAY':
       return {
         ...state,
-        cards: card
+        cardsPlayed: []
       }
     case 'END_MATCH':
     default:

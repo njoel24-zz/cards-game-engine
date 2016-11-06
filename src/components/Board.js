@@ -5,11 +5,11 @@ import StartMatch from '../containers/StartMatch'
 // {", "} a che serve?
 
 const Board = () => (
-  <p>
+  <div>
     <StartMatch />
-    <Players />
+    <Players players={state.players} />
     <Common />
-  </p>
+  </div>
 )
 
 // Board.propTypes = {

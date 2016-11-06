@@ -1,10 +1,8 @@
 import React from 'react'
-import { connect } from 'react-redux'
 import { startMatch } from '../actions'
 
 let StartMatch = ({ dispatch }) => {
-  let input
-
+  
   return (
     <div>
       <form onSubmit={e => {
