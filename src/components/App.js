@@ -3,9 +3,8 @@ import Board from './Board'
 
 class App extends React.Component {
 	render() {
-		return <Board store={this.props.store} />
+		return <Board/>
 	}
 }
-  
 
 export default App

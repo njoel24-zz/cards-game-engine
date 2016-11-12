@@ -4,12 +4,17 @@ import { createStore } from 'redux'
 import App from './components/App'
 import reducer from './reducers'
 import { initMatch } from './actions'
+import { Provider } from 'react-redux'
 
 const store = createStore(reducer)
 store.dispatch(initMatch())
 console.log("start");
 console.log(store.getState());
+
 render(
-  <App store={store} />,
+	<Provider store={store}>
+  		<App />
+  	</Provider>,
   document.getElementById('root')
 )
+
