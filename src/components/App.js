@@ -1,10 +1,11 @@
 import React from 'react'
 import Board from './Board'
 
-const App = () => (
-  <div>
-    <Board />
-  </div>
-)
+class App extends React.Component {
+	render() {
+		return <Board store={this.props.store} />
+	}
+}
+  
 
 export default App

@@ -1,22 +1,21 @@
 import React from 'react'
 import Players from './Players'
 import Common from './Common'
-import StartMatch from '../containers/StartMatch'
-// {", "} a che serve?
+import StartMatch from './StartMatch'
 
-const Board = (state) => (
-  <div>
-    <StartMatch />
-    <Players players={state.players} />
-    <Common />
-  </div>
-)
-
-// Board.propTypes = {
- // active: PropTypes.bool.isRequired,
-  //children: PropTypes.node.isRequired,
-  //onClick: PropTypes.func.isRequired
-//}
+class Board extends React.Component {
+	
+  render() {
+    let store = this.props.store;
+    let state = store.getState();
+    return (
+    <div>
+    	<StartMatch dispatch={store.dispatch} />
+    	<Players  players={state.players} />
+    	<Common cards={state.cardsPlayed} />
+    </div>
+    )
+  }
+}
 
 export default Board
-

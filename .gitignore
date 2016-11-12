@@ -1,0 +1,7 @@
+/node_modules
+/app/*.js
+/app/*.map
+/public/*
+/typings/*
+/src/*
+npm-debug.log
