@@ -8,10 +8,11 @@ class Board extends React.Component {
   render() {
     
     return (
-    <div>
+    <div className='container'>
     	<StartMatch/>
+      <Common />
     	<Players/>
-    	<Common />
+    	<me/>
     </div>
     )
   }

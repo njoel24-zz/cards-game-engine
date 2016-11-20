@@ -5,16 +5,11 @@ class Players extends React.Component {
 render () {
 	let store = this.context.store;
 	return (
-		<ul>
+		<ul className='row'>
     		{store.getState().players.map(player =>
-  				<li key={player.id}>{player.name}
-  				<ul>
-  				{player.cards.map(card =>
-  					<li key={card}>{card}</li>
-				)}
-  				</ul>
-  				</li>
+  				<li className='col-xs-1' key={player.id}>{player.name}</li>
     		)}
+          <li className='col-xs-7'></li>
   		</ul>
 		)
 	}

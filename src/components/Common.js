@@ -7,10 +7,11 @@ render () {
 		return null;
 	let store = this.context.store;
 	return (
-		<ul>
+		<ul className='row'>
     		{store.getState().cardsPlayed.map(card =>
-  				<li key={card.id}>card.name</li>
+  				<li className='col-xs-2' key={card.id}>card.name</li>
     		)}
+				<li className='col-xs-2'></li>
   		</ul>
 		)
 	}

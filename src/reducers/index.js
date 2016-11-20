@@ -4,11 +4,11 @@ const reducer = (state = [], action) => {
   switch (action.type) {
   	case 'INIT':
   	return {
-  		players: [{id:1, name: 'Pippo', cards: [0,1,2,3,4,5,6,7], points: 0},
-  		{id:2, name: 'Ugo', cards: [0,1,2,3,4,5,6,7], points: 0},
-  		{id:3, name: 'Mario', cards: [0,1,2,3,4,5,6,7], points: 0},
-  		{id:4, name: 'John', cards: [0,1,2,3,4,5,6,7], points: 0},
-  		{id:5, name: 'Franz', cards: [0,1,2,3,4,5,6,7], points: 0}],
+  		players: [{id:1, name: 'Pippo3', me: true, cards: [0,1,2,3,4,5,6,7], points: 0},
+  		{id:2, name: 'Ugo', me: false, cards: [0,1,2,3,4,5,6,7], points: 0},
+  		{id:3, name: 'Mario', me: false, cards: [0,1,2,3,4,5,6,7], points: 0},
+  		{id:4, name: 'John', me: false, cards: [0,1,2,3,4,5,6,7], points: 0},
+  		{id:5, name: 'Franz', me: false, cards: [0,1,2,3,4,5,6,7], points: 0}],
   		cardsPlayed: [],
   		winnerMatch: undefined,
   		winnerTurno: undefined,

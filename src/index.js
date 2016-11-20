@@ -5,7 +5,7 @@ import App from './components/App'
 import reducer from './reducers'
 import { initMatch } from './actions'
 import { Provider } from 'react-redux'
-
+import 'stylesheets/base'
 const store = createStore(reducer)
 store.dispatch(initMatch())
 console.log("start");
@@ -17,4 +17,3 @@ render(
   	</Provider>,
   document.getElementById('root')
 )
-
