@@ -5,11 +5,13 @@ import App from './components/App'
 import reducer from './reducers'
 import { initMatch } from './actions'
 import { Provider } from 'react-redux'
-import 'stylesheets/base'
+// import 'stylesheets/base'
 const store = createStore(reducer)
-store.dispatch(initMatch())
 console.log("start");
-console.log(store.getState());
+let unsubscribe  = store.subscribe(refreshUI)
+
+function refreshUI() {
+	console.log("refresh")
 
 render(
 	<Provider store={store}>
@@ -17,3 +19,8 @@ render(
   	</Provider>,
   document.getElementById('root')
 )
+
+}
+
+refreshUI();
+

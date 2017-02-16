@@ -1,18 +1,18 @@
 import React from 'react'
 import Players from './Players'
 import Common from './Common'
-import StartMatch from './StartMatch'
+import StartMatch from './StartMatch' 
 
 class Board extends React.Component {
 	
   render() {
-    
+    console.log("Board called")
     return (
     <div className='container'>
-    	<StartMatch/>
       <Common />
     	<Players/>
     	<me/>
+      <StartMatch/>
     </div>
     )
   }

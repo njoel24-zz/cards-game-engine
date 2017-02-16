@@ -1,3 +1,18 @@
 Board Game Engine written in React/Redux 
 npm install / npm start 
 The aim of this project is to create a configurable board for card games.
+
+
+
+first step:
+redux pattern and main algorithms
+
+second step:
+random and AI
+
+third step:
+graphics and animation
+
+notes:
+change http server..it is crap...
+use of connect..
