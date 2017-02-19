@@ -13,6 +13,12 @@ random and AI
 third step:
 graphics and animation
 
+forth steps:
+back end and multiplayer
+
 notes:
 change http server..it is crap...
 use of connect..
+presentational component
+correct use of the redux pattern
+effects

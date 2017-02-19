@@ -3,7 +3,6 @@ import React from 'react'
 class Players extends React.Component {
 
 render () {
-  console.log("render Players");  
   if(!this.context)
     return null;
 
