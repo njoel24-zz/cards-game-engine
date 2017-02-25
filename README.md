@@ -18,7 +18,9 @@ back end and multiplayer
 
 notes:
 change http server..it is crap...
-use of connect..
+use of connect instead of context
 presentational component
 correct use of the redux pattern
 effects
+combineReducers
+Engine...where? and how?

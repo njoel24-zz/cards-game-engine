@@ -1,100 +1,114 @@
+import EngineAuction from './lib/EngineAuction'
+import EngineMatch from './lib/EngineMatch'
+
 const reducer = (state = [], action) => {
+  engineAuction = new EngineAuction()
+  engineMatch = new EngineMatch()
+
   switch (action.type) {
+
   	case 'ECHO':
-    console.log("init called")
-  	return {
-      ...state
-  	}
+    console.log("echo called")
+  	return state
+
     case 'START_MATCH':
     console.log("Start Match");
-    const shuffleCards = shuffle();
+    const shuffleCards = engineMatch.shuffleCards();
       return {
         ...state,
-        players: [{id:0, name: 'Pippo3',  cards: shuffleCards.slice(0,8), points: 0},
-        {id:1, name: 'Ugo',  cards: shuffleCards.slice(8,16), points: 0},
-        {id:2, name: 'Mario',  cards: shuffleCards.slice(16,24), points: 0},
-        {id:3, name: 'John', cards: shuffleCards.slice(24,32), points: 0},
-        {id:4, name: 'Franz', cards: shuffleCards.slice(32,40), points: 0}],
-        cardsPlayed: [{id:0, value:0},{id:1, value:0},{id:2, value:0},{id:3, value:0},{id:4, value:0}],
-        winnerMatch: undefined,
-        winnerTurno: undefined,
+        players: [{id:0, name: 'Pippo3',  cards: shuffleCards.slice(0,8), points: 0, auction: {points: 0, isIn: true }},
+        {id:1, name: 'Ugo',  cards: shuffleCards.slice(8,16), points: 0, auction: {points: 0, isIn: true }},
+        {id:2, name: 'Mario',  cards: shuffleCards.slice(16,24), points: 0, auction: {points: 0, isIn: true }},
+        {id:3, name: 'John', cards: shuffleCards.slice(24,32), points: 0, auction: {points: 0, isIn: true }},
+        {id:4, name: 'Franz', cards: shuffleCards.slice(32,40), points: 0, auction: {points: 0, isIn: true } }],        
+        match: {  winner: undefined, winnerTurn: undefined, isTurnFinished: false, turns: 1, cardsPlayed: engineMatch.resetCardsPlayed() },
+        auction: { winner: undefined, seed: undefined },
+        isFinished: false,
         inTurn: 0,
         me: 4,
-        isMatchFinished: false,
-        isTurnFinished: false,
-        turns: 1
+        area: 'auction'
       }
     case 'CHANGE_TURN':
         console.log("Change Turn");
       return {
       	...state,
-      	inTurn: ((state.inTurn++)%5)+1,
-        isTurnFinished: state.cardsPlayed.length == 5
+        inTurn: engineMatch.getNextInturn(state),
+        match: {...state.match, isTurnFinished: engineMatch.isTurnFinished(state) }
+      }
+
+    case 'CHANGE_TURN_AUCTION':
+      console.log("Change Turn");
+      return {
+        ...state,
+        inTurn: engineAuction.getNextInturn(state),
+        auction: { winner: engineAuction.getWinnerAuction(state), seed: engineAuction.getSeed() }
+      }
+
+    case 'END_AUCTION':
+      newArea = engineAuction.getArea();
+      return {
+        ...state,
+        area: newArea
     }
 
     case 'END_TURN':
       console.log("End turn");
       return {
         ...state,
-        winnerTurno: 0,
-        inTurn: 0,
-        isTurnFinished: false,
-        cardsPlayed: [{id:0, value:0},{id:1, value:0},{id:2, value:0},{id:3, value:0},{id:4, value:0}],
-        turns: state.turns+1,
-        isMatchFinished: state.turns == 8
-    }
+        match: { ...state.match, winnerTurn: engineMatch.getWinnerTurn(), inTurn: engineMatch.getNextInTurn(state), cardsPlayed: engineMatch.resetCardsPlayed(),turns: state.turns+1 },
+        isFinished: state.turns == 9
+      }
+
     case 'PLAY':
       console.log("Play");
       return {
         ...state,
-        cardsPlayed: [{id:0, value:0},{id:1, value:0},{id:2, value:0},{id:3, value:0},{id:4, value:0}]
+        cardsPlayed: engineMatch.resetCardsPlayed()
       }
+
+    case 'PLAY_AUCTION':
+      console.log("Play Auction");
+      return {
+        ...state
+    }
+
+    case 'PLAY_AUCTION_BOT':
+    console.log("PLAY_AUCTION_BOT");
+
+      if(engine.isUserInAuction(state)) {
+        let newPlayers = {...state.players}
+        newPlayers[state.inTurn].auction = engineAuction.setAuctionForUser(newPlayers[state.inTurn].auction)
+        return {
+          ...state,
+          players: newPlayers
+        }
+      } else {
+        return {
+          ...state
+        }
+      }
+
     case 'PLAY_BOT':
       console.log("Play_BOT");
-      const newCardPlayed =  getRandomValue(state.players, state.inTurn)
-      const newCardsPlayed = state.cardsPlayed.map( c => {console.log(c); if(c.id == state.inTurn) { c.value = newCardPlayed; return c;} else { return c; } })
-      return {
-        ...state,
-        cardsPlayed: newCardsPlayed
-      }
+      const newCardPlayed =  engineMatch.getCardToPlay(state.players, state.inTurn)
+      const newCardsPlayed = engineMatch.playCardOnTheTable(state);
+        return {
+          ...state,
+          match: { ...state.match, cardsPlayed: newCardsPlayed } 
+        }
+      
     case 'SET_WINNER':
       console.log("End Match");
       return {
         ...state,
-        winnerMatch: 1
+        match: { ...state.match,  winner: engineMatch.setWinnerMatch(state) }
       }
     break;
+
     default:
       return state
   }
 }
 
-function shuffle() {
-  let array = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40];
-  var currentIndex = array.length, temporaryValue, randomIndex;
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-  return array;
-}
-
-function getRandomValue(players, inTurn) {
-   let p = players.filter( p => { return p.id == inTurn } )[0]
-   if(p) {
-    let filteredCards = p.cards.filter(c => { return c !== 0 } )    
-    let randomIndex = Math.floor(Math.random() * filteredCards.length-1);
-    let choosenCard = p.cards[randomIndex];
-    p.cards[randomIndex] = 0;
-    return choosenCard;
-   }
-   return 0
-}
 
 export default reducer
