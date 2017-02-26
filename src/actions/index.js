@@ -1,4 +1,6 @@
 
+// match
+
 export const setWinner = () => ({
   type: 'SET_WINNER'
 })
@@ -29,5 +31,23 @@ export const play = () => ({
 
 export const playBot = () => ({
   type: 'PLAY_BOT'
+})
+
+// auction
+
+export const playAuctionBot = () => ({
+  type: 'PLAY_AUCTION_BOT'
+})
+
+export const playAuction = () => ({
+  type: 'PLAY_AUCTION'
+})
+
+export const endAuction = () => ({
+  type: 'END_AUCTION'
+})
+
+export const changeTurnAuction = () => ({
+  type: 'CHANGE_TURN_AUCTION'
 })
 

@@ -1,7 +1,9 @@
-class EngineAuction  {
+import EngineCommon from './EngineCommon'
 
-  getArea() {
-    return 'match';
+class EngineAuction extends EngineCommon  {
+
+  constructor() {
+    super()
   }
 
   getSeed(state) {
@@ -10,11 +12,13 @@ class EngineAuction  {
   }
 
   getWinnerAuction(state) {
-    let playersInAuction = state.players.filter( p => { return p.auction.inIn == true })
+    // temp hack to convert an object of object in an array of objects
+    state.players = Object.keys(state.players).map(function (key) { return state.players[key]; });
+    let playersInAuction = state.players.filter( p => {  return p.auction.isIn === true })
     if( playersInAuction.length == 1) {
-      return playersInAuction[0]
+      return playersInAuction[0].id
     } else {
-      return undefined
+      return 0
     }
   }
 
@@ -22,11 +26,23 @@ class EngineAuction  {
     return state.players[state.inTurn].auction.isIn
   }
 
-  setAuctionForUser(user) {
-    return {points: 80, isIn: true}
+  setAuctionForUser(auction) {
+    return this.getAIChoice(auction)
+  }
+
+  // TODO
+  getAIChoice(auction) {
+    let randomIndex = Math.floor(Math.random() * 10);
+    if(randomIndex < 5) {
+      auction.isIn = false
+    }else {
+      auction.isIn = true
+      auction.points = 85
+    }
+    return auction
   }
 
 }
 
-export default Engine
+export default EngineAuction
 

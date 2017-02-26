@@ -2,8 +2,8 @@ import EngineAuction from './lib/EngineAuction'
 import EngineMatch from './lib/EngineMatch'
 
 const reducer = (state = [], action) => {
-  engineAuction = new EngineAuction()
-  engineMatch = new EngineMatch()
+  var engineMatch = new EngineMatch()
+  var engineAuction = new EngineAuction()
 
   switch (action.type) {
 
@@ -22,7 +22,7 @@ const reducer = (state = [], action) => {
         {id:3, name: 'John', cards: shuffleCards.slice(24,32), points: 0, auction: {points: 0, isIn: true }},
         {id:4, name: 'Franz', cards: shuffleCards.slice(32,40), points: 0, auction: {points: 0, isIn: true } }],        
         match: {  winner: undefined, winnerTurn: undefined, isTurnFinished: false, turns: 1, cardsPlayed: engineMatch.resetCardsPlayed() },
-        auction: { winner: undefined, seed: undefined },
+        auction: { winner: 0, seed: undefined },
         isFinished: false,
         inTurn: 0,
         me: 4,
@@ -32,20 +32,24 @@ const reducer = (state = [], action) => {
         console.log("Change Turn");
       return {
       	...state,
-        inTurn: engineMatch.getNextInturn(state),
+        inTurn: engineMatch.getNextInTurn(state.inTurn),
         match: {...state.match, isTurnFinished: engineMatch.isTurnFinished(state) }
       }
 
     case 'CHANGE_TURN_AUCTION':
-      console.log("Change Turn");
+      console.log("Change Turn Auction");
+      var inTurn = engineAuction.getNextInTurn(state.inTurn)
       return {
         ...state,
-        inTurn: engineAuction.getNextInturn(state),
-        auction: { winner: engineAuction.getWinnerAuction(state), seed: engineAuction.getSeed() }
+        inTurn: inTurn,
+        auction: { winner: engineAuction.getWinnerAuction(state), seed: engineAuction.getSeed() },
+        match: {...state.match, cardsPlayed: engineMatch.resetCardsPlayed()}
       }
 
     case 'END_AUCTION':
-      newArea = engineAuction.getArea();
+    console.log("end auction")    
+    console.log("vince l'asta: "+engineAuction.getWinnerAuction(state))
+      var newArea = engineAuction.getArea();
       return {
         ...state,
         area: newArea
@@ -53,17 +57,17 @@ const reducer = (state = [], action) => {
 
     case 'END_TURN':
       console.log("End turn");
+      console.log("number of turns played:"+state.match.turns)
       return {
         ...state,
-        match: { ...state.match, winnerTurn: engineMatch.getWinnerTurn(), inTurn: engineMatch.getNextInTurn(state), cardsPlayed: engineMatch.resetCardsPlayed(),turns: state.turns+1 },
-        isFinished: state.turns == 9
+        match: { ...state.match, winnerTurn: engineMatch.getWinnerTurn(state), inTurn: engineMatch.getNextInTurn(state.inTurn), cardsPlayed: engineMatch.resetCardsPlayed(),turns: state.match.turns+1 },
+        isFinished: engineMatch.isMatchFinished(state)
       }
 
     case 'PLAY':
       console.log("Play");
       return {
-        ...state,
-        cardsPlayed: engineMatch.resetCardsPlayed()
+        ...state
       }
 
     case 'PLAY_AUCTION':
@@ -73,9 +77,8 @@ const reducer = (state = [], action) => {
     }
 
     case 'PLAY_AUCTION_BOT':
-    console.log("PLAY_AUCTION_BOT");
-
-      if(engine.isUserInAuction(state)) {
+    console.log("PLAY_AUCTION_BOT:"+ state.inTurn);
+      if(engineAuction.isUserInAuction(state)) {
         let newPlayers = {...state.players}
         newPlayers[state.inTurn].auction = engineAuction.setAuctionForUser(newPlayers[state.inTurn].auction)
         return {
@@ -91,7 +94,10 @@ const reducer = (state = [], action) => {
     case 'PLAY_BOT':
       console.log("Play_BOT");
       const newCardPlayed =  engineMatch.getCardToPlay(state.players, state.inTurn)
-      const newCardsPlayed = engineMatch.playCardOnTheTable(state);
+      const newCardsPlayed = engineMatch.playCardOnTheTable(state, newCardPlayed);
+      console.log("il bot gioca:"+ newCardPlayed)
+      console.log("gioca il bot. New cards played:")
+      console.log(newCardsPlayed)
         return {
           ...state,
           match: { ...state.match, cardsPlayed: newCardsPlayed } 

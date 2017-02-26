@@ -11,7 +11,6 @@ console.log("start");
 let unsubscribe  = store.subscribe(refreshUI)
 
 function refreshUI() {
-	console.log("refresh")
 
 render(
 	<Provider store={store}>

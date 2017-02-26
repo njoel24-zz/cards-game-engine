@@ -24,3 +24,11 @@ correct use of the redux pattern
 effects
 combineReducers
 Engine...where? and how?
+use abstract classes
+sourcesmap
+crawler
+props in constructor
+++  AND +1
+console.log si aggiorna con lo stato
+Perform debounce in React.js
+

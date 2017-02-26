@@ -1,34 +1,35 @@
-class EngineMatch  {
+import EngineCommon from './EngineCommon'
 
-  playCardOnTheTable(state){
-    state.match.cardsPlayed.map( c => { 
-      if(c.id == state.inTurn) { 
-        c.value = newCardPlayed; return c;
-      } else { 
-        return c; 
-      } 
-    })
+class EngineMatch extends EngineCommon {
+
+  constructor() {
+    super()
   }
 
+  playCardOnTheTable(state, newCardPlayed){
+    var newCardsPlayed = state.match.cardsPlayed
+    newCardsPlayed[state.inTurn].value = newCardPlayed
+    return newCardsPlayed
+  }
 
+  // TODO
   setWinnerMatch() {
     return 1;
   }
 
-
-
   isTurnFinished(state){
-    state.cardsPlayed.filter( c => { return c.value != 0 } )[0] == 0
+    var res = state.match.cardsPlayed.filter( c => { return c.value == 0 } );
+    return res.length == 0
   }
 
-  getWinnerTurn(){
-
+  isMatchFinished(state){
+    return (state.match.turns === 8)
   }
 
-  getNextInTurn(state) {
-    return ((state.inTurn++)%5)
+  // TODO
+  getWinnerTurn(state){
+    return 1;
   }
-
 
   resetCardsPlayed() {
     return [{id:0, value:0},{id:1, value:0},{id:2, value:0},{id:3, value:0},{id:4, value:0}]
@@ -50,13 +51,14 @@ class EngineMatch  {
     return array;
   }
 
+  // TODO
   getCardToPlay(players, inTurn) {
     let p = players.filter( p => { return p.id == inTurn } )[0]
     if(p) {
-      let filteredCards = p.cards.filter(c => { return c !== 0 } )    
-      let randomIndex = Math.floor(Math.random() * filteredCards.length-1);
+      // let filteredCards = p.cards.filter(c => { return c !== 0 } )    
+      let randomIndex = Math.floor(Math.random() * 7);
       let choosenCard = p.cards[randomIndex];
-      p.cards[randomIndex] = 0;
+      // p.cards[randomIndex] = 0;
     return choosenCard;
     }
    return 0
@@ -64,5 +66,4 @@ class EngineMatch  {
 
 }
 
-export default Engine
-
+export default EngineMatch
