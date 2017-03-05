@@ -8,6 +8,7 @@ render () {
 
 	let store = this.context.store;
 
+
   if(!store.getState().players)
     return null;
   // temp hack to convert an object of object in an array of objects
@@ -15,12 +16,20 @@ render () {
 	return (
 		<ul className='row'>
     		{store.getState().players.map(player =>
-  				<li className='col-xs-1' key={player.id}>{player.name} - {player.auction.points} - {player.auction.isIn}</li>
+  				<li className='col-xs-1' key={player.id}>{player.name} - {player.auction.points} - { this.getTempVal(player.auction.isIn) }</li>
     		)}
           <li className='col-xs-7'></li>
   		</ul>
 		)
 	}
+
+  getTempVal(val){
+    if(val){
+      return "si"
+    } else {
+      return "no"
+    } 
+  }
 }  
 
 Players.contextTypes = {

@@ -1,6 +1,7 @@
 import React from 'react'
-import { startMatch, setWinner, initMatch, endTurn, endMatch,
-		changeTurn, play, playBot, playAuctionBot, playAuction, endAuction, changeTurnAuction } from '../actions'
+import { startMatch, setWinner,  endTurn,
+		changeTurn, play, playBot} from '../actions/match'
+import { playAuctionBot, playAuction, endAuction, changeTurnAuction } from '../actions/auction'
 
 class StartMatch extends React.Component {
 
@@ -8,13 +9,8 @@ class StartMatch extends React.Component {
 		let store = this.context.store;
 		store.dispatch(startMatch())
 		this.startLoopAuction()
-		this.startLoop()
+		 // this.startLoop()
 	}		
-
-	sleep(ms) {
-    	var unixtime_ms = new Date().getTime();
-    	while(new Date().getTime() < unixtime_ms + ms) {}
-	}
 
 	startLoop() {
 		// temporary loop break
@@ -46,7 +42,8 @@ class StartMatch extends React.Component {
 	startLoopAuction() {
 		
 		let store = this.context.store;
-		console.log("store:"+store.getState().inTurn)
+		console.log("sstore:"+store.getState().inTurn)
+		
 		if(store.getState().me != store.getState().inTurn){
 			store.dispatch(playAuctionBot())
 		}else{
@@ -56,14 +53,14 @@ class StartMatch extends React.Component {
 			
 		console.log("prima:"+store.getState().inTurn)
 		store.dispatch(changeTurnAuction())
-		console.log("dopo:"+store.getState().inTurn)
+		console.log("dopo00000:"+store.getState().inTurn)
 
 		if(store.getState().auction.winner !== undefined) {
 			store.dispatch(endAuction())
 			return
 		} 
 
-		// setTimeout(this.startLoopAuction.bind(this), "1500")
+		// setTimeout("this.startLoopAuction.bind(this)", "1500")
 		
 	}
 

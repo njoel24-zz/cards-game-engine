@@ -4,7 +4,7 @@
   "description": "A classical italian card game",
   "main": "public/index.html",
   "scripts": {
-    "start": "http-server | webpack -w",
+    "start": "browser-sync start --server --files '*.html, *.css, *.js '  | webpack -w",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
     "test": "react-scripts test"

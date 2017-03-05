@@ -1,17 +1,35 @@
+// react
 import React from 'react'
 import { render } from 'react-dom'
+
+// redux
 import { createStore } from 'redux'
-import App from './components/App'
-import reducer from './reducers'
-import { initMatch } from './actions'
+
+// redux/react
 import { Provider } from 'react-redux'
+
+// app
+import App from './components/App'
+// import reducer from './reducers'
+import { initMatch } from './actions'
+
 // import 'stylesheets/base'
-const store = createStore(reducer)
-console.log("start");
-let unsubscribe  = store.subscribe(refreshUI)
 
-function refreshUI() {
+// reducers
+import { applyMiddleware } from 'redux'
+import matchReducer from './reducers/match'
 
+
+// middlewares
+import matchMiddleware from './middlewares/MatchMiddleware'
+const middlewares = applyMiddleware(matchMiddleware)
+
+const store = createStore(matchReducer, middlewares)
+
+// let unsubscribe  = store.subscribe(refreshUI)
+
+// function refreshUI() {
+console.log("refresh")
 render(
 	<Provider store={store}>
   		<App />
@@ -19,7 +37,7 @@ render(
   document.getElementById('root')
 )
 
-}
+// }
 
-refreshUI();
+// refreshUI();
 

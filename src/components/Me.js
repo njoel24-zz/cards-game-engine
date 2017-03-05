@@ -14,7 +14,7 @@ render () {
 	return (
 		<ul className='row'>
     		{store.getState().players[store.getState().me].cards.map(c =>
-  				<li className='col-xs-2' key={c}>{c}</li>
+  				<li className='col-xs-2' key={c}><img src={'img/'+c+'.jpg'} className='card'/></li>
     		)}
 				<li className='col-xs-2'></li>
   		</ul>
