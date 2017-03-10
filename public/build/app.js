@@ -59,6 +59,8 @@
 
 	var _reactDom = __webpack_require__(33);
 
+	var _match = __webpack_require__(225);
+
 	var _redux = __webpack_require__(180);
 
 	var _reactRedux = __webpack_require__(201);
@@ -67,25 +69,25 @@
 
 	var _App2 = _interopRequireDefault(_App);
 
-	var _actions = __webpack_require__(225);
+	var _match2 = __webpack_require__(229);
 
-	var _match = __webpack_require__(229);
+	var _match3 = _interopRequireDefault(_match2);
 
-	var _match2 = _interopRequireDefault(_match);
-
-	var _MatchMiddleware = __webpack_require__(231);
+	var _MatchMiddleware = __webpack_require__(230);
 
 	var _MatchMiddleware2 = _interopRequireDefault(_MatchMiddleware);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	// import reducer from './reducers'
+	// app
 
 
-	// redux/react
+	// redux
 	var middlewares = (0, _redux.applyMiddleware)(_MatchMiddleware2.default);
 
 	// middlewares
+
+	// import reducer from './reducers'
 
 
 	// import 'stylesheets/base'
@@ -93,28 +95,22 @@
 	// reducers
 
 
-	// app
+	// redux/react
 
 
-	// redux
+	// actions
 	// react
 
 
-	var store = (0, _redux.createStore)(_match2.default, middlewares);
+	var store = (0, _redux.createStore)(_match3.default, middlewares);
 
-	// let unsubscribe  = store.subscribe(refreshUI)
+	store.dispatch((0, _match.initMatch)());
 
-	// function refreshUI() {
-	console.log("refresh");
 	(0, _reactDom.render)(_react2.default.createElement(
 	  _reactRedux.Provider,
 	  { store: store },
 	  _react2.default.createElement(_App2.default, null)
 	), document.getElementById('root'));
-
-	// }
-
-	// refreshUI();
 
 /***/ },
 /* 2 */
@@ -23728,10 +23724,6 @@
 		return App;
 	}(_react2.default.Component);
 
-	App.contextTypes = {
-		store: _react2.default.PropTypes.object
-	};
-
 	exports.default = App;
 
 /***/ },
@@ -23762,7 +23754,7 @@
 
 	var _StartMatch2 = _interopRequireDefault(_StartMatch);
 
-	var _Me = __webpack_require__(228);
+	var _Me = __webpack_require__(227);
 
 	var _Me2 = _interopRequireDefault(_Me);
 
@@ -23818,6 +23810,8 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _reactRedux = __webpack_require__(201);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -23838,53 +23832,33 @@
 	  _createClass(Players, [{
 	    key: 'render',
 	    value: function render() {
-	      var _this2 = this;
-
-	      if (!this.context) return null;
-
-	      var store = this.context.store;
-
-	      if (!store.getState().players) return null;
-	      // temp hack to convert an object of object in an array of objects
-	      store.getState().players = Object.keys(store.getState().players).map(function (key) {
-	        return store.getState().players[key];
-	      });
 	      return _react2.default.createElement(
 	        'ul',
 	        { className: 'row' },
-	        store.getState().players.map(function (player) {
+	        this.props.players.map(function (player) {
 	          return _react2.default.createElement(
 	            'li',
 	            { className: 'col-xs-1', key: player.id },
 	            player.name,
 	            ' - ',
-	            player.auction.points,
-	            ' - ',
-	            _this2.getTempVal(player.auction.isIn)
+	            player.auction.points
 	          );
 	        }),
 	        _react2.default.createElement('li', { className: 'col-xs-7' })
 	      );
-	    }
-	  }, {
-	    key: 'getTempVal',
-	    value: function getTempVal(val) {
-	      if (val) {
-	        return "si";
-	      } else {
-	        return "no";
-	      }
 	    }
 	  }]);
 
 	  return Players;
 	}(_react2.default.Component);
 
-	Players.contextTypes = {
-	  store: _react2.default.PropTypes.object
+	var mapStateToProps = function mapStateToProps(store) {
+	  return {
+	    players: store.players
+	  };
 	};
 
-	exports.default = Players;
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Players);
 
 /***/ },
 /* 223 */
@@ -23901,6 +23875,8 @@
 	var _react = __webpack_require__(2);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(201);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -23922,20 +23898,10 @@
 	  _createClass(Common, [{
 	    key: 'render',
 	    value: function render() {
-	      if (!this.context) return null;
-
-	      var store = this.context.store;
-	      if (!store.getState()) return null;
-	      if (!store.getState().match || !store.getState().match.cardsPlayed) return null;
-	      var winner = null;
-	      if (store.getState().match.winner) {
-	        winner = store.getState().match.winner.toString();
-	      }
-
 	      return _react2.default.createElement(
 	        'ul',
 	        { className: 'row' },
-	        store.getState().match.cardsPlayed.map(function (card) {
+	        this.props.match.cardsPlayed.map(function (card) {
 	          return _react2.default.createElement(
 	            'li',
 	            { className: 'col-xs-2', key: card.id },
@@ -23947,31 +23913,31 @@
 	          'li',
 	          { className: 'col-xs-2' },
 	          'turns:',
-	          store.getState() - match.turns
+	          this.props.match.turns
 	        ),
 	        _react2.default.createElement(
 	          'li',
 	          { className: 'col-xs-2' },
 	          'winner match:',
-	          store.getState().match.winner
+	          this.props.match.winner
 	        ),
 	        _react2.default.createElement(
 	          'li',
 	          { className: 'col-xs-2' },
 	          'winner turn:',
-	          store.getState().match.winnerTurn
+	          this.props.match.winnerTurn
 	        ),
 	        _react2.default.createElement(
 	          'li',
 	          { className: 'col-xs-2' },
 	          'seed:',
-	          store.getState().auction.seed
+	          this.props.auction.seed
 	        ),
 	        _react2.default.createElement(
 	          'li',
 	          { className: 'col-xs-2' },
 	          'winner auction:',
-	          winner
+	          this.props.auction.winner
 	        )
 	      );
 	    }
@@ -23980,11 +23946,14 @@
 	  return Common;
 	}(_react2.default.Component);
 
-	Common.contextTypes = {
-	  store: _react2.default.PropTypes.object
+	var mapStateToProps = function mapStateToProps(store) {
+	  return {
+	    match: store.match,
+	    auction: store.auction
+	  };
 	};
 
-	exports.default = Common;
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Common);
 
 /***/ },
 /* 224 */
@@ -24002,9 +23971,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _match = __webpack_require__(226);
+	var _reactRedux = __webpack_require__(201);
 
-	var _auction = __webpack_require__(227);
+	var _match = __webpack_require__(225);
+
+	var _auction = __webpack_require__(226);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -24026,8 +23997,7 @@
 		_createClass(StartMatch, [{
 			key: 'start',
 			value: function start() {
-				var store = this.context.store;
-				store.dispatch((0, _match.startMatch)());
+				this.props.startMatch();
 				this.startLoopAuction();
 				// this.startLoop()
 			}
@@ -24035,25 +24005,24 @@
 			key: 'startLoop',
 			value: function startLoop() {
 				// temporary loop break
-				var store = this.context.store;
 
-				if (store.getState().match.isTurnFinished) {
-					store.dispatch((0, _match.endTurn)());
+				if (this.props.match.isTurnFinished) {
+					this.props.endTurn();
 				}
 
-				if (store.getState().isFinished) {
-					store.dispatch((0, _match.setWinner)());
+				if (this.props.isFinished) {
+					this.props.setWinner();
 					return;
 				}
 
-				if (store.getState().me != store.getState().inTurn) {
-					store.dispatch((0, _match.playBot)());
+				if (this.props.me != this.props.inTurn) {
+					this.props.playBot();
 				} else {
 					// ui interaction then 
-					store.dispatch((0, _match.playBot)());
+					this.props.playBot();
 				}
 
-				store.dispatch((0, _match.changeTurn)());
+				this.props.changeTurn();
 
 				setTimeout(this.startLoop.bind(this), "1500");
 			}
@@ -24061,22 +24030,17 @@
 			key: 'startLoopAuction',
 			value: function startLoopAuction() {
 
-				var store = this.context.store;
-				console.log("sstore:" + store.getState().inTurn);
-
-				if (store.getState().me != store.getState().inTurn) {
-					store.dispatch((0, _auction.playAuctionBot)());
+				if (this.props.me != this.props.inTurn) {
+					this.props.playAuctionBot();
 				} else {
 					// ui interaction then 
-					store.dispatch((0, _auction.playAuctionBot)());
+					this.props.playAuctionBot();
 				}
 
-				console.log("prima:" + store.getState().inTurn);
-				store.dispatch((0, _auction.changeTurnAuction)());
-				console.log("dopo00000:" + store.getState().inTurn);
+				this.props.changeTurnAuction();
 
-				if (store.getState().auction.winner !== undefined) {
-					store.dispatch((0, _auction.endAuction)());
+				if (this.props.auction.winner !== undefined) {
+					this.props.endAuction();
 					return;
 				}
 
@@ -24088,7 +24052,6 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				var store = this.context.store;
 				return _react2.default.createElement(
 					'button',
 					{ onClick: this.start.bind(this) },
@@ -24100,24 +24063,45 @@
 		return StartMatch;
 	}(_react2.default.Component);
 
-	StartMatch.contextTypes = {
-		store: _react2.default.PropTypes.object
+	var mapStateToProps = function mapStateToProps(store) {
+		return {
+			match: store.match,
+			me: store.me,
+			inTurn: store.inTurn,
+			auction: store.auction
+		};
 	};
 
-	exports.default = StartMatch;
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+		return {
+			startMatch: function startMatch() {
+				dispatch((0, _match.startMatch)());
+			},
+			setWinner: function setWinner() {
+				dispatch((0, _match.setWinner)());
+			},
+			playBot: function playBot() {
+				dispatch((0, _match.playBot)());
+			},
+			changeTurn: function changeTurn() {
+				dispatch((0, _match.changeTurn)());
+			},
+			playAuctionBot: function playAuctionBot() {
+				dispatch((0, _auction.playAuctionBot)());
+			},
+			changeTurnAuction: function changeTurnAuction() {
+				dispatch((0, _auction.changeTurnAuction)());
+			},
+			endAuction: function endAuction() {
+				dispatch((0, _auction.endAuction)());
+			}
+		};
+	};
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(StartMatch);
 
 /***/ },
 /* 225 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _match = __webpack_require__(226);
-
-	var _auction = __webpack_require__(227);
-
-/***/ },
-/* 226 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -24125,6 +24109,12 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	var initMatch = exports.initMatch = function initMatch() {
+	  return {
+	    type: 'INIT_MATCH'
+	  };
+	};
+
 	var startMatch = exports.startMatch = function startMatch() {
 	  return {
 	    type: 'START_MATCH',
@@ -24141,7 +24131,6 @@
 	var playBot = exports.playBot = function playBot() {
 	  return {
 	    type: 'PLAY_BOT',
-	    cardPlayed: undefined,
 	    cardsPlayed: undefined
 	  };
 	};
@@ -24172,7 +24161,7 @@
 	};
 
 /***/ },
-/* 227 */
+/* 226 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -24211,13 +24200,13 @@
 	};
 
 /***/ },
-/* 228 */
+/* 227 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-		value: true
+	  value: true
 	});
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -24225,6 +24214,8 @@
 	var _react = __webpack_require__(2);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(201);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -24235,48 +24226,46 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var Me = function (_React$Component) {
-		_inherits(Me, _React$Component);
+	  _inherits(Me, _React$Component);
 
-		function Me() {
-			_classCallCheck(this, Me);
+	  function Me() {
+	    _classCallCheck(this, Me);
 
-			return _possibleConstructorReturn(this, (Me.__proto__ || Object.getPrototypeOf(Me)).apply(this, arguments));
-		}
+	    return _possibleConstructorReturn(this, (Me.__proto__ || Object.getPrototypeOf(Me)).apply(this, arguments));
+	  }
 
-		_createClass(Me, [{
-			key: 'render',
-			value: function render() {
-				if (!this.context) return null;
+	  _createClass(Me, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'ul',
+	        { className: 'row' },
+	        this.props.players[this.props.me].cards.map(function (c) {
+	          return _react2.default.createElement(
+	            'li',
+	            { className: 'col-xs-2', key: c },
+	            _react2.default.createElement('img', { src: 'img/' + c + '.jpg', className: 'card' })
+	          );
+	        }),
+	        _react2.default.createElement('li', { className: 'col-xs-2' })
+	      );
+	    }
+	  }]);
 
-				var store = this.context.store;
-
-				if (!store.getState().players) return null;
-
-				return _react2.default.createElement(
-					'ul',
-					{ className: 'row' },
-					store.getState().players[store.getState().me].cards.map(function (c) {
-						return _react2.default.createElement(
-							'li',
-							{ className: 'col-xs-2', key: c },
-							_react2.default.createElement('img', { src: 'img/' + c + '.jpg', className: 'card' })
-						);
-					}),
-					_react2.default.createElement('li', { className: 'col-xs-2' })
-				);
-			}
-		}]);
-
-		return Me;
+	  return Me;
 	}(_react2.default.Component);
 
-	Me.contextTypes = {
-		store: _react2.default.PropTypes.object
+	var mapStateToProps = function mapStateToProps(store) {
+	  return {
+	    players: store.players,
+	    me: store.me
+	  };
 	};
 
-	exports.default = Me;
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Me);
 
 /***/ },
+/* 228 */,
 /* 229 */
 /***/ function(module, exports) {
 
@@ -24294,6 +24283,17 @@
 
 
 	  switch (action.type) {
+
+	    case 'INIT_MATCH':
+	      return _extends({}, state, {
+	        players: [{ id: 0, name: 'Pippo3', cards: [], points: 0, auction: { points: 0, isIn: true } }, { id: 1, name: 'Ugo', cards: [], points: 0, auction: { points: 0, isIn: true } }, { id: 2, name: 'Mario', cards: [], points: 0, auction: { points: 0, isIn: true } }, { id: 3, name: 'John', cards: [], points: 0, auction: { points: 0, isIn: true } }, { id: 4, name: 'Franz', cards: [], points: 0, auction: { points: 0, isIn: true } }],
+	        match: { winner: undefined, winnerTurn: undefined, isTurnFinished: false, turns: 1, cardsPlayed: [] },
+	        auction: { winner: undefined, seed: undefined },
+	        isFinished: false,
+	        inTurn: 0,
+	        me: 4,
+	        area: 'auction'
+	      });
 
 	    case 'START_MATCH':
 	      var shuffleCards = action.shuffleCards;
@@ -24330,10 +24330,8 @@
 
 	    case 'PLAY_BOT':
 	      console.log("Play_BOT");
-	      var newCardPlayed = action.cardPlayed;
-	      var newCardsPlayed = action.cardsPlayed;
 	      return _extends({}, state, {
-	        match: _extends({}, state.match, { cardsPlayed: newCardsPlayed })
+	        match: _extends({}, state.match, { cardsPlayed: action.cardsPlayed })
 	      });
 
 	    case 'SET_WINNER':
@@ -24345,10 +24343,9 @@
 
 	    case 'CHANGE_TURN_AUCTION':
 	      console.log("Change Turn Auction");
-	      var inTurn = action.getNextInTurn;
 	      return _extends({}, state, {
-	        inTurn: inTurn,
-	        auction: _extends({}, state.auction, { winner: action.getWinnerAuction })
+	        inTurn: action.inTurn,
+	        auction: _extends({}, state.auction, { winner: action.winnerAuction })
 	      });
 
 	    case 'END_AUCTION':
@@ -24356,7 +24353,7 @@
 	      var newArea = action.getArea;
 	      return _extends({}, state, {
 	        area: newArea,
-	        auction: _extends({}, state.auction, { seed: action.getSeed })
+	        auction: _extends({}, state.auction, { seed: action.seed })
 	      });
 
 	    case 'PLAY_AUCTION':
@@ -24383,8 +24380,7 @@
 	exports.default = matchReducer;
 
 /***/ },
-/* 230 */,
-/* 231 */
+/* 230 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -24404,7 +24400,7 @@
 	        case 'PLAY':
 	          break;
 	        case 'PLAY_BOT':
-	          action.cardPlayed = getCardToPlay(), action.cardsPlayed = playCardOnTheTable(cardPlayed);
+	          action.cardsPlayed = playCardOnTheTable(getCardToPlay());
 	          break;
 	        case 'CHANGE_TURN':
 	          action.inTurn = getNextInTurn(), action.turnFinished = isTurnFinished();
@@ -24422,7 +24418,7 @@
 	        case 'PLAY_AUCTION':
 	          break;
 	        case 'CHANGE_TURN_AUCTION':
-	          action.inTurn = getNextInTurn(), action.winner = getWinnerAuction();
+	          action.inTurn = getNextInTurn(), action.winnerAuction = getWinnerAuction();
 	          break;
 	        case 'END_AUCTION':
 	          action.newArea = getArea(), action.seed = getSeed();

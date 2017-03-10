@@ -1,3 +1,7 @@
+export const initMatch = () => ({
+  type: 'INIT_MATCH'
+})
+
 export const startMatch = () => ({
   type: 'START_MATCH',
   shuffleCards: undefined
@@ -9,7 +13,6 @@ export const play = () => ({
 
 export const playBot = () => ({
   type: 'PLAY_BOT',
-  cardPlayed: undefined,
   cardsPlayed: undefined
 })
 

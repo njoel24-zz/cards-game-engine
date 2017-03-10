@@ -2,6 +2,22 @@ const matchReducer = (state = [], action) => {
 
   switch (action.type) {
 
+    case 'INIT_MATCH':
+      return {
+        ...state,
+        players: [{id:0, name: 'Pippo3',  cards: [] , points: 0, auction: {points: 0, isIn: true }},
+        {id:1, name: 'Ugo',  cards: [], points: 0, auction: {points: 0, isIn: true }},
+        {id:2, name: 'Mario',  cards: [], points: 0, auction: {points: 0, isIn: true }},
+        {id:3, name: 'John', cards: [], points: 0, auction: {points: 0, isIn: true }},
+        {id:4, name: 'Franz', cards: [], points: 0, auction: {points: 0, isIn: true } }],        
+        match: {  winner: undefined, winnerTurn: undefined, isTurnFinished: false, turns: 1, cardsPlayed: [] },
+        auction: { winner: undefined, seed: undefined },
+        isFinished: false,
+        inTurn: 0,
+        me: 4,
+        area: 'auction'
+      }
+
     case 'START_MATCH':
     const shuffleCards = action.shuffleCards;
       return {
@@ -46,11 +62,9 @@ const matchReducer = (state = [], action) => {
 
     case 'PLAY_BOT':
       console.log("Play_BOT");
-      const newCardPlayed =  action.cardPlayed
-      const newCardsPlayed = action.cardsPlayed
        return {
           ...state,
-          match: { ...state.match, cardsPlayed: newCardsPlayed } 
+          match: { ...state.match, cardsPlayed: action.cardsPlayed } 
     }      
 
 
@@ -64,11 +78,10 @@ const matchReducer = (state = [], action) => {
 
      case 'CHANGE_TURN_AUCTION':
       console.log("Change Turn Auction");
-      var inTurn = action.getNextInTurn
       return {
         ...state,
-        inTurn: inTurn,
-        auction: { ...state.auction, winner: action.getWinnerAuction }
+        inTurn: action.inTurn,
+        auction: { ...state.auction, winner: action.winnerAuction }
       }
 
     case 'END_AUCTION':
@@ -77,7 +90,7 @@ const matchReducer = (state = [], action) => {
       return {
         ...state,
         area: newArea,
-        auction: { ...state.auction, seed: action.getSeed }
+        auction: { ...state.auction, seed: action.seed }
     }
 
     case 'PLAY_AUCTION':

@@ -1,4 +1,5 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import { startMatch, setWinner,  endTurn,
 		changeTurn, play, playBot} from '../actions/match'
 import { playAuctionBot, playAuction, endAuction, changeTurnAuction } from '../actions/auction'
@@ -6,57 +7,49 @@ import { playAuctionBot, playAuction, endAuction, changeTurnAuction } from '../a
 class StartMatch extends React.Component {
 
 	start() {
-		let store = this.context.store;
-		store.dispatch(startMatch())
+		this.props.startMatch();
 		this.startLoopAuction()
 		 // this.startLoop()
 	}		
 
 	startLoop() {
 		// temporary loop break
-		let store = this.context.store;
 
-		if(store.getState().match.isTurnFinished) {
-			store.dispatch(endTurn())
+		if(this.props.match.isTurnFinished) {
+			this.props.endTurn();
 		}
 
-		if(store.getState().isFinished) {
-			store.dispatch(setWinner())
+		if(this.props.isFinished) {
+			this.props.setWinner();
 			return;
 		}
 		
-		if(store.getState().me != store.getState().inTurn) {
-			store.dispatch(playBot())
+		if(this.props.me != this.props.inTurn) {
+			this.props.playBot();
 		} else {
 			// ui interaction then 
-			store.dispatch(playBot())
+			this.props.playBot();
 		}
 			
-		store.dispatch(changeTurn())
-		
+		this.props.changeTurn();
 		
 		setTimeout(this.startLoop.bind(this), "1500")
 		
 	}
 
 	startLoopAuction() {
-		
-		let store = this.context.store;
-		console.log("sstore:"+store.getState().inTurn)
-		
-		if(store.getState().me != store.getState().inTurn){
-			store.dispatch(playAuctionBot())
+	
+		if(this.props.me != this.props.inTurn){
+			this.props.playAuctionBot();
 		}else{
 			// ui interaction then 
-			store.dispatch(playAuctionBot())
+			this.props.playAuctionBot();
 		}
 			
-		console.log("prima:"+store.getState().inTurn)
-		store.dispatch(changeTurnAuction())
-		console.log("dopo00000:"+store.getState().inTurn)
-
-		if(store.getState().auction.winner !== undefined) {
-			store.dispatch(endAuction())
+		this.props.changeTurnAuction();
+		
+		if(this.props.auction.winner !== undefined) {
+			this.props.endAuction();
 			return
 		} 
 
@@ -68,7 +61,6 @@ class StartMatch extends React.Component {
 	}
 
 	render () {
-		let store = this.context.store;
 		return (
 			<button onClick={this.start.bind(this)}>Start Match</button>
 		)
@@ -76,8 +68,39 @@ class StartMatch extends React.Component {
 
 }  
 
-StartMatch.contextTypes = {
-  store: React.PropTypes.object
+const mapStateToProps = function(store) {
+  return {
+    match: store.match,
+		me: store.me,
+		inTurn: store.inTurn,
+		auction: store.auction
+  };
 }
 
-export default StartMatch
+const mapDispatchToProps = function(dispatch, ownProps) {
+  return {
+    startMatch: function() {
+      dispatch(startMatch());
+    },
+		setWinner: function() {
+      dispatch(setWinner());
+    },
+		playBot: function() {
+      dispatch(playBot());
+    },
+		changeTurn: function() {
+      dispatch(changeTurn());
+    },
+		playAuctionBot: function() {
+      dispatch(playAuctionBot());
+    },
+		changeTurnAuction: function() {
+      dispatch(changeTurnAuction());
+    },
+		endAuction: function() {
+      dispatch(endAuction());
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(StartMatch);
