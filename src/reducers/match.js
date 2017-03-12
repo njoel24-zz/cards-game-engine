@@ -4,7 +4,6 @@ const matchReducer = (state = [], action) => {
 
     case 'INIT_MATCH':
       return {
-        ...state,
         players: [{id:0, name: 'Pippo3',  cards: [] , points: 0, auction: {points: 0, isIn: true }},
         {id:1, name: 'Ugo',  cards: [], points: 0, auction: {points: 0, isIn: true }},
         {id:2, name: 'Mario',  cards: [], points: 0, auction: {points: 0, isIn: true }},
@@ -15,24 +14,20 @@ const matchReducer = (state = [], action) => {
         isFinished: false,
         inTurn: 0,
         me: 4,
-        area: 'auction'
+        area: 'auction',
+        isStart: false
       }
 
     case 'START_MATCH':
     const shuffleCards = action.shuffleCards;
       return {
         ...state,
-        players: [{id:0, name: 'Pippo3',  cards: shuffleCards.slice(0,8), points: 0, auction: {points: 0, isIn: true }},
-        {id:1, name: 'Ugo',  cards: shuffleCards.slice(8,16), points: 0, auction: {points: 0, isIn: true }},
-        {id:2, name: 'Mario',  cards: shuffleCards.slice(16,24), points: 0, auction: {points: 0, isIn: true }},
-        {id:3, name: 'John', cards: shuffleCards.slice(24,32), points: 0, auction: {points: 0, isIn: true }},
-        {id:4, name: 'Franz', cards: shuffleCards.slice(32,40), points: 0, auction: {points: 0, isIn: true } }],        
-        match: {  winner: undefined, winnerTurn: undefined, isTurnFinished: false, turns: 1, cardsPlayed: action.cardsPlayed },
-        auction: { winner: undefined, seed: undefined },
-        isFinished: false,
-        inTurn: 0,
-        me: 4,
-        area: 'auction'
+        players: [{...state.players[0],cards: shuffleCards.slice(0,8)},
+        {...state.players[1],  cards: shuffleCards.slice(8,16)},
+        {...state.players[2],  cards: shuffleCards.slice(16,24)},
+        {...state.players[3],  cards: shuffleCards.slice(24,32)},
+        {...state.players[4],  cards: shuffleCards.slice(32,40)}],
+        isStart: true
       }
 
     case 'CHANGE_TURN':

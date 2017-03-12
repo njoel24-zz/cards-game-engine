@@ -2,15 +2,18 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { startMatch, setWinner,  endTurn,
 		changeTurn, play, playBot} from '../actions/match'
-import { playAuctionBot, playAuction, endAuction, changeTurnAuction } from '../actions/auction'
+import { playAuctionBot, 
+	 playAuction,
+	 endAuction, 
+	 changeTurnAuction } from '../actions/auction'
+
 
 class StartMatch extends React.Component {
 
-	start() {
-		this.props.startMatch();
-		this.startLoopAuction()
-		 // this.startLoop()
-	}		
+constructor(props) {
+	super(props)
+	console.log("called")
+}
 
 	startLoop() {
 		// temporary loop break
@@ -33,39 +36,36 @@ class StartMatch extends React.Component {
 			
 		this.props.changeTurn();
 		
-		setTimeout(this.startLoop.bind(this), "1500")
+		// etTimeout(this.startLoop.bind(this), "1500")
 		
 	}
 
 	startLoopAuction() {
-	
 		if(this.props.me != this.props.inTurn){
 			this.props.playAuctionBot();
 		}else{
 			// ui interaction then 
 			this.props.playAuctionBot();
 		}
-			
 		this.props.changeTurnAuction();
-		
 		if(this.props.auction.winner !== undefined) {
 			this.props.endAuction();
 			return
 		} 
-
-		// setTimeout("this.startLoopAuction.bind(this)", "1500")
-		
 	}
 
 	play() {
 	}
 
-	render () {
+	startMatch() {
+    	this.props.startMatch()
+  }
+
+	render () {	
 		return (
-			<button onClick={this.start.bind(this)}>Start Match</button>
+			<button onClick={ this.props.startMatch}>Start Match</button>
 		)
 	}
-
 }  
 
 const mapStateToProps = function(store) {
@@ -73,31 +73,32 @@ const mapStateToProps = function(store) {
     match: store.match,
 		me: store.me,
 		inTurn: store.inTurn,
-		auction: store.auction
+		auction: store.auction,
+		area: store.area
   };
 }
 
 const mapDispatchToProps = function(dispatch, ownProps) {
   return {
-    startMatch: function() {
+    startMatch: () => {
       dispatch(startMatch());
     },
-		setWinner: function() {
+		setWinner: () => {
       dispatch(setWinner());
     },
-		playBot: function() {
+		playBot: () => {
       dispatch(playBot());
     },
-		changeTurn: function() {
+		changeTurn: () => {
       dispatch(changeTurn());
     },
-		playAuctionBot: function() {
+		playAuctionBot: () => {
       dispatch(playAuctionBot());
     },
-		changeTurnAuction: function() {
+		changeTurnAuction: () => {
       dispatch(changeTurnAuction());
     },
-		endAuction: function() {
+		endAuction: () => {
       dispatch(endAuction());
     }
   }
