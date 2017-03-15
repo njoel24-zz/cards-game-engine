@@ -30,14 +30,6 @@ const matchReducer = (state = [], action) => {
         isStart: true
       }
 
-    case 'CHANGE_TURN':
-      console.log("Change Turn");
-      return {
-      	...state,
-        inTurn: action.getNextInTurn,
-        match: {...state.match, isTurnFinished: action.turnFinished }
-      }
-
     case 'END_TURN':
       console.log("End turn");
       return {
@@ -59,7 +51,9 @@ const matchReducer = (state = [], action) => {
       console.log("Play_BOT");
        return {
           ...state,
-          match: { ...state.match, cardsPlayed: action.cardsPlayed } 
+          match: { ...state.match, cardsPlayed: action.cardsPlayed } ,
+          inTurn: action.getNextInTurn,
+          match: {...state.match, isTurnFinished: action.turnFinished }
     }      
 
 
@@ -70,14 +64,6 @@ const matchReducer = (state = [], action) => {
         match: { ...state.match,  winner: action.setWinnerMatch }
       }
     break;
-
-     case 'CHANGE_TURN_AUCTION':
-      console.log("Change Turn Auction");
-      return {
-        ...state,
-        inTurn: action.inTurn,
-        auction: { ...state.auction, winner: action.winnerAuction }
-      }
 
     case 'END_AUCTION':
     console.log("end auction")    
@@ -95,17 +81,22 @@ const matchReducer = (state = [], action) => {
     }
 
     case 'PLAY_AUCTION_BOT':
-    console.log("PLAY_AUCTION_BOT:"+ state.inTurn);
+    console.log("PLAY_AUCTION_BOT:"+ state.inTurn+ "isIn:"+action.inAuction);
+    console.log(state)
       if(action.inAuction) {
-        let newPlayers = {...state.players}
+        let newPlayers = [...state.players]
         newPlayers[state.inTurn].auction = action.auctionForUser
         return {
           ...state,
-          players: newPlayers
+          players: newPlayers,
+          inTurn: action.inTurn,
+          auction: { ...state.auction, winner: action.winnerAuction }
         }
       } else {
         return {
-          ...state
+          ...state,
+          inTurn: action.inTurn,
+          auction: { ...state.auction, winner: action.winnerAuction }
         }
       }
 

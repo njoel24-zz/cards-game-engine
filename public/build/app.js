@@ -59,21 +59,21 @@
 
 	var _reactDom = __webpack_require__(33);
 
-	var _match = __webpack_require__(225);
+	var _match = __webpack_require__(180);
 
-	var _redux = __webpack_require__(180);
+	var _redux = __webpack_require__(181);
 
-	var _reactRedux = __webpack_require__(201);
+	var _reactRedux = __webpack_require__(202);
 
-	var _App = __webpack_require__(220);
+	var _App = __webpack_require__(221);
 
 	var _App2 = _interopRequireDefault(_App);
 
-	var _match2 = __webpack_require__(229);
+	var _match2 = __webpack_require__(228);
 
 	var _match3 = _interopRequireDefault(_match2);
 
-	var _MatchMiddleware = __webpack_require__(230);
+	var _MatchMiddleware = __webpack_require__(229);
 
 	var _MatchMiddleware2 = _interopRequireDefault(_MatchMiddleware);
 
@@ -21644,6 +21644,66 @@
 
 /***/ },
 /* 180 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var initMatch = exports.initMatch = function initMatch() {
+	  return {
+	    type: 'INIT_MATCH'
+	  };
+	};
+
+	var startMatch = exports.startMatch = function startMatch() {
+	  return {
+	    type: 'START_MATCH',
+	    shuffleCards: undefined
+	  };
+	};
+
+	var play = exports.play = function play() {
+	  return {
+	    type: 'PLAY'
+	  };
+	};
+
+	var playBot = exports.playBot = function playBot() {
+	  return {
+	    type: 'PLAY_BOT',
+	    cardsPlayed: undefined
+	  };
+	};
+
+	var changeTurn = exports.changeTurn = function changeTurn() {
+	  return {
+	    type: 'CHANGE_TURN',
+	    inTurn: undefined
+	  };
+	};
+
+	var endTurn = exports.endTurn = function endTurn() {
+	  return {
+	    type: 'END_TURN',
+	    winnerTurn: undefined,
+	    inTurn: undefined,
+	    cardsPlayed: undefined,
+	    finishedMatch: undefined,
+	    turns: undefined
+	  };
+	};
+
+	var setWinner = exports.setWinner = function setWinner() {
+	  return {
+	    type: 'SET_WINNER',
+	    winner: undefined
+	  };
+	};
+
+/***/ },
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -21651,27 +21711,27 @@
 	exports.__esModule = true;
 	exports.compose = exports.applyMiddleware = exports.bindActionCreators = exports.combineReducers = exports.createStore = undefined;
 
-	var _createStore = __webpack_require__(181);
+	var _createStore = __webpack_require__(182);
 
 	var _createStore2 = _interopRequireDefault(_createStore);
 
-	var _combineReducers = __webpack_require__(196);
+	var _combineReducers = __webpack_require__(197);
 
 	var _combineReducers2 = _interopRequireDefault(_combineReducers);
 
-	var _bindActionCreators = __webpack_require__(198);
+	var _bindActionCreators = __webpack_require__(199);
 
 	var _bindActionCreators2 = _interopRequireDefault(_bindActionCreators);
 
-	var _applyMiddleware = __webpack_require__(199);
+	var _applyMiddleware = __webpack_require__(200);
 
 	var _applyMiddleware2 = _interopRequireDefault(_applyMiddleware);
 
-	var _compose = __webpack_require__(200);
+	var _compose = __webpack_require__(201);
 
 	var _compose2 = _interopRequireDefault(_compose);
 
-	var _warning = __webpack_require__(197);
+	var _warning = __webpack_require__(198);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
@@ -21695,7 +21755,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 181 */
+/* 182 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21704,11 +21764,11 @@
 	exports.ActionTypes = undefined;
 	exports['default'] = createStore;
 
-	var _isPlainObject = __webpack_require__(182);
+	var _isPlainObject = __webpack_require__(183);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
-	var _symbolObservable = __webpack_require__(192);
+	var _symbolObservable = __webpack_require__(193);
 
 	var _symbolObservable2 = _interopRequireDefault(_symbolObservable);
 
@@ -21961,12 +22021,12 @@
 	}
 
 /***/ },
-/* 182 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGetTag = __webpack_require__(183),
-	    getPrototype = __webpack_require__(189),
-	    isObjectLike = __webpack_require__(191);
+	var baseGetTag = __webpack_require__(184),
+	    getPrototype = __webpack_require__(190),
+	    isObjectLike = __webpack_require__(192);
 
 	/** `Object#toString` result references. */
 	var objectTag = '[object Object]';
@@ -22029,12 +22089,12 @@
 
 
 /***/ },
-/* 183 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Symbol = __webpack_require__(184),
-	    getRawTag = __webpack_require__(187),
-	    objectToString = __webpack_require__(188);
+	var Symbol = __webpack_require__(185),
+	    getRawTag = __webpack_require__(188),
+	    objectToString = __webpack_require__(189);
 
 	/** `Object#toString` result references. */
 	var nullTag = '[object Null]',
@@ -22063,10 +22123,10 @@
 
 
 /***/ },
-/* 184 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var root = __webpack_require__(185);
+	var root = __webpack_require__(186);
 
 	/** Built-in value references. */
 	var Symbol = root.Symbol;
@@ -22075,10 +22135,10 @@
 
 
 /***/ },
-/* 185 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var freeGlobal = __webpack_require__(186);
+	var freeGlobal = __webpack_require__(187);
 
 	/** Detect free variable `self`. */
 	var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
@@ -22090,7 +22150,7 @@
 
 
 /***/ },
-/* 186 */
+/* 187 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
@@ -22101,10 +22161,10 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 187 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Symbol = __webpack_require__(184);
+	var Symbol = __webpack_require__(185);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -22153,7 +22213,7 @@
 
 
 /***/ },
-/* 188 */
+/* 189 */
 /***/ function(module, exports) {
 
 	/** Used for built-in method references. */
@@ -22181,10 +22241,10 @@
 
 
 /***/ },
-/* 189 */
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var overArg = __webpack_require__(190);
+	var overArg = __webpack_require__(191);
 
 	/** Built-in value references. */
 	var getPrototype = overArg(Object.getPrototypeOf, Object);
@@ -22193,7 +22253,7 @@
 
 
 /***/ },
-/* 190 */
+/* 191 */
 /***/ function(module, exports) {
 
 	/**
@@ -22214,7 +22274,7 @@
 
 
 /***/ },
-/* 191 */
+/* 192 */
 /***/ function(module, exports) {
 
 	/**
@@ -22249,14 +22309,14 @@
 
 
 /***/ },
-/* 192 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(193);
+	module.exports = __webpack_require__(194);
 
 
 /***/ },
-/* 193 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, module) {'use strict';
@@ -22265,7 +22325,7 @@
 	  value: true
 	});
 
-	var _ponyfill = __webpack_require__(195);
+	var _ponyfill = __webpack_require__(196);
 
 	var _ponyfill2 = _interopRequireDefault(_ponyfill);
 
@@ -22288,10 +22348,10 @@
 
 	var result = (0, _ponyfill2['default'])(root);
 	exports['default'] = result;
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(194)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(195)(module)))
 
 /***/ },
-/* 194 */
+/* 195 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -22307,7 +22367,7 @@
 
 
 /***/ },
-/* 195 */
+/* 196 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22335,7 +22395,7 @@
 	};
 
 /***/ },
-/* 196 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -22343,13 +22403,13 @@
 	exports.__esModule = true;
 	exports['default'] = combineReducers;
 
-	var _createStore = __webpack_require__(181);
+	var _createStore = __webpack_require__(182);
 
-	var _isPlainObject = __webpack_require__(182);
+	var _isPlainObject = __webpack_require__(183);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
-	var _warning = __webpack_require__(197);
+	var _warning = __webpack_require__(198);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
@@ -22483,7 +22543,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 197 */
+/* 198 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22513,7 +22573,7 @@
 	}
 
 /***/ },
-/* 198 */
+/* 199 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22569,7 +22629,7 @@
 	}
 
 /***/ },
-/* 199 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22580,7 +22640,7 @@
 
 	exports['default'] = applyMiddleware;
 
-	var _compose = __webpack_require__(200);
+	var _compose = __webpack_require__(201);
 
 	var _compose2 = _interopRequireDefault(_compose);
 
@@ -22632,7 +22692,7 @@
 	}
 
 /***/ },
-/* 200 */
+/* 201 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -22675,7 +22735,7 @@
 	}
 
 /***/ },
-/* 201 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22683,11 +22743,11 @@
 	exports.__esModule = true;
 	exports.connect = exports.Provider = undefined;
 
-	var _Provider = __webpack_require__(202);
+	var _Provider = __webpack_require__(203);
 
 	var _Provider2 = _interopRequireDefault(_Provider);
 
-	var _connect = __webpack_require__(205);
+	var _connect = __webpack_require__(206);
 
 	var _connect2 = _interopRequireDefault(_connect);
 
@@ -22697,7 +22757,7 @@
 	exports.connect = _connect2["default"];
 
 /***/ },
-/* 202 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -22707,11 +22767,11 @@
 
 	var _react = __webpack_require__(2);
 
-	var _storeShape = __webpack_require__(203);
+	var _storeShape = __webpack_require__(204);
 
 	var _storeShape2 = _interopRequireDefault(_storeShape);
 
-	var _warning = __webpack_require__(204);
+	var _warning = __webpack_require__(205);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
@@ -22781,7 +22841,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 203 */
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22797,7 +22857,7 @@
 	});
 
 /***/ },
-/* 204 */
+/* 205 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22827,7 +22887,7 @@
 	}
 
 /***/ },
-/* 205 */
+/* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -22840,31 +22900,31 @@
 
 	var _react = __webpack_require__(2);
 
-	var _storeShape = __webpack_require__(203);
+	var _storeShape = __webpack_require__(204);
 
 	var _storeShape2 = _interopRequireDefault(_storeShape);
 
-	var _shallowEqual = __webpack_require__(206);
+	var _shallowEqual = __webpack_require__(207);
 
 	var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
 
-	var _wrapActionCreators = __webpack_require__(207);
+	var _wrapActionCreators = __webpack_require__(208);
 
 	var _wrapActionCreators2 = _interopRequireDefault(_wrapActionCreators);
 
-	var _warning = __webpack_require__(204);
+	var _warning = __webpack_require__(205);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
-	var _isPlainObject = __webpack_require__(208);
+	var _isPlainObject = __webpack_require__(209);
 
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 
-	var _hoistNonReactStatics = __webpack_require__(218);
+	var _hoistNonReactStatics = __webpack_require__(219);
 
 	var _hoistNonReactStatics2 = _interopRequireDefault(_hoistNonReactStatics);
 
-	var _invariant = __webpack_require__(219);
+	var _invariant = __webpack_require__(220);
 
 	var _invariant2 = _interopRequireDefault(_invariant);
 
@@ -23228,7 +23288,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 206 */
+/* 207 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -23259,7 +23319,7 @@
 	}
 
 /***/ },
-/* 207 */
+/* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23267,7 +23327,7 @@
 	exports.__esModule = true;
 	exports["default"] = wrapActionCreators;
 
-	var _redux = __webpack_require__(180);
+	var _redux = __webpack_require__(181);
 
 	function wrapActionCreators(actionCreators) {
 	  return function (dispatch) {
@@ -23276,12 +23336,12 @@
 	}
 
 /***/ },
-/* 208 */
+/* 209 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGetTag = __webpack_require__(209),
-	    getPrototype = __webpack_require__(215),
-	    isObjectLike = __webpack_require__(217);
+	var baseGetTag = __webpack_require__(210),
+	    getPrototype = __webpack_require__(216),
+	    isObjectLike = __webpack_require__(218);
 
 	/** `Object#toString` result references. */
 	var objectTag = '[object Object]';
@@ -23344,12 +23404,12 @@
 
 
 /***/ },
-/* 209 */
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Symbol = __webpack_require__(210),
-	    getRawTag = __webpack_require__(213),
-	    objectToString = __webpack_require__(214);
+	var Symbol = __webpack_require__(211),
+	    getRawTag = __webpack_require__(214),
+	    objectToString = __webpack_require__(215);
 
 	/** `Object#toString` result references. */
 	var nullTag = '[object Null]',
@@ -23378,10 +23438,10 @@
 
 
 /***/ },
-/* 210 */
+/* 211 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var root = __webpack_require__(211);
+	var root = __webpack_require__(212);
 
 	/** Built-in value references. */
 	var Symbol = root.Symbol;
@@ -23390,10 +23450,10 @@
 
 
 /***/ },
-/* 211 */
+/* 212 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var freeGlobal = __webpack_require__(212);
+	var freeGlobal = __webpack_require__(213);
 
 	/** Detect free variable `self`. */
 	var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
@@ -23405,7 +23465,7 @@
 
 
 /***/ },
-/* 212 */
+/* 213 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
@@ -23416,10 +23476,10 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 213 */
+/* 214 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Symbol = __webpack_require__(210);
+	var Symbol = __webpack_require__(211);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -23468,7 +23528,7 @@
 
 
 /***/ },
-/* 214 */
+/* 215 */
 /***/ function(module, exports) {
 
 	/** Used for built-in method references. */
@@ -23496,10 +23556,10 @@
 
 
 /***/ },
-/* 215 */
+/* 216 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var overArg = __webpack_require__(216);
+	var overArg = __webpack_require__(217);
 
 	/** Built-in value references. */
 	var getPrototype = overArg(Object.getPrototypeOf, Object);
@@ -23508,7 +23568,7 @@
 
 
 /***/ },
-/* 216 */
+/* 217 */
 /***/ function(module, exports) {
 
 	/**
@@ -23529,7 +23589,7 @@
 
 
 /***/ },
-/* 217 */
+/* 218 */
 /***/ function(module, exports) {
 
 	/**
@@ -23564,7 +23624,7 @@
 
 
 /***/ },
-/* 218 */
+/* 219 */
 /***/ function(module, exports) {
 
 	/**
@@ -23620,7 +23680,7 @@
 
 
 /***/ },
-/* 219 */
+/* 220 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -23678,7 +23738,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 220 */
+/* 221 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23693,7 +23753,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Board = __webpack_require__(221);
+	var _Board = __webpack_require__(222);
 
 	var _Board2 = _interopRequireDefault(_Board);
 
@@ -23727,7 +23787,7 @@
 	exports.default = App;
 
 /***/ },
-/* 221 */
+/* 222 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23742,21 +23802,27 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Players = __webpack_require__(222);
+	var _reactRedux = __webpack_require__(202);
+
+	var _Players = __webpack_require__(223);
 
 	var _Players2 = _interopRequireDefault(_Players);
 
-	var _Common = __webpack_require__(223);
+	var _Common = __webpack_require__(224);
 
 	var _Common2 = _interopRequireDefault(_Common);
 
-	var _StartMatch = __webpack_require__(224);
+	var _StartMatch = __webpack_require__(225);
 
 	var _StartMatch2 = _interopRequireDefault(_StartMatch);
 
 	var _Me = __webpack_require__(227);
 
 	var _Me2 = _interopRequireDefault(_Me);
+
+	var _match = __webpack_require__(180);
+
+	var _auction = __webpack_require__(226);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -23778,24 +23844,99 @@
 	  _createClass(Board, [{
 	    key: 'render',
 	    value: function render() {
+	      // workaround to avoid infinite loop on StartMatch
+	      var renderStartMatch = this.getStartMatch();
+	      this.prepareAsyncAction(3000);
+
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'container' },
 	        _react2.default.createElement(_Common2.default, null),
 	        _react2.default.createElement(_Players2.default, null),
 	        _react2.default.createElement(_Me2.default, null),
-	        _react2.default.createElement(_StartMatch2.default, null)
+	        renderStartMatch
 	      );
+	    }
+	  }, {
+	    key: 'prepareAsyncAction',
+	    value: function prepareAsyncAction(timeout) {
+	      if (this.props.isStart && this.props.area === "auction") {
+	        if (this.props.auction.winner === undefined) {
+	          setTimeout(this.props.playAuctionBot.bind(this), timeout);
+	        } else {
+	          setTimeout(this.props.endAuction.bind(this), timeout);
+	        }
+	      } else if (this.props.isStart && this.props.area === "match") {
+
+	        if (this.props.isFinished) {
+	          setTimeout(this.props.setWinner.bind(this), timeout);
+	        }
+
+	        if (this.props.match.isTurnFinished) {
+	          setTimeout(this.props.endTurn.bind(this), timeout);
+	        }
+
+	        if (!this.props.isFinished) {
+	          setTimeout(this.props.playBot.bind(this), timeout);
+	        }
+	      }
+	    }
+	  }, {
+	    key: 'getStartMatch',
+	    value: function getStartMatch() {
+	      var renderHtml = "";
+	      if (!this.props.isStart) {
+	        return _react2.default.createElement(_StartMatch2.default, null);
+	      } else {
+	        return null;
+	      }
 	    }
 	  }]);
 
 	  return Board;
 	}(_react2.default.Component);
 
-	exports.default = Board;
+	var mapStateToProps = function mapStateToProps(store) {
+	  return {
+	    isStart: store.isStart,
+	    area: store.area,
+	    match: store.match,
+	    me: store.me,
+	    inTurn: store.inTurn,
+	    auction: store.auction
+	  };
+	};
+
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	  return {
+	    startMatch: function startMatch() {
+	      dispatch((0, _match.startMatch)());
+	    },
+	    setWinner: function setWinner() {
+	      dispatch((0, _match.setWinner)());
+	    },
+	    playBot: function playBot() {
+	      dispatch((0, _match.playBot)());
+	    },
+	    changeTurn: function changeTurn() {
+	      dispatch((0, _match.changeTurn)());
+	    },
+	    playAuctionBot: function playAuctionBot() {
+	      dispatch((0, _auction.playAuctionBot)());
+	    },
+	    changeTurnAuction: function changeTurnAuction() {
+	      dispatch((0, _auction.changeTurnAuction)());
+	    },
+	    endAuction: function endAuction() {
+	      dispatch((0, _auction.endAuction)());
+	    }
+	  };
+	};
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Board);
 
 /***/ },
-/* 222 */
+/* 223 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23810,7 +23951,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRedux = __webpack_require__(201);
+	var _reactRedux = __webpack_require__(202);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -23861,7 +24002,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Players);
 
 /***/ },
-/* 223 */
+/* 224 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23876,7 +24017,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRedux = __webpack_require__(201);
+	var _reactRedux = __webpack_require__(202);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -23956,13 +24097,13 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Common);
 
 /***/ },
-/* 224 */
+/* 225 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-		value: true
+			value: true
 	});
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -23971,9 +24112,9 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRedux = __webpack_require__(201);
+	var _reactRedux = __webpack_require__(202);
 
-	var _match = __webpack_require__(225);
+	var _match = __webpack_require__(180);
 
 	var _auction = __webpack_require__(226);
 
@@ -23986,179 +24127,41 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var StartMatch = function (_React$Component) {
-		_inherits(StartMatch, _React$Component);
+			_inherits(StartMatch, _React$Component);
 
-		function StartMatch() {
-			_classCallCheck(this, StartMatch);
+			function StartMatch() {
+					_classCallCheck(this, StartMatch);
 
-			return _possibleConstructorReturn(this, (StartMatch.__proto__ || Object.getPrototypeOf(StartMatch)).apply(this, arguments));
-		}
-
-		_createClass(StartMatch, [{
-			key: 'start',
-			value: function start() {
-				this.props.startMatch();
-				this.startLoopAuction();
-				// this.startLoop()
+					return _possibleConstructorReturn(this, (StartMatch.__proto__ || Object.getPrototypeOf(StartMatch)).apply(this, arguments));
 			}
-		}, {
-			key: 'startLoop',
-			value: function startLoop() {
-				// temporary loop break
 
-				if (this.props.match.isTurnFinished) {
-					this.props.endTurn();
-				}
+			_createClass(StartMatch, [{
+					key: 'render',
+					value: function render() {
+							return _react2.default.createElement(
+									'button',
+									{ onClick: this.props.startMatch },
+									'Start Match'
+							);
+					}
+			}]);
 
-				if (this.props.isFinished) {
-					this.props.setWinner();
-					return;
-				}
-
-				if (this.props.me != this.props.inTurn) {
-					this.props.playBot();
-				} else {
-					// ui interaction then 
-					this.props.playBot();
-				}
-
-				this.props.changeTurn();
-
-				setTimeout(this.startLoop.bind(this), "1500");
-			}
-		}, {
-			key: 'startLoopAuction',
-			value: function startLoopAuction() {
-
-				if (this.props.me != this.props.inTurn) {
-					this.props.playAuctionBot();
-				} else {
-					// ui interaction then 
-					this.props.playAuctionBot();
-				}
-
-				this.props.changeTurnAuction();
-
-				if (this.props.auction.winner !== undefined) {
-					this.props.endAuction();
-					return;
-				}
-
-				// setTimeout("this.startLoopAuction.bind(this)", "1500")
-			}
-		}, {
-			key: 'play',
-			value: function play() {}
-		}, {
-			key: 'render',
-			value: function render() {
-				return _react2.default.createElement(
-					'button',
-					{ onClick: this.start.bind(this) },
-					'Start Match'
-				);
-			}
-		}]);
-
-		return StartMatch;
+			return StartMatch;
 	}(_react2.default.Component);
 
 	var mapStateToProps = function mapStateToProps(store) {
-		return {
-			match: store.match,
-			me: store.me,
-			inTurn: store.inTurn,
-			auction: store.auction
-		};
+			return {};
 	};
 
 	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
-		return {
-			startMatch: function startMatch() {
-				dispatch((0, _match.startMatch)());
-			},
-			setWinner: function setWinner() {
-				dispatch((0, _match.setWinner)());
-			},
-			playBot: function playBot() {
-				dispatch((0, _match.playBot)());
-			},
-			changeTurn: function changeTurn() {
-				dispatch((0, _match.changeTurn)());
-			},
-			playAuctionBot: function playAuctionBot() {
-				dispatch((0, _auction.playAuctionBot)());
-			},
-			changeTurnAuction: function changeTurnAuction() {
-				dispatch((0, _auction.changeTurnAuction)());
-			},
-			endAuction: function endAuction() {
-				dispatch((0, _auction.endAuction)());
-			}
-		};
+			return {
+					startMatch: function startMatch() {
+							dispatch((0, _match.startMatch)());
+					}
+			};
 	};
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(StartMatch);
-
-/***/ },
-/* 225 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var initMatch = exports.initMatch = function initMatch() {
-	  return {
-	    type: 'INIT_MATCH'
-	  };
-	};
-
-	var startMatch = exports.startMatch = function startMatch() {
-	  return {
-	    type: 'START_MATCH',
-	    shuffleCards: undefined
-	  };
-	};
-
-	var play = exports.play = function play() {
-	  return {
-	    type: 'PLAY'
-	  };
-	};
-
-	var playBot = exports.playBot = function playBot() {
-	  return {
-	    type: 'PLAY_BOT',
-	    cardsPlayed: undefined
-	  };
-	};
-
-	var changeTurn = exports.changeTurn = function changeTurn() {
-	  return {
-	    type: 'CHANGE_TURN',
-	    inTurn: undefined
-	  };
-	};
-
-	var endTurn = exports.endTurn = function endTurn() {
-	  return {
-	    type: 'END_TURN',
-	    winnerTurn: undefined,
-	    inTurn: undefined,
-	    cardsPlayed: undefined,
-	    finishedMatch: undefined,
-	    turns: undefined
-	  };
-	};
-
-	var setWinner = exports.setWinner = function setWinner() {
-	  return {
-	    type: 'SET_WINNER',
-	    winner: undefined
-	  };
-	};
 
 /***/ },
 /* 226 */
@@ -24215,7 +24218,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRedux = __webpack_require__(201);
+	var _reactRedux = __webpack_require__(202);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -24265,8 +24268,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Me);
 
 /***/ },
-/* 228 */,
-/* 229 */
+/* 228 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -24277,6 +24279,10 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 	var matchReducer = function matchReducer() {
 	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 	  var action = arguments[1];
@@ -24285,33 +24291,22 @@
 	  switch (action.type) {
 
 	    case 'INIT_MATCH':
-	      return _extends({}, state, {
+	      return {
 	        players: [{ id: 0, name: 'Pippo3', cards: [], points: 0, auction: { points: 0, isIn: true } }, { id: 1, name: 'Ugo', cards: [], points: 0, auction: { points: 0, isIn: true } }, { id: 2, name: 'Mario', cards: [], points: 0, auction: { points: 0, isIn: true } }, { id: 3, name: 'John', cards: [], points: 0, auction: { points: 0, isIn: true } }, { id: 4, name: 'Franz', cards: [], points: 0, auction: { points: 0, isIn: true } }],
 	        match: { winner: undefined, winnerTurn: undefined, isTurnFinished: false, turns: 1, cardsPlayed: [] },
 	        auction: { winner: undefined, seed: undefined },
 	        isFinished: false,
 	        inTurn: 0,
 	        me: 4,
-	        area: 'auction'
-	      });
+	        area: 'auction',
+	        isStart: false
+	      };
 
 	    case 'START_MATCH':
 	      var shuffleCards = action.shuffleCards;
 	      return _extends({}, state, {
-	        players: [{ id: 0, name: 'Pippo3', cards: shuffleCards.slice(0, 8), points: 0, auction: { points: 0, isIn: true } }, { id: 1, name: 'Ugo', cards: shuffleCards.slice(8, 16), points: 0, auction: { points: 0, isIn: true } }, { id: 2, name: 'Mario', cards: shuffleCards.slice(16, 24), points: 0, auction: { points: 0, isIn: true } }, { id: 3, name: 'John', cards: shuffleCards.slice(24, 32), points: 0, auction: { points: 0, isIn: true } }, { id: 4, name: 'Franz', cards: shuffleCards.slice(32, 40), points: 0, auction: { points: 0, isIn: true } }],
-	        match: { winner: undefined, winnerTurn: undefined, isTurnFinished: false, turns: 1, cardsPlayed: action.cardsPlayed },
-	        auction: { winner: undefined, seed: undefined },
-	        isFinished: false,
-	        inTurn: 0,
-	        me: 4,
-	        area: 'auction'
-	      });
-
-	    case 'CHANGE_TURN':
-	      console.log("Change Turn");
-	      return _extends({}, state, {
-	        inTurn: action.getNextInTurn,
-	        match: _extends({}, state.match, { isTurnFinished: action.turnFinished })
+	        players: [_extends({}, state.players[0], { cards: shuffleCards.slice(0, 8) }), _extends({}, state.players[1], { cards: shuffleCards.slice(8, 16) }), _extends({}, state.players[2], { cards: shuffleCards.slice(16, 24) }), _extends({}, state.players[3], { cards: shuffleCards.slice(24, 32) }), _extends({}, state.players[4], { cards: shuffleCards.slice(32, 40) })],
+	        isStart: true
 	      });
 
 	    case 'END_TURN':
@@ -24330,9 +24325,10 @@
 
 	    case 'PLAY_BOT':
 	      console.log("Play_BOT");
-	      return _extends({}, state, {
-	        match: _extends({}, state.match, { cardsPlayed: action.cardsPlayed })
-	      });
+	      return _extends({}, state, _defineProperty({
+	        match: _extends({}, state.match, { cardsPlayed: action.cardsPlayed }),
+	        inTurn: action.getNextInTurn
+	      }, 'match', _extends({}, state.match, { isTurnFinished: action.turnFinished })));
 
 	    case 'SET_WINNER':
 	      console.log("End Match");
@@ -24340,13 +24336,6 @@
 	        match: _extends({}, state.match, { winner: action.setWinnerMatch })
 	      });
 	      break;
-
-	    case 'CHANGE_TURN_AUCTION':
-	      console.log("Change Turn Auction");
-	      return _extends({}, state, {
-	        inTurn: action.inTurn,
-	        auction: _extends({}, state.auction, { winner: action.winnerAuction })
-	      });
 
 	    case 'END_AUCTION':
 	      console.log("end auction");
@@ -24361,15 +24350,21 @@
 	      return _extends({}, state);
 
 	    case 'PLAY_AUCTION_BOT':
-	      console.log("PLAY_AUCTION_BOT:" + state.inTurn);
+	      console.log("PLAY_AUCTION_BOT:" + state.inTurn + "isIn:" + action.inAuction);
+	      console.log(state);
 	      if (action.inAuction) {
-	        var newPlayers = _extends({}, state.players);
+	        var newPlayers = [].concat(_toConsumableArray(state.players));
 	        newPlayers[state.inTurn].auction = action.auctionForUser;
 	        return _extends({}, state, {
-	          players: newPlayers
+	          players: newPlayers,
+	          inTurn: action.inTurn,
+	          auction: _extends({}, state.auction, { winner: action.winnerAuction })
 	        });
 	      } else {
-	        return _extends({}, state);
+	        return _extends({}, state, {
+	          inTurn: action.inTurn,
+	          auction: _extends({}, state.auction, { winner: action.winnerAuction })
+	        });
 	      }
 
 	    default:
@@ -24380,7 +24375,7 @@
 	exports.default = matchReducer;
 
 /***/ },
-/* 230 */
+/* 229 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -24400,10 +24395,8 @@
 	        case 'PLAY':
 	          break;
 	        case 'PLAY_BOT':
-	          action.cardsPlayed = playCardOnTheTable(getCardToPlay());
-	          break;
-	        case 'CHANGE_TURN':
-	          action.inTurn = getNextInTurn(), action.turnFinished = isTurnFinished();
+	          action.cardsPlayed = playCardOnTheTable(getCardToPlay()), action.inTurn = getNextInTurn();
+	          action.turnFinished = isTurnFinished();
 	          break;
 	        case 'END_TURN':
 	          action.winnerTurn = getWinnerTurn(), action.inTurn = getNextInTurn(), action.cardsPlayed = resetCardsPlayed(), action.finishedMatch = isMatchFinished();
@@ -24413,7 +24406,8 @@
 	          action.winner = setWinnerMatch();
 	          break;
 	        case 'PLAY_AUCTION_BOT':
-	          action.inAuction = isUserInAuction(), action.auctionForUser = setAuctionForUser();
+	          action.inAuction = isUserInAuction(), action.auctionForUser = setAuctionForUser(), action.inTurn = getNextInTurn();
+	          action.turnFinished = isTurnFinished();
 	          break;
 	        case 'PLAY_AUCTION':
 	          break;

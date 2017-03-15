@@ -30,11 +30,16 @@ const store = createStore(matchReducer, middlewares)
 
 store.dispatch(initMatch())
 
+
+
+
 render(
 	<Provider store={store}>
   		<App />
   	</Provider>,
   document.getElementById('root')
 )
+
+
 
 

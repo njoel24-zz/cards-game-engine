@@ -8,11 +8,9 @@ const matchMiddleware = store => next => action => {
 		case 'PLAY':
     break
 		case 'PLAY_BOT':
-			action.cardsPlayed = playCardOnTheTable(getCardToPlay())
-    break
-		case 'CHANGE_TURN':
-			action.inTurn = getNextInTurn(),
-			action.turnFinished = isTurnFinished()
+			action.cardsPlayed = playCardOnTheTable(getCardToPlay()),
+      action.inTurn = getNextInTurn()
+      action.turnFinished = isTurnFinished()
     break
 		case 'END_TURN':
 			action.winnerTurn = getWinnerTurn(),
@@ -26,7 +24,9 @@ const matchMiddleware = store => next => action => {
     break
 		case 'PLAY_AUCTION_BOT':
 			action.inAuction = isUserInAuction(),
-			action.auctionForUser = setAuctionForUser()
+			action.auctionForUser = setAuctionForUser(),
+      action.inTurn = getNextInTurn()
+      action.turnFinished = isTurnFinished()
     break
 		case 'PLAY_AUCTION':
     break
