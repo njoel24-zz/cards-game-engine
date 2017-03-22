@@ -5,7 +5,7 @@ import Common from './Common'
 import StartMatch from './StartMatch' 
 import Me from './Me' 
 
-import { startMatch, setWinner,  endTurn,
+import { initMatch, startMatch, setWinner,  endTurn,
 		changeTurn, play, playBot} from '../actions/match'
 import { playAuctionBot, 
 	 playAuction,
@@ -17,7 +17,7 @@ class Board extends React.Component {
   render() {
     // workaround to avoid infinite loop on StartMatch
     var renderStartMatch = this.getStartMatch()
-    this.prepareAsyncAction(3000)  
+    this.prepareAsyncAction(1000)  
 
     return (
     <div className='container'>
@@ -31,25 +31,24 @@ class Board extends React.Component {
 
   prepareAsyncAction (timeout) {
     if (this.props.isStart && this.props.area === "auction") {
-      if(this.props.auction.winner === undefined) {
-        setTimeout(this.props.playAuctionBot.bind(this), timeout);
-      }else {
+      if (this.props.auction.winner !== undefined) {
         setTimeout(this.props.endAuction.bind(this), timeout);
+      } else {
+        setTimeout(this.props.playAuctionBot.bind(this), timeout);
       }
     } else if (this.props.isStart && this.props.area === "match") {
 
       if(this.props.isFinished) {
         setTimeout(this.props.setWinner.bind(this), timeout);
-		  }
-
-      if(this.props.match.isTurnFinished) {
+		  } else if(this.props.match.isTurnFinished) {
         setTimeout(this.props.endTurn.bind(this), timeout);
-		  }
-		
-      if(!this.props.isFinished) {
+      } else  {
+
         setTimeout(this.props.playBot.bind(this), timeout);
-      }
-		  
+		  }		  
+    } else if (!this.props.isStart && this.props.area === "match") {
+      setTimeout(this.props.initMatch.bind(this), timeout);
+      
     }
   }
 
@@ -72,12 +71,16 @@ const mapStateToProps = function(store) {
 		me: store.me,
 		inTurn: store.inTurn,
 		auction: store.auction,
+    isFinished: store.isFinished,
   };
 }
 
 
 const mapDispatchToProps = function(dispatch, ownProps) {
   return {
+    initMatch: () => {
+      dispatch(initMatch());
+    },
     startMatch: () => {
       dispatch(startMatch());
     },
@@ -98,6 +101,9 @@ const mapDispatchToProps = function(dispatch, ownProps) {
     },
 		endAuction: () => {
       dispatch(endAuction());
+    },
+		endTurn: () => {
+      dispatch(endTurn());
     }
   }
 }

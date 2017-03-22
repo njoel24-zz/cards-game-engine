@@ -1,6 +1,11 @@
+import cards from "../constants/cards";
+
 const matchMiddleware = store => next => action => {
   const state = store.getState() // perché ?
 	switch(action.type){
+    case 'INIT_MATCH':
+    action.cardsPlayed = resetCardsPlayed()
+    break
 		case 'START_MATCH':
 			action.shuffleCards = shuffleCards()
       action.cardsPlayed = resetCardsPlayed()
@@ -8,8 +13,12 @@ const matchMiddleware = store => next => action => {
 		case 'PLAY':
     break
 		case 'PLAY_BOT':
-			action.cardsPlayed = playCardOnTheTable(getCardToPlay()),
-      action.inTurn = getNextInTurn()
+			action.cardsPlayed = playCardOnTheTable(),
+      action.inTurn = getNextInTurn(),
+      action.turnFinished = isTurnFinished()
+    break
+    case 'CHANGE_TURN':
+      action.inTurn = getNextInTurn(),
       action.turnFinished = isTurnFinished()
     break
 		case 'END_TURN':
@@ -25,18 +34,19 @@ const matchMiddleware = store => next => action => {
 		case 'PLAY_AUCTION_BOT':
 			action.inAuction = isUserInAuction(),
 			action.auctionForUser = setAuctionForUser(),
-      action.inTurn = getNextInTurn()
-      action.turnFinished = isTurnFinished()
+      action.inTurn = getNextInTurn(),
+      action.winnerAuction = getWinnerAuction()
+    break
+    case 'CHANGE_TURN_AUCTION':
+			action.inTurn = getNextInTurn(),
+      action.winnerAuction = getWinnerAuction()
     break
 		case 'PLAY_AUCTION':
     break
-		case 'CHANGE_TURN_AUCTION':
-			action.inTurn = getNextInTurn(),
-  		action.winnerAuction = getWinnerAuction()
-    break
 		case 'END_AUCTION':
-			action.newArea = getArea(),
-      action.seed = getSeed()
+			action.area = getArea(),
+      action.seed = getSeed(),
+      action.teams = getTeams()
     break
 	}
 
@@ -45,25 +55,51 @@ const matchMiddleware = store => next => action => {
       return next
     }
 
+    function getNextTurn() {
+      var next = (state.match.turns+1)%9
+      return next
+    }
+
     function getArea() {
       return 'match';
     }
 
+    function getTeams() {
+      return [1,1,2,2,2];
+    }
 
-  function playCardOnTheTable(newCardPlayed){
+  function playCardOnTheTable(){
+      let c = getCardToPlay()
       var newCardsPlayed = state.match.cardsPlayed
-      newCardsPlayed[state.inTurn].value = newCardPlayed
-      return newCardsPlayed
+      return newCardsPlayed.map( card => {
+        if(card.id == state.inTurn){
+          card.value = c
+        }
+        return card;
+      })
     }
 
     // TODO
     function setWinnerMatch() {
-      return 1;
+      let team1=0,team2=0;
+      for(let i=0; i<state.players.length; i++ ) {
+          let player = state.players[i];
+          if(player.team === 1) {
+            team1 += player.points;
+          } else {
+            team2 += player.points;
+          }
+      }
+      if(team1 > team2) {
+        return "chiamante"
+      } else {
+        return "others"
+      }
     }
 
     function isTurnFinished(){
       var res = state.match.cardsPlayed.filter( c => { return c.value == 0 } );
-      return res.length == 0
+      return res.length == 1
     }
 
     function isMatchFinished(){
@@ -72,7 +108,18 @@ const matchMiddleware = store => next => action => {
 
     // TODO
     function getWinnerTurn(){
-      return 1;
+      let max = 0;
+      let winner =0;
+      let totalPoints = 0;
+      for( let i = 0; i< state.match.cardsPlayed.length; i++ ) {
+          let c = state.match.cardsPlayed[i];
+          if(c.value > max) {
+            max = cards[c.value].value
+            winner = c.id
+          }
+          totalPoints += cards[c.value].points
+      }
+      return { winner: winner, totalPoints: totalPoints }
     }
 
     function resetCardsPlayed() {
@@ -104,9 +151,12 @@ const matchMiddleware = store => next => action => {
           let randomIndex = Math.floor(Math.random() * 7);
           let choosenCard = p.cards[randomIndex];
           // p.cards[randomIndex] = 0;
+          if(choosenCard == 0) {
+            choosenCard = 1;
+          }
         return choosenCard;
       }
-      return 0
+      return 1
     }
 
 
@@ -116,8 +166,6 @@ const matchMiddleware = store => next => action => {
     }
 
     function getWinnerAuction() {
-      // temp hack to convert an object of object in an array of objects
-      state.players = Object.keys(state.players).map(function (key) { return state.players[key]; });
       let playersInAuction = state.players.filter( p => {  return p.auction.isIn === true })
       if( playersInAuction.length == 1) {
         return playersInAuction[0].id
@@ -132,18 +180,36 @@ const matchMiddleware = store => next => action => {
 
 
     function setAuctionForUser() {
-      return getAIChoice(state.players[state.inTurn].auction)
+
+      if(state.players[state.inTurn].auction.isIn === true) {
+        const biggestAuction = getBiggestAuction(state.players);
+        return getAIChoice(state.players[state.inTurn].auction, biggestAuction)
+      } else {
+        return state.players[state.inTurn].auction
+      }
+    }
+
+    function getBiggestAuction(players) {
+      let tmpMax = 0
+      players.map((player) => {
+        if(player.auction.points > tmpMax ){
+          tmpMax = player.auction.points
+        } 
+      })
+      return tmpMax
     }
 
     // TODO
-    function getAIChoice(auction) {
-      let randomIndex = Math.floor(Math.random() * 10);
-      if(randomIndex < 5) {
-          auction.isIn = false
+    function getAIChoice(auction, biggestAuction) {
+      
+      let tmpVal = Math.floor(Math.random() * 120);
+      if(tmpVal < biggestAuction) {
+        auction.isIn = false
       } else {
-          auction.isIn = true
-          auction.points = 85
+        auction.isIn = true
       }
+      auction.points = tmpVal
+      
       return auction
     }
 

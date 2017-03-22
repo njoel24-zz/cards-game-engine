@@ -1,5 +1,6 @@
 export const initMatch = () => ({
-  type: 'INIT_MATCH'
+  type: 'INIT_MATCH',
+  cardsPlayed: undefined
 })
 
 export const startMatch = () => ({

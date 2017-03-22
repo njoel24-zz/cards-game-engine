@@ -6,7 +6,7 @@ render () {
 	return (
 		<ul className='row'>
     		{ this.props.match.cardsPlayed.map(card =>
-  				<li className='col-xs-2' key={card.id}><img src={'img/'+card.value+'.jpg'} className='card'/></li>
+  				<li className='col-xs-2' key={card.id}><img src={'img/'+card.id+'.jpg'} className='card'/></li>
     		)}
 				<li className='col-xs-2'></li>
   				<li className='col-xs-2'>turns:{this.props.match.turns}</li>

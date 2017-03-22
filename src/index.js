@@ -13,8 +13,6 @@ import { Provider, connect } from 'react-redux'
 
 // app
 import App from './components/App'
-// import reducer from './reducers'
-
 
 // import 'stylesheets/base'
 
@@ -30,16 +28,9 @@ const store = createStore(matchReducer, middlewares)
 
 store.dispatch(initMatch())
 
-
-
-
 render(
 	<Provider store={store}>
   		<App />
   	</Provider>,
   document.getElementById('root')
 )
-
-
-
-

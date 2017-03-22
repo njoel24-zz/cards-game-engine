@@ -16,7 +16,6 @@ class StartMatch extends React.Component {
 	}
 }  
 
-
 const mapStateToProps = function(store) {
   return {};
 }

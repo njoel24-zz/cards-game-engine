@@ -87,8 +87,6 @@
 
 	// middlewares
 
-	// import reducer from './reducers'
-
 
 	// import 'stylesheets/base'
 
@@ -21653,7 +21651,8 @@
 	});
 	var initMatch = exports.initMatch = function initMatch() {
 	  return {
-	    type: 'INIT_MATCH'
+	    type: 'INIT_MATCH',
+	    cardsPlayed: undefined
 	  };
 	};
 
@@ -23846,7 +23845,7 @@
 	    value: function render() {
 	      // workaround to avoid infinite loop on StartMatch
 	      var renderStartMatch = this.getStartMatch();
-	      this.prepareAsyncAction(3000);
+	      this.prepareAsyncAction(1000);
 
 	      return _react2.default.createElement(
 	        'div',
@@ -23861,24 +23860,23 @@
 	    key: 'prepareAsyncAction',
 	    value: function prepareAsyncAction(timeout) {
 	      if (this.props.isStart && this.props.area === "auction") {
-	        if (this.props.auction.winner === undefined) {
-	          setTimeout(this.props.playAuctionBot.bind(this), timeout);
-	        } else {
+	        if (this.props.auction.winner !== undefined) {
 	          setTimeout(this.props.endAuction.bind(this), timeout);
+	        } else {
+	          setTimeout(this.props.playAuctionBot.bind(this), timeout);
 	        }
 	      } else if (this.props.isStart && this.props.area === "match") {
 
 	        if (this.props.isFinished) {
 	          setTimeout(this.props.setWinner.bind(this), timeout);
-	        }
-
-	        if (this.props.match.isTurnFinished) {
+	        } else if (this.props.match.isTurnFinished) {
 	          setTimeout(this.props.endTurn.bind(this), timeout);
-	        }
+	        } else {
 
-	        if (!this.props.isFinished) {
 	          setTimeout(this.props.playBot.bind(this), timeout);
 	        }
+	      } else if (!this.props.isStart && this.props.area === "match") {
+	        setTimeout(this.props.initMatch.bind(this), timeout);
 	      }
 	    }
 	  }, {
@@ -23903,12 +23901,16 @@
 	    match: store.match,
 	    me: store.me,
 	    inTurn: store.inTurn,
-	    auction: store.auction
+	    auction: store.auction,
+	    isFinished: store.isFinished
 	  };
 	};
 
 	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
 	  return {
+	    initMatch: function initMatch() {
+	      dispatch((0, _match.initMatch)());
+	    },
 	    startMatch: function startMatch() {
 	      dispatch((0, _match.startMatch)());
 	    },
@@ -23929,6 +23931,9 @@
 	    },
 	    endAuction: function endAuction() {
 	      dispatch((0, _auction.endAuction)());
+	    },
+	    endTurn: function endTurn() {
+	      dispatch((0, _match.endTurn)());
 	    }
 	  };
 	};
@@ -24046,7 +24051,7 @@
 	          return _react2.default.createElement(
 	            'li',
 	            { className: 'col-xs-2', key: card.id },
-	            _react2.default.createElement('img', { src: 'img/' + card.value + '.jpg', className: 'card' })
+	            _react2.default.createElement('img', { src: 'img/' + card.id + '.jpg', className: 'card' })
 	          );
 	        }),
 	        _react2.default.createElement('li', { className: 'col-xs-2' }),
@@ -24281,8 +24286,6 @@
 
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 	var matchReducer = function matchReducer() {
 	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 	  var action = arguments[1];
@@ -24292,8 +24295,8 @@
 
 	    case 'INIT_MATCH':
 	      return {
-	        players: [{ id: 0, name: 'Pippo3', cards: [], points: 0, auction: { points: 0, isIn: true } }, { id: 1, name: 'Ugo', cards: [], points: 0, auction: { points: 0, isIn: true } }, { id: 2, name: 'Mario', cards: [], points: 0, auction: { points: 0, isIn: true } }, { id: 3, name: 'John', cards: [], points: 0, auction: { points: 0, isIn: true } }, { id: 4, name: 'Franz', cards: [], points: 0, auction: { points: 0, isIn: true } }],
-	        match: { winner: undefined, winnerTurn: undefined, isTurnFinished: false, turns: 1, cardsPlayed: [] },
+	        players: [{ id: 0, name: 'Pippo3', cards: [], points: 0, auction: { points: 0, isIn: true }, team: 2 }, { id: 1, name: 'Ugo', cards: [], points: 0, auction: { points: 0, isIn: true }, team: 2 }, { id: 2, name: 'Mario', cards: [], points: 0, auction: { points: 0, isIn: true }, team: 2 }, { id: 3, name: 'John', cards: [], points: 0, auction: { points: 0, isIn: true }, team: 2 }, { id: 4, name: 'Franz', cards: [], points: 0, auction: { points: 0, isIn: true }, team: 2 }],
+	        match: { winner: undefined, winnerTurn: undefined, isTurnFinished: false, turns: 1, cardsPlayed: action.cardsPlayed },
 	        auction: { winner: undefined, seed: undefined },
 	        isFinished: false,
 	        inTurn: 0,
@@ -24312,10 +24315,10 @@
 	    case 'END_TURN':
 	      console.log("End turn");
 	      return _extends({}, state, {
-	        match: _extends({}, state.match, { winnerTurn: action.getWinnerTurn,
-	          inTurn: action.getNextInTurn,
-	          cardsPlayed: action.resetCardsPlayed,
-	          turns: action.turns }),
+	        match: _extends({}, state.match, { winnerTurn: action.winnerTurn,
+	          inTurn: action.inTurn,
+	          cardsPlayed: action.cardsPlayed,
+	          turns: action.turns, isTurnFinished: false }),
 	        isFinished: action.finishedMatch
 	      });
 
@@ -24325,47 +24328,54 @@
 
 	    case 'PLAY_BOT':
 	      console.log("Play_BOT");
-	      return _extends({}, state, _defineProperty({
-	        match: _extends({}, state.match, { cardsPlayed: action.cardsPlayed }),
-	        inTurn: action.getNextInTurn
-	      }, 'match', _extends({}, state.match, { isTurnFinished: action.turnFinished })));
+	      return _extends({}, state, {
+	        inTurn: action.inTurn,
+	        match: _extends({}, state.match, { cardsPlayed: action.cardsPlayed, isTurnFinished: action.turnFinished })
+	      });
+
+	    case 'CHANGE_TURN':
+	      console.log("Change Turn");
+	      return _extends({}, state, {
+	        inTurn: action.inTurn,
+	        match: _extends({}, state.match, { isTurnFinished: action.turnFinished })
+	      });
 
 	    case 'SET_WINNER':
 	      console.log("End Match");
 	      return _extends({}, state, {
-	        match: _extends({}, state.match, { winner: action.setWinnerMatch })
+	        match: _extends({}, state.match, { winner: action.setWinnerMatch }),
+	        isStart: false
 	      });
 	      break;
 
 	    case 'END_AUCTION':
 	      console.log("end auction");
-	      var newArea = action.getArea;
 	      return _extends({}, state, {
-	        area: newArea,
-	        auction: _extends({}, state.auction, { seed: action.seed })
+	        area: action.area,
+	        auction: _extends({}, state.auction, { seed: action.seed }),
+	        players: [_extends({}, state.players[0], { team: action.teams[0] }), _extends({}, state.players[1], { team: action.teams[1] }), _extends({}, state.players[2], { team: action.teams[2] }), _extends({}, state.players[3], { team: action.teams[3] }), _extends({}, state.players[4], { team: action.teams[4] })]
 	      });
 
 	    case 'PLAY_AUCTION':
 	      console.log("Play Auction");
 	      return _extends({}, state);
 
+	    case 'CHANGE_TURN_AUCTION':
+	      console.log("Change Turn Auction");
+	      return _extends({}, state, {
+	        inTurn: action.inTurn,
+	        auction: _extends({}, state.auction, { winner: action.winnerAuction })
+	      });
+
 	    case 'PLAY_AUCTION_BOT':
 	      console.log("PLAY_AUCTION_BOT:" + state.inTurn + "isIn:" + action.inAuction);
-	      console.log(state);
-	      if (action.inAuction) {
-	        var newPlayers = [].concat(_toConsumableArray(state.players));
-	        newPlayers[state.inTurn].auction = action.auctionForUser;
-	        return _extends({}, state, {
-	          players: newPlayers,
-	          inTurn: action.inTurn,
-	          auction: _extends({}, state.auction, { winner: action.winnerAuction })
-	        });
-	      } else {
-	        return _extends({}, state, {
-	          inTurn: action.inTurn,
-	          auction: _extends({}, state.auction, { winner: action.winnerAuction })
-	        });
-	      }
+	      var newPlayers = [].concat(_toConsumableArray(state.players));
+	      newPlayers[state.inTurn].auction = action.auctionForUser;
+	      return _extends({}, state, {
+	        inTurn: action.inTurn,
+	        players: newPlayers,
+	        auction: _extends({}, state.auction, { winner: action.winnerAuction })
+	      });
 
 	    default:
 	      return state;
@@ -24376,18 +24386,28 @@
 
 /***/ },
 /* 229 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+
+	var _cards = __webpack_require__(230);
+
+	var _cards2 = _interopRequireDefault(_cards);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 	var matchMiddleware = function matchMiddleware(store) {
 	  return function (next) {
 	    return function (action) {
 	      var state = store.getState(); // perché ?
 	      switch (action.type) {
+	        case 'INIT_MATCH':
+	          action.cardsPlayed = resetCardsPlayed();
+	          break;
 	        case 'START_MATCH':
 	          action.shuffleCards = shuffleCards();
 	          action.cardsPlayed = resetCardsPlayed();
@@ -24395,8 +24415,10 @@
 	        case 'PLAY':
 	          break;
 	        case 'PLAY_BOT':
-	          action.cardsPlayed = playCardOnTheTable(getCardToPlay()), action.inTurn = getNextInTurn();
-	          action.turnFinished = isTurnFinished();
+	          action.cardsPlayed = playCardOnTheTable(), action.inTurn = getNextInTurn(), action.turnFinished = isTurnFinished();
+	          break;
+	        case 'CHANGE_TURN':
+	          action.inTurn = getNextInTurn(), action.turnFinished = isTurnFinished();
 	          break;
 	        case 'END_TURN':
 	          action.winnerTurn = getWinnerTurn(), action.inTurn = getNextInTurn(), action.cardsPlayed = resetCardsPlayed(), action.finishedMatch = isMatchFinished();
@@ -24406,16 +24428,15 @@
 	          action.winner = setWinnerMatch();
 	          break;
 	        case 'PLAY_AUCTION_BOT':
-	          action.inAuction = isUserInAuction(), action.auctionForUser = setAuctionForUser(), action.inTurn = getNextInTurn();
-	          action.turnFinished = isTurnFinished();
-	          break;
-	        case 'PLAY_AUCTION':
+	          action.inAuction = isUserInAuction(), action.auctionForUser = setAuctionForUser(), action.inTurn = getNextInTurn(), action.winnerAuction = getWinnerAuction();
 	          break;
 	        case 'CHANGE_TURN_AUCTION':
 	          action.inTurn = getNextInTurn(), action.winnerAuction = getWinnerAuction();
 	          break;
+	        case 'PLAY_AUCTION':
+	          break;
 	        case 'END_AUCTION':
-	          action.newArea = getArea(), action.seed = getSeed();
+	          action.area = getArea(), action.seed = getSeed(), action.teams = getTeams();
 	          break;
 	      }
 
@@ -24424,26 +24445,54 @@
 	        return next;
 	      }
 
+	      function getNextTurn() {
+	        var next = (state.match.turns + 1) % 9;
+	        return next;
+	      }
+
 	      function getArea() {
 	        return 'match';
 	      }
 
-	      function playCardOnTheTable(newCardPlayed) {
+	      function getTeams() {
+	        return [1, 1, 2, 2, 2];
+	      }
+
+	      function playCardOnTheTable() {
+	        var c = getCardToPlay();
 	        var newCardsPlayed = state.match.cardsPlayed;
-	        newCardsPlayed[state.inTurn].value = newCardPlayed;
-	        return newCardsPlayed;
+	        return newCardsPlayed.map(function (card) {
+	          if (card.id == state.inTurn) {
+	            card.value = c;
+	          }
+	          return card;
+	        });
 	      }
 
 	      // TODO
 	      function setWinnerMatch() {
-	        return 1;
+	        var team1 = 0,
+	            team2 = 0;
+	        for (var i = 0; i < state.players.length; i++) {
+	          var player = state.players[i];
+	          if (player.team === 1) {
+	            team1 += player.points;
+	          } else {
+	            team2 += player.points;
+	          }
+	        }
+	        if (team1 > team2) {
+	          return "chiamante";
+	        } else {
+	          return "others";
+	        }
 	      }
 
 	      function isTurnFinished() {
 	        var res = state.match.cardsPlayed.filter(function (c) {
 	          return c.value == 0;
 	        });
-	        return res.length == 0;
+	        return res.length == 1;
 	      }
 
 	      function isMatchFinished() {
@@ -24452,7 +24501,18 @@
 
 	      // TODO
 	      function getWinnerTurn() {
-	        return 1;
+	        var max = 0;
+	        var winner = 0;
+	        var totalPoints = 0;
+	        for (var i = 0; i < state.match.cardsPlayed.length; i++) {
+	          var c = state.match.cardsPlayed[i];
+	          if (c.value > max) {
+	            max = _cards2.default[c.value].value;
+	            winner = c.id;
+	          }
+	          totalPoints += _cards2.default[c.value].points;
+	        }
+	        return { winner: winner, totalPoints: totalPoints };
 	      }
 
 	      function resetCardsPlayed() {
@@ -24487,9 +24547,12 @@
 	          var randomIndex = Math.floor(Math.random() * 7);
 	          var choosenCard = p.cards[randomIndex];
 	          // p.cards[randomIndex] = 0;
+	          if (choosenCard == 0) {
+	            choosenCard = 1;
+	          }
 	          return choosenCard;
 	        }
-	        return 0;
+	        return 1;
 	      }
 
 	      function getSeed(state) {
@@ -24498,10 +24561,6 @@
 	      }
 
 	      function getWinnerAuction() {
-	        // temp hack to convert an object of object in an array of objects
-	        state.players = Object.keys(state.players).map(function (key) {
-	          return state.players[key];
-	        });
 	        var playersInAuction = state.players.filter(function (p) {
 	          return p.auction.isIn === true;
 	        });
@@ -24517,18 +24576,36 @@
 	      }
 
 	      function setAuctionForUser() {
-	        return getAIChoice(state.players[state.inTurn].auction);
+
+	        if (state.players[state.inTurn].auction.isIn === true) {
+	          var biggestAuction = getBiggestAuction(state.players);
+	          return getAIChoice(state.players[state.inTurn].auction, biggestAuction);
+	        } else {
+	          return state.players[state.inTurn].auction;
+	        }
+	      }
+
+	      function getBiggestAuction(players) {
+	        var tmpMax = 0;
+	        players.map(function (player) {
+	          if (player.auction.points > tmpMax) {
+	            tmpMax = player.auction.points;
+	          }
+	        });
+	        return tmpMax;
 	      }
 
 	      // TODO
-	      function getAIChoice(auction) {
-	        var randomIndex = Math.floor(Math.random() * 10);
-	        if (randomIndex < 5) {
+	      function getAIChoice(auction, biggestAuction) {
+
+	        var tmpVal = Math.floor(Math.random() * 120);
+	        if (tmpVal < biggestAuction) {
 	          auction.isIn = false;
 	        } else {
 	          auction.isIn = true;
-	          auction.points = 85;
 	        }
+	        auction.points = tmpVal;
+
 	        return auction;
 	      }
 
@@ -24538,6 +24615,65 @@
 	};
 
 	exports.default = matchMiddleware;
+
+/***/ },
+/* 230 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var cards = {
+
+	    1: { value: 10, points: 11, seme: "denari", nome: "asso" },
+	    2: { value: 1, points: 0, seme: "denari", nome: "due" },
+	    3: { value: 9, points: 10, seme: "denari", nome: "tre" },
+	    4: { value: 2, points: 0, seme: "denari", nome: "quattro" },
+	    5: { value: 3, points: 0, seme: "denari", nome: "cinque" },
+	    6: { value: 4, points: 0, seme: "denari", nome: "sei" },
+	    7: { value: 5, points: 0, seme: "denari", nome: "sette" },
+	    8: { value: 6, points: 2, seme: "denari", nome: "donna" },
+	    9: { value: 7, points: 3, seme: "denari", nome: "cavallo" },
+	    10: { value: 8, points: 4, seme: "denari", nome: "re" },
+
+	    11: { value: 10, points: 11, seme: "spade", nome: "asso" },
+	    12: { value: 1, points: 0, seme: "spade", nome: "due" },
+	    13: { value: 9, points: 10, seme: "spade", nome: "tre" },
+	    14: { value: 2, points: 0, seme: "spade", nome: "quattro" },
+	    15: { value: 3, points: 0, seme: "spade", nome: "cinque" },
+	    16: { value: 4, points: 0, seme: "spade", nome: "sei" },
+	    17: { value: 5, points: 0, seme: "spade", nome: "sette" },
+	    18: { value: 6, points: 2, seme: "spade", nome: "donna" },
+	    19: { value: 7, points: 3, seme: "spade", nome: "cavallo" },
+	    20: { value: 8, points: 4, seme: "spade", nome: "re" },
+
+	    21: { value: 10, points: 11, seme: "coppe", nome: "asso" },
+	    22: { value: 1, points: 0, seme: "coppe", nome: "due" },
+	    23: { value: 9, points: 10, seme: "coppe", nome: "tre" },
+	    24: { value: 2, points: 0, seme: "coppe", nome: "quattro" },
+	    25: { value: 3, points: 0, seme: "coppe", nome: "cinque" },
+	    26: { value: 4, points: 0, seme: "coppe", nome: "sei" },
+	    27: { value: 5, points: 0, seme: "coppe", nome: "sette" },
+	    28: { value: 6, points: 2, seme: "coppe", nome: "donna" },
+	    29: { value: 7, points: 3, seme: "coppe", nome: "cavallo" },
+	    30: { value: 8, points: 4, seme: "coppe", nome: "re" },
+
+	    31: { value: 10, points: 11, seme: "bastoni", nome: "asso" },
+	    32: { value: 1, points: 0, seme: "bastoni", nome: "due" },
+	    33: { value: 9, points: 10, seme: "bastoni", nome: "tre" },
+	    34: { value: 2, points: 0, seme: "bastoni", nome: "quattro" },
+	    35: { value: 3, points: 0, seme: "bastoni", nome: "cinque" },
+	    36: { value: 4, points: 0, seme: "bastoni", nome: "sei" },
+	    37: { value: 5, points: 0, seme: "bastoni", nome: "sette" },
+	    38: { value: 6, points: 2, seme: "bastoni", nome: "donna" },
+	    39: { value: 7, points: 3, seme: "bastoni", nome: "cavallo" },
+	    40: { value: 8, points: 4, seme: "bastoni", nome: "re" }
+
+	};
+
+	exports.default = cards;
 
 /***/ }
 /******/ ]);
