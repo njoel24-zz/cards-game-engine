@@ -23866,13 +23866,11 @@
 	          setTimeout(this.props.playAuctionBot.bind(this), timeout);
 	        }
 	      } else if (this.props.isStart && this.props.area === "match") {
-
 	        if (this.props.isFinished) {
 	          setTimeout(this.props.setWinner.bind(this), timeout);
 	        } else if (this.props.match.isTurnFinished) {
 	          setTimeout(this.props.endTurn.bind(this), timeout);
 	        } else {
-
 	          setTimeout(this.props.playBot.bind(this), timeout);
 	        }
 	      } else if (!this.props.isStart && this.props.area === "match") {
@@ -24051,7 +24049,7 @@
 	          return _react2.default.createElement(
 	            'li',
 	            { className: 'col-xs-2', key: card.id },
-	            _react2.default.createElement('img', { src: 'img/' + card.id + '.jpg', className: 'card' })
+	            _react2.default.createElement('img', { src: 'img/' + card.value + '.jpg', className: 'card' })
 	          );
 	        }),
 	        _react2.default.createElement('li', { className: 'col-xs-2' }),
@@ -24274,7 +24272,7 @@
 
 /***/ },
 /* 228 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -24283,6 +24281,12 @@
 	});
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _cards = __webpack_require__(230);
+
+	var _cards2 = _interopRequireDefault(_cards);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
@@ -24295,14 +24299,15 @@
 
 	    case 'INIT_MATCH':
 	      return {
-	        players: [{ id: 0, name: 'Pippo3', cards: [], points: 0, auction: { points: 0, isIn: true }, team: 2 }, { id: 1, name: 'Ugo', cards: [], points: 0, auction: { points: 0, isIn: true }, team: 2 }, { id: 2, name: 'Mario', cards: [], points: 0, auction: { points: 0, isIn: true }, team: 2 }, { id: 3, name: 'John', cards: [], points: 0, auction: { points: 0, isIn: true }, team: 2 }, { id: 4, name: 'Franz', cards: [], points: 0, auction: { points: 0, isIn: true }, team: 2 }],
+	        players: [{ id: 0, name: 'Pippo3', cards: [], points: 0, auction: { points: 0, isIn: true } }, { id: 1, name: 'Ugo', cards: [], points: 0, auction: { points: 0, isIn: true } }, { id: 2, name: 'Mario', cards: [], points: 0, auction: { points: 0, isIn: true } }, { id: 3, name: 'John', cards: [], points: 0, auction: { points: 0, isIn: true } }, { id: 4, name: 'Franz', cards: [], points: 0, auction: { points: 0, isIn: true } }],
 	        match: { winner: undefined, winnerTurn: undefined, isTurnFinished: false, turns: 1, cardsPlayed: action.cardsPlayed },
-	        auction: { winner: undefined, seed: undefined },
+	        auction: { winner: undefined, seed: undefined, compagno: undefined },
 	        isFinished: false,
 	        inTurn: 0,
 	        me: 4,
 	        area: 'auction',
-	        isStart: false
+	        isStart: false,
+	        cards: _cards2.default
 	      };
 
 	    case 'START_MATCH':
@@ -24315,10 +24320,12 @@
 	    case 'END_TURN':
 	      console.log("End turn");
 	      return _extends({}, state, {
-	        match: _extends({}, state.match, { winnerTurn: action.winnerTurn,
+	        match: _extends({}, state.match, {
+	          winnerTurn: action.winnerTurn.winner,
 	          inTurn: action.inTurn,
 	          cardsPlayed: action.cardsPlayed,
 	          turns: action.turns, isTurnFinished: false }),
+	        players: action.players,
 	        isFinished: action.finishedMatch
 	      });
 
@@ -24352,8 +24359,7 @@
 	      console.log("end auction");
 	      return _extends({}, state, {
 	        area: action.area,
-	        auction: _extends({}, state.auction, { seed: action.seed }),
-	        players: [_extends({}, state.players[0], { team: action.teams[0] }), _extends({}, state.players[1], { team: action.teams[1] }), _extends({}, state.players[2], { team: action.teams[2] }), _extends({}, state.players[3], { team: action.teams[3] }), _extends({}, state.players[4], { team: action.teams[4] })]
+	        auction: _extends({}, state.auction, { seed: action.seed, compagno: action.compagno })
 	      });
 
 	    case 'PLAY_AUCTION':
@@ -24386,20 +24392,13 @@
 
 /***/ },
 /* 229 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-
-	var _cards = __webpack_require__(230);
-
-	var _cards2 = _interopRequireDefault(_cards);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 	var matchMiddleware = function matchMiddleware(store) {
 	  return function (next) {
 	    return function (action) {
@@ -24421,8 +24420,7 @@
 	          action.inTurn = getNextInTurn(), action.turnFinished = isTurnFinished();
 	          break;
 	        case 'END_TURN':
-	          action.winnerTurn = getWinnerTurn(), action.inTurn = getNextInTurn(), action.cardsPlayed = resetCardsPlayed(), action.finishedMatch = isMatchFinished();
-	          action.turns = getNextTurn(); // increase a value
+	          action.winnerTurn = getWinnerTurn(), action.players = getPlayers(action.winnerTurn), action.inTurn = getNextInTurn(), action.cardsPlayed = resetCardsPlayed(), action.finishedMatch = isMatchFinished(), action.turns = getNextTurn(); // increase a value
 	          break;
 	        case 'SET_WINNER':
 	          action.winner = setWinnerMatch();
@@ -24436,8 +24434,19 @@
 	        case 'PLAY_AUCTION':
 	          break;
 	        case 'END_AUCTION':
-	          action.area = getArea(), action.seed = getSeed(), action.teams = getTeams();
+	          action.compagno = getCompagno(), action.area = 'match', action.seed = getSeed();
 	          break;
+	      }
+
+	      function getPlayers(winnerTurno) {
+	        return state.players.map(function (player) {
+	          if (player.id === winnerTurno.winner) {
+	            player.points = winnerTurno.totalPoints;
+	            return player;
+	          } else {
+	            return player;
+	          }
+	        });
 	      }
 
 	      function getNextInTurn() {
@@ -24450,12 +24459,16 @@
 	        return next;
 	      }
 
-	      function getArea() {
-	        return 'match';
-	      }
-
-	      function getTeams() {
-	        return [1, 1, 2, 2, 2];
+	      function getCompagno() {
+	        var compagno = -1;
+	        state.players.map(function (player) {
+	          if (player.cards.filter(function (card) {
+	            card === state.auction.compagno;
+	          }).length > 0) {
+	            compagno = player.id;
+	          }
+	        });
+	        return compagno;
 	      }
 
 	      function playCardOnTheTable() {
@@ -24469,13 +24482,12 @@
 	        });
 	      }
 
-	      // TODO
 	      function setWinnerMatch() {
 	        var team1 = 0,
 	            team2 = 0;
 	        for (var i = 0; i < state.players.length; i++) {
 	          var player = state.players[i];
-	          if (player.team === 1) {
+	          if (player.id === state.auction.winner || player.id === state.auction.compagno) {
 	            team1 += player.points;
 	          } else {
 	            team2 += player.points;
@@ -24492,25 +24504,31 @@
 	        var res = state.match.cardsPlayed.filter(function (c) {
 	          return c.value == 0;
 	        });
-	        return res.length == 1;
+	        return res.length == 0;
 	      }
 
 	      function isMatchFinished() {
 	        return state.match.turns === 8;
 	      }
 
-	      // TODO
 	      function getWinnerTurn() {
-	        var max = 0;
+	        var maxValue = 0;
 	        var winner = 0;
 	        var totalPoints = 0;
 	        for (var i = 0; i < state.match.cardsPlayed.length; i++) {
 	          var c = state.match.cardsPlayed[i];
-	          if (c.value > max) {
-	            max = _cards2.default[c.value].value;
+	          var valueCurrentcard = 0;
+	          if (state.auction.seed === state.cards[c.value].seme) {
+	            valueCurrentcard = state.cards[c.value].value + 100;
+	          } else {
+	            valueCurrentcard = state.cards[c.value].value;
+	          }
+	          if (valueCurrentcard > maxValue) {
+
+	            maxValue = valueCurrentcard;
 	            winner = c.id;
 	          }
-	          totalPoints += _cards2.default[c.value].points;
+	          totalPoints += state.cards[c.value].points;
 	        }
 	        return { winner: winner, totalPoints: totalPoints };
 	      }
@@ -24555,8 +24573,8 @@
 	        return 1;
 	      }
 
+	      // TODO 
 	      function getSeed(state) {
-	        // TODO
 	        return "coppe";
 	      }
 

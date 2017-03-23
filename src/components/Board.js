@@ -37,18 +37,15 @@ class Board extends React.Component {
         setTimeout(this.props.playAuctionBot.bind(this), timeout);
       }
     } else if (this.props.isStart && this.props.area === "match") {
-
       if(this.props.isFinished) {
         setTimeout(this.props.setWinner.bind(this), timeout);
 		  } else if(this.props.match.isTurnFinished) {
         setTimeout(this.props.endTurn.bind(this), timeout);
       } else  {
-
         setTimeout(this.props.playBot.bind(this), timeout);
 		  }		  
     } else if (!this.props.isStart && this.props.area === "match") {
       setTimeout(this.props.initMatch.bind(this), timeout);
-      
     }
   }
 

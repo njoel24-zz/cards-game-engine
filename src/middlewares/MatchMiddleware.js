@@ -1,5 +1,3 @@
-import cards from "../constants/cards";
-
 const matchMiddleware = store => next => action => {
   const state = store.getState() // perché ?
 	switch(action.type){
@@ -23,9 +21,10 @@ const matchMiddleware = store => next => action => {
     break
 		case 'END_TURN':
 			action.winnerTurn = getWinnerTurn(),
+      action.players = getPlayers(action.winnerTurn),
   		action.inTurn = getNextInTurn(),
   		action.cardsPlayed = resetCardsPlayed(),
-  		action.finishedMatch = isMatchFinished()
+  		action.finishedMatch = isMatchFinished(),
   		action.turns = getNextTurn() // increase a value
     break
 		case 'SET_WINNER':
@@ -44,11 +43,22 @@ const matchMiddleware = store => next => action => {
 		case 'PLAY_AUCTION':
     break
 		case 'END_AUCTION':
-			action.area = getArea(),
-      action.seed = getSeed(),
-      action.teams = getTeams()
+      action.compagno = getCompagno(),
+			action.area = 'match',
+      action.seed = getSeed()
     break
 	}
+
+  function getPlayers(winnerTurno) {
+    return state.players.map(player => {
+      if (player.id === winnerTurno.winner) {
+        player.points = winnerTurno.totalPoints;
+        return player;
+      } else {
+        return player;
+      }
+    })
+  }
 
   function getNextInTurn() {
       var next = (state.inTurn+1)%5
@@ -60,12 +70,14 @@ const matchMiddleware = store => next => action => {
       return next
     }
 
-    function getArea() {
-      return 'match';
-    }
-
-    function getTeams() {
-      return [1,1,2,2,2];
+    function getCompagno() {
+      let compagno = -1
+      state.players.map(player => {
+        if(player.cards.filter(card => {card === state.auction.compagno}).length > 0) {
+          compagno = player.id;
+        }
+      })
+      return compagno;
     }
 
   function playCardOnTheTable(){
@@ -79,12 +91,11 @@ const matchMiddleware = store => next => action => {
       })
     }
 
-    // TODO
     function setWinnerMatch() {
       let team1=0,team2=0;
       for(let i=0; i<state.players.length; i++ ) {
           let player = state.players[i];
-          if(player.team === 1) {
+          if(player.id === state.auction.winner || player.id === state.auction.compagno) {
             team1 += player.points;
           } else {
             team2 += player.points;
@@ -99,25 +110,31 @@ const matchMiddleware = store => next => action => {
 
     function isTurnFinished(){
       var res = state.match.cardsPlayed.filter( c => { return c.value == 0 } );
-      return res.length == 1
+      return res.length == 0
     }
 
     function isMatchFinished(){
       return (state.match.turns === 8)
     }
 
-    // TODO
     function getWinnerTurn(){
-      let max = 0;
+      let maxValue = 0;
       let winner =0;
       let totalPoints = 0;
       for( let i = 0; i< state.match.cardsPlayed.length; i++ ) {
           let c = state.match.cardsPlayed[i];
-          if(c.value > max) {
-            max = cards[c.value].value
+          let valueCurrentcard =  0
+          if(state.auction.seed === state.cards[c.value].seme ) {
+            valueCurrentcard = state.cards[c.value].value + 100
+          } else {
+            valueCurrentcard = state.cards[c.value].value
+          }
+          if(valueCurrentcard > maxValue) {
+            
+            maxValue = valueCurrentcard
             winner = c.id
           }
-          totalPoints += cards[c.value].points
+          totalPoints += state.cards[c.value].points
       }
       return { winner: winner, totalPoints: totalPoints }
     }
@@ -159,11 +176,11 @@ const matchMiddleware = store => next => action => {
       return 1
     }
 
-
+    // TODO 
     function getSeed(state) {
-      // TODO
       return "coppe"
     }
+
 
     function getWinnerAuction() {
       let playersInAuction = state.players.filter( p => {  return p.auction.isIn === true })
