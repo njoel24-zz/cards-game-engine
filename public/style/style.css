@@ -1,3 +1,20 @@
+li {
+	list-style-type: none;
+}
+
 .card {
-	width: 100px;
+	width: 100%;
+}
+
+
+.common-cards {
+	height: 250px;
+}
+
+.player-info {
+	height: 180px;
+}
+
+.hidden{
+	visibility: hidden;
 }

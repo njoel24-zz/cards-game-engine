@@ -2,10 +2,9 @@ import React from 'react'
 import { connect } from 'react-redux'
 import Players from './Players'
 import Common from './Common'
-import StartMatch from './StartMatch' 
 import Me from './Me' 
 
-import { initMatch, startMatch, setWinner,  endTurn,
+import { initMatch,  setWinner,  endTurn,
 		changeTurn, play, playBot} from '../actions/match'
 import { playAuctionBot, 
 	 playAuction,
@@ -15,16 +14,14 @@ import { playAuctionBot,
 class Board extends React.Component {
 	
   render() {
-    // workaround to avoid infinite loop on StartMatch
-    var renderStartMatch = this.getStartMatch()
+    
     this.prepareAsyncAction(1000)  
 
     return (
     <div className='container'>
+      <Players/>
       <Common />
-    	<Players/>
     	<Me/>
-      { renderStartMatch }
     </div>
     )
   }
@@ -49,14 +46,7 @@ class Board extends React.Component {
     }
   }
 
-  getStartMatch() {
-    var renderHtml = ""
-    if (!this.props.isStart) {
-      return  <StartMatch/>  
-    } else {
-      return null
-    }
-  }
+  
 
 }
 
@@ -77,9 +67,6 @@ const mapDispatchToProps = function(dispatch, ownProps) {
   return {
     initMatch: () => {
       dispatch(initMatch());
-    },
-    startMatch: () => {
-      dispatch(startMatch());
     },
 		setWinner: () => {
       dispatch(setWinner());

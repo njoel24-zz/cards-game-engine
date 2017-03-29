@@ -1,15 +1,20 @@
 import React from 'react'
 import { connect } from 'react-redux'
+
+import { Card } from './Card'
 class Me extends React.Component {
 
 render () {
 	return (
-		<ul className='row'>
+		<ul className='row common-cards'>
     		{this.props.players[this.props.me].cards.map(c =>
-  				<li className='col-xs-2' key={c}><img src={'img/'+c+'.jpg'} className='card'/></li>
+  				<li className='col-xs-1' key={c}>
+							<Card src={'img/'+c+'.jpg'} />
+					</li>
     		)}
-				<li className='col-xs-2'></li>
-  		</ul>
+				<li className='col-xs-2'>Timer</li>
+				<li className='col-xs-2'>Info</li>
+  	</ul>
 		)
 	}
 }  

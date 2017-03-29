@@ -73,7 +73,7 @@
 
 	var _match3 = _interopRequireDefault(_match2);
 
-	var _MatchMiddleware = __webpack_require__(229);
+	var _MatchMiddleware = __webpack_require__(230);
 
 	var _MatchMiddleware2 = _interopRequireDefault(_MatchMiddleware);
 
@@ -23811,10 +23811,6 @@
 
 	var _Common2 = _interopRequireDefault(_Common);
 
-	var _StartMatch = __webpack_require__(225);
-
-	var _StartMatch2 = _interopRequireDefault(_StartMatch);
-
 	var _Me = __webpack_require__(227);
 
 	var _Me2 = _interopRequireDefault(_Me);
@@ -23843,17 +23839,15 @@
 	  _createClass(Board, [{
 	    key: 'render',
 	    value: function render() {
-	      // workaround to avoid infinite loop on StartMatch
-	      var renderStartMatch = this.getStartMatch();
+
 	      this.prepareAsyncAction(1000);
 
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'container' },
-	        _react2.default.createElement(_Common2.default, null),
 	        _react2.default.createElement(_Players2.default, null),
-	        _react2.default.createElement(_Me2.default, null),
-	        renderStartMatch
+	        _react2.default.createElement(_Common2.default, null),
+	        _react2.default.createElement(_Me2.default, null)
 	      );
 	    }
 	  }, {
@@ -23877,16 +23871,6 @@
 	        setTimeout(this.props.initMatch.bind(this), timeout);
 	      }
 	    }
-	  }, {
-	    key: 'getStartMatch',
-	    value: function getStartMatch() {
-	      var renderHtml = "";
-	      if (!this.props.isStart) {
-	        return _react2.default.createElement(_StartMatch2.default, null);
-	      } else {
-	        return null;
-	      }
-	    }
 	  }]);
 
 	  return Board;
@@ -23908,9 +23892,6 @@
 	  return {
 	    initMatch: function initMatch() {
 	      dispatch((0, _match.initMatch)());
-	    },
-	    startMatch: function startMatch() {
-	      dispatch((0, _match.startMatch)());
 	    },
 	    setWinner: function setWinner() {
 	      dispatch((0, _match.setWinner)());
@@ -23945,7 +23926,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+			value: true
 	});
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -23965,41 +23946,90 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var Players = function (_React$Component) {
-	  _inherits(Players, _React$Component);
+			_inherits(Players, _React$Component);
 
-	  function Players() {
-	    _classCallCheck(this, Players);
+			function Players() {
+					_classCallCheck(this, Players);
 
-	    return _possibleConstructorReturn(this, (Players.__proto__ || Object.getPrototypeOf(Players)).apply(this, arguments));
-	  }
+					return _possibleConstructorReturn(this, (Players.__proto__ || Object.getPrototypeOf(Players)).apply(this, arguments));
+			}
 
-	  _createClass(Players, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'ul',
-	        { className: 'row' },
-	        this.props.players.map(function (player) {
-	          return _react2.default.createElement(
-	            'li',
-	            { className: 'col-xs-1', key: player.id },
-	            player.name,
-	            ' - ',
-	            player.auction.points
-	          );
-	        }),
-	        _react2.default.createElement('li', { className: 'col-xs-7' })
-	      );
-	    }
-	  }]);
+			_createClass(Players, [{
+					key: 'render',
+					value: function render() {
+							var _this2 = this;
 
-	  return Players;
+							return _react2.default.createElement(
+									'ul',
+									{ className: 'row player-info' },
+									this.props.players.map(function (player) {
+											return _react2.default.createElement(
+													'li',
+													{ className: 'col-xs-2', key: player.id },
+													_react2.default.createElement(
+															'div',
+															null,
+															'Name: ',
+															player.name
+													),
+													_react2.default.createElement(
+															'div',
+															null,
+															'Auction: ',
+															player.auction.points
+													),
+													_react2.default.createElement(
+															'div',
+															{ className: !player.auction.isIn ? 'hidden' : '' },
+															'In Auction'
+													),
+													_react2.default.createElement(
+															'div',
+															null,
+															'Points: ',
+															player.points
+													),
+													_react2.default.createElement(
+															'div',
+															{ className: player.id !== _this2.props.inTurn ? 'hidden' : '' },
+															'inTurn'
+													),
+													_react2.default.createElement(
+															'div',
+															{ className: player.id !== _this2.props.match.winner ? 'hidden' : '' },
+															'Winner'
+													),
+													_react2.default.createElement(
+															'div',
+															{ className: player.id !== _this2.props.auction.winner ? 'hidden' : '' },
+															'WinnerAuction'
+													),
+													_react2.default.createElement(
+															'div',
+															{ className: player.id !== _this2.props.auction.compagno ? 'hidden' : '' },
+															'compagno'
+													),
+													_react2.default.createElement(
+															'div',
+															{ className: player.id !== _this2.props.match.winnerTurn ? 'hidden' : '' },
+															'winnerTurn'
+													)
+											);
+									})
+							);
+					}
+			}]);
+
+			return Players;
 	}(_react2.default.Component);
 
 	var mapStateToProps = function mapStateToProps(store) {
-	  return {
-	    players: store.players
-	  };
+			return {
+					players: store.players,
+					inTurn: store.inTurn,
+					match: store.match,
+					auction: store.auction
+			};
 	};
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Players);
@@ -24022,6 +24052,14 @@
 
 	var _reactRedux = __webpack_require__(202);
 
+	var _match = __webpack_require__(180);
+
+	var _Card = __webpack_require__(231);
+
+	var _StartMatch = __webpack_require__(225);
+
+	var _StartMatch2 = _interopRequireDefault(_StartMatch);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -24042,48 +24080,29 @@
 	  _createClass(Common, [{
 	    key: 'render',
 	    value: function render() {
+	      var renderStartMatch = this.getStartMatch();
 	      return _react2.default.createElement(
 	        'ul',
-	        { className: 'row' },
+	        { className: 'row common-cards' },
 	        this.props.match.cardsPlayed.map(function (card) {
 	          return _react2.default.createElement(
 	            'li',
 	            { className: 'col-xs-2', key: card.id },
-	            _react2.default.createElement('img', { src: 'img/' + card.value + '.jpg', className: 'card' })
+	            _react2.default.createElement(_Card.Card, { src: 'img/' + card.value + '.jpg' })
 	          );
 	        }),
-	        _react2.default.createElement('li', { className: 'col-xs-2' }),
-	        _react2.default.createElement(
-	          'li',
-	          { className: 'col-xs-2' },
-	          'turns:',
-	          this.props.match.turns
-	        ),
-	        _react2.default.createElement(
-	          'li',
-	          { className: 'col-xs-2' },
-	          'winner match:',
-	          this.props.match.winner
-	        ),
-	        _react2.default.createElement(
-	          'li',
-	          { className: 'col-xs-2' },
-	          'winner turn:',
-	          this.props.match.winnerTurn
-	        ),
-	        _react2.default.createElement(
-	          'li',
-	          { className: 'col-xs-2' },
-	          'seed:',
-	          this.props.auction.seed
-	        ),
-	        _react2.default.createElement(
-	          'li',
-	          { className: 'col-xs-2' },
-	          'winner auction:',
-	          this.props.auction.winner
-	        )
+	        renderStartMatch
 	      );
+	    }
+	  }, {
+	    key: 'getStartMatch',
+	    value: function getStartMatch() {
+	      var renderHtml = "";
+	      if (!this.props.isStart) {
+	        return _react2.default.createElement(_StartMatch2.default, null);
+	      } else {
+	        return null;
+	      }
 	    }
 	  }]);
 
@@ -24093,7 +24112,8 @@
 	var mapStateToProps = function mapStateToProps(store) {
 	  return {
 	    match: store.match,
-	    auction: store.auction
+	    auction: store.auction,
+	    isStart: store.isStart
 	  };
 	};
 
@@ -24142,9 +24162,15 @@
 					key: 'render',
 					value: function render() {
 							return _react2.default.createElement(
-									'button',
-									{ onClick: this.props.startMatch },
-									'Start Match'
+									'li',
+									{ className: 'col-xs-2' },
+									' ',
+									_react2.default.createElement(
+											'button',
+											{ onClick: this.props.startMatch },
+											'Start Match'
+									),
+									' '
 							);
 					}
 			}]);
@@ -24212,7 +24238,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+			value: true
 	});
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -24223,6 +24249,8 @@
 
 	var _reactRedux = __webpack_require__(202);
 
+	var _Card = __webpack_require__(231);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -24232,40 +24260,49 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var Me = function (_React$Component) {
-	  _inherits(Me, _React$Component);
+			_inherits(Me, _React$Component);
 
-	  function Me() {
-	    _classCallCheck(this, Me);
+			function Me() {
+					_classCallCheck(this, Me);
 
-	    return _possibleConstructorReturn(this, (Me.__proto__ || Object.getPrototypeOf(Me)).apply(this, arguments));
-	  }
+					return _possibleConstructorReturn(this, (Me.__proto__ || Object.getPrototypeOf(Me)).apply(this, arguments));
+			}
 
-	  _createClass(Me, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'ul',
-	        { className: 'row' },
-	        this.props.players[this.props.me].cards.map(function (c) {
-	          return _react2.default.createElement(
-	            'li',
-	            { className: 'col-xs-2', key: c },
-	            _react2.default.createElement('img', { src: 'img/' + c + '.jpg', className: 'card' })
-	          );
-	        }),
-	        _react2.default.createElement('li', { className: 'col-xs-2' })
-	      );
-	    }
-	  }]);
+			_createClass(Me, [{
+					key: 'render',
+					value: function render() {
+							return _react2.default.createElement(
+									'ul',
+									{ className: 'row common-cards' },
+									this.props.players[this.props.me].cards.map(function (c) {
+											return _react2.default.createElement(
+													'li',
+													{ className: 'col-xs-1', key: c },
+													_react2.default.createElement(_Card.Card, { src: 'img/' + c + '.jpg' })
+											);
+									}),
+									_react2.default.createElement(
+											'li',
+											{ className: 'col-xs-2' },
+											'Timer'
+									),
+									_react2.default.createElement(
+											'li',
+											{ className: 'col-xs-2' },
+											'Info'
+									)
+							);
+					}
+			}]);
 
-	  return Me;
+			return Me;
 	}(_react2.default.Component);
 
 	var mapStateToProps = function mapStateToProps(store) {
-	  return {
-	    players: store.players,
-	    me: store.me
-	  };
+			return {
+					players: store.players,
+					me: store.me
+			};
 	};
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Me);
@@ -24282,7 +24319,7 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var _cards = __webpack_require__(230);
+	var _cards = __webpack_require__(229);
 
 	var _cards2 = _interopRequireDefault(_cards);
 
@@ -24392,6 +24429,65 @@
 
 /***/ },
 /* 229 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var cards = {
+
+	    1: { value: 10, points: 11, seme: "denari", nome: "asso" },
+	    2: { value: 1, points: 0, seme: "denari", nome: "due" },
+	    3: { value: 9, points: 10, seme: "denari", nome: "tre" },
+	    4: { value: 2, points: 0, seme: "denari", nome: "quattro" },
+	    5: { value: 3, points: 0, seme: "denari", nome: "cinque" },
+	    6: { value: 4, points: 0, seme: "denari", nome: "sei" },
+	    7: { value: 5, points: 0, seme: "denari", nome: "sette" },
+	    8: { value: 6, points: 2, seme: "denari", nome: "donna" },
+	    9: { value: 7, points: 3, seme: "denari", nome: "cavallo" },
+	    10: { value: 8, points: 4, seme: "denari", nome: "re" },
+
+	    11: { value: 10, points: 11, seme: "spade", nome: "asso" },
+	    12: { value: 1, points: 0, seme: "spade", nome: "due" },
+	    13: { value: 9, points: 10, seme: "spade", nome: "tre" },
+	    14: { value: 2, points: 0, seme: "spade", nome: "quattro" },
+	    15: { value: 3, points: 0, seme: "spade", nome: "cinque" },
+	    16: { value: 4, points: 0, seme: "spade", nome: "sei" },
+	    17: { value: 5, points: 0, seme: "spade", nome: "sette" },
+	    18: { value: 6, points: 2, seme: "spade", nome: "donna" },
+	    19: { value: 7, points: 3, seme: "spade", nome: "cavallo" },
+	    20: { value: 8, points: 4, seme: "spade", nome: "re" },
+
+	    21: { value: 10, points: 11, seme: "coppe", nome: "asso" },
+	    22: { value: 1, points: 0, seme: "coppe", nome: "due" },
+	    23: { value: 9, points: 10, seme: "coppe", nome: "tre" },
+	    24: { value: 2, points: 0, seme: "coppe", nome: "quattro" },
+	    25: { value: 3, points: 0, seme: "coppe", nome: "cinque" },
+	    26: { value: 4, points: 0, seme: "coppe", nome: "sei" },
+	    27: { value: 5, points: 0, seme: "coppe", nome: "sette" },
+	    28: { value: 6, points: 2, seme: "coppe", nome: "donna" },
+	    29: { value: 7, points: 3, seme: "coppe", nome: "cavallo" },
+	    30: { value: 8, points: 4, seme: "coppe", nome: "re" },
+
+	    31: { value: 10, points: 11, seme: "bastoni", nome: "asso" },
+	    32: { value: 1, points: 0, seme: "bastoni", nome: "due" },
+	    33: { value: 9, points: 10, seme: "bastoni", nome: "tre" },
+	    34: { value: 2, points: 0, seme: "bastoni", nome: "quattro" },
+	    35: { value: 3, points: 0, seme: "bastoni", nome: "cinque" },
+	    36: { value: 4, points: 0, seme: "bastoni", nome: "sei" },
+	    37: { value: 5, points: 0, seme: "bastoni", nome: "sette" },
+	    38: { value: 6, points: 2, seme: "bastoni", nome: "donna" },
+	    39: { value: 7, points: 3, seme: "bastoni", nome: "cavallo" },
+	    40: { value: 8, points: 4, seme: "bastoni", nome: "re" }
+
+	};
+
+	exports.default = cards;
+
+/***/ },
+/* 230 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -24635,63 +24731,50 @@
 	exports.default = matchMiddleware;
 
 /***/ },
-/* 230 */
-/***/ function(module, exports) {
+/* 231 */
+/***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+		value: true
 	});
-	var cards = {
+	exports.Card = undefined;
 
-	    1: { value: 10, points: 11, seme: "denari", nome: "asso" },
-	    2: { value: 1, points: 0, seme: "denari", nome: "due" },
-	    3: { value: 9, points: 10, seme: "denari", nome: "tre" },
-	    4: { value: 2, points: 0, seme: "denari", nome: "quattro" },
-	    5: { value: 3, points: 0, seme: "denari", nome: "cinque" },
-	    6: { value: 4, points: 0, seme: "denari", nome: "sei" },
-	    7: { value: 5, points: 0, seme: "denari", nome: "sette" },
-	    8: { value: 6, points: 2, seme: "denari", nome: "donna" },
-	    9: { value: 7, points: 3, seme: "denari", nome: "cavallo" },
-	    10: { value: 8, points: 4, seme: "denari", nome: "re" },
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	    11: { value: 10, points: 11, seme: "spade", nome: "asso" },
-	    12: { value: 1, points: 0, seme: "spade", nome: "due" },
-	    13: { value: 9, points: 10, seme: "spade", nome: "tre" },
-	    14: { value: 2, points: 0, seme: "spade", nome: "quattro" },
-	    15: { value: 3, points: 0, seme: "spade", nome: "cinque" },
-	    16: { value: 4, points: 0, seme: "spade", nome: "sei" },
-	    17: { value: 5, points: 0, seme: "spade", nome: "sette" },
-	    18: { value: 6, points: 2, seme: "spade", nome: "donna" },
-	    19: { value: 7, points: 3, seme: "spade", nome: "cavallo" },
-	    20: { value: 8, points: 4, seme: "spade", nome: "re" },
+	var _react = __webpack_require__(2);
 
-	    21: { value: 10, points: 11, seme: "coppe", nome: "asso" },
-	    22: { value: 1, points: 0, seme: "coppe", nome: "due" },
-	    23: { value: 9, points: 10, seme: "coppe", nome: "tre" },
-	    24: { value: 2, points: 0, seme: "coppe", nome: "quattro" },
-	    25: { value: 3, points: 0, seme: "coppe", nome: "cinque" },
-	    26: { value: 4, points: 0, seme: "coppe", nome: "sei" },
-	    27: { value: 5, points: 0, seme: "coppe", nome: "sette" },
-	    28: { value: 6, points: 2, seme: "coppe", nome: "donna" },
-	    29: { value: 7, points: 3, seme: "coppe", nome: "cavallo" },
-	    30: { value: 8, points: 4, seme: "coppe", nome: "re" },
+	var _react2 = _interopRequireDefault(_react);
 
-	    31: { value: 10, points: 11, seme: "bastoni", nome: "asso" },
-	    32: { value: 1, points: 0, seme: "bastoni", nome: "due" },
-	    33: { value: 9, points: 10, seme: "bastoni", nome: "tre" },
-	    34: { value: 2, points: 0, seme: "bastoni", nome: "quattro" },
-	    35: { value: 3, points: 0, seme: "bastoni", nome: "cinque" },
-	    36: { value: 4, points: 0, seme: "bastoni", nome: "sei" },
-	    37: { value: 5, points: 0, seme: "bastoni", nome: "sette" },
-	    38: { value: 6, points: 2, seme: "bastoni", nome: "donna" },
-	    39: { value: 7, points: 3, seme: "bastoni", nome: "cavallo" },
-	    40: { value: 8, points: 4, seme: "bastoni", nome: "re" }
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	};
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	exports.default = cards;
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Card = exports.Card = function (_React$Component) {
+		_inherits(Card, _React$Component);
+
+		function Card() {
+			_classCallCheck(this, Card);
+
+			return _possibleConstructorReturn(this, (Card.__proto__ || Object.getPrototypeOf(Card)).apply(this, arguments));
+		}
+
+		_createClass(Card, [{
+			key: 'render',
+			value: function render() {
+				return _react2.default.createElement('img', { src: this.props.src, className: 'card' });
+			}
+		}]);
+
+		return Card;
+	}(_react2.default.Component);
+
+	exports.default = Card;
 
 /***/ }
 /******/ ]);

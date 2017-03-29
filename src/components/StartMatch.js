@@ -11,7 +11,7 @@ import { playAuctionBot,
 class StartMatch extends React.Component {
 	render () {	
 		return (
-			<button onClick={ this.props.startMatch}>Start Match</button>
+			<li className='col-xs-2'> <button onClick={ this.props.startMatch}>Start Match</button> </li>
 		)
 	}
 }  
