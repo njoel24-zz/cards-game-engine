@@ -7,11 +7,12 @@ import { playAuctionBot,
 	 endAuction, 
 	 changeTurnAuction } from '../actions/auction'
 
-
 class StartMatch extends React.Component {
 	render () {	
 		return (
-			<li className='col-xs-2'> <button onClick={ this.props.startMatch}>Start Match</button> </li>
+			<li className='col-xs-2'> 
+				<button onClick={ this.props.startMatch}>Start Match</button>
+			</li>
 		)
 	}
 }  

@@ -6,10 +6,10 @@ class Me extends React.Component {
 
 render () {
 	return (
-		<ul className='row common-cards'>
+		<ul className='row me'>
     		{this.props.players[this.props.me].cards.map(c =>
   				<li className='col-xs-1' key={c}>
-							<Card src={'img/'+c+'.jpg'} />
+							<Card card={c}  />
 					</li>
     		)}
 				<li className='col-xs-2'>Timer</li>

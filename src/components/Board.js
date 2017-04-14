@@ -18,7 +18,7 @@ class Board extends React.Component {
     this.prepareAsyncAction(1000)  
 
     return (
-    <div className='container'>
+    <div className='board'>
       <Players/>
       <Common />
     	<Me/>

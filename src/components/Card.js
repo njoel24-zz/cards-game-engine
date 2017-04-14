@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { Component } from 'react';
 
 export class Card extends React.Component {
 
 render () {
 	return (
-        <img src={this.props.src} className='card'/>
+        <img className={(this.props.card === 0) ? 'hidden': 'card'}  src={'img/'+this.props.card+'.jpg'} />
 		)
 	}
 }  
