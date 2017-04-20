@@ -15,7 +15,9 @@ class Board extends React.Component {
 	
   render() {
     
-    this.prepareAsyncAction(1000)  
+    if(this.props.inTurn !== this.props.me) {
+      this.prepareAsyncAction(1000)  
+    }
 
     return (
     <div className='board'>

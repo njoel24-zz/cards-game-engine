@@ -50,7 +50,9 @@ const matchReducer = (state = [], action) => {
     case 'PLAY':
       console.log("Play");
       return {
-        ...state
+        ...state,
+          inTurn: action.inTurn,
+          match: { ...state.match, cardsPlayed: action.cardsPlayed, isTurnFinished: action.turnFinished }           
       }
 
     case 'PLAY_BOT':
@@ -88,8 +90,24 @@ const matchReducer = (state = [], action) => {
 
     case 'PLAY_AUCTION':
       console.log("Play Auction");
+      newPlayers = [...state.players]
+        newPlayers[state.inTurn].auction = action.auctionForUser
+        return {
+          ...state,
+          inTurn: action.inTurn,
+          players: newPlayers,
+          auction: { ...state.auction, winner: action.winnerAuction }
+        }
+
+    case 'EXIT_AUCTION':
+      console.log("Exit Auction");
+      let newPlayers = [...state.players]
+      newPlayers[state.inTurn].auction.isIn = action.inAuction
       return {
-        ...state
+        ...state,
+        players: newPlayers,
+        inTurn: action.inTurn,
+        auction: { ...state.auction, winner: action.winnerAuction }
     }
 
     case 'CHANGE_TURN_AUCTION':
@@ -102,7 +120,7 @@ const matchReducer = (state = [], action) => {
 
     case 'PLAY_AUCTION_BOT':
       console.log("PLAY_AUCTION_BOT:"+ state.inTurn+ "isIn:"+action.inAuction);
-        let newPlayers = [...state.players]
+        newPlayers = [...state.players]
         newPlayers[state.inTurn].auction = action.auctionForUser
         return {
           ...state,

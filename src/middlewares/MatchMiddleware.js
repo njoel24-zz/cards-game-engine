@@ -9,6 +9,9 @@ const matchMiddleware = store => next => action => {
       action.cardsPlayed = resetCardsPlayed()
     break
 		case 'PLAY':
+      action.cardsPlayed = playCardOnTheTable(action.value),
+      action.inTurn = getNextInTurn(),
+      action.turnFinished = isTurnFinished()
     break
 		case 'PLAY_BOT':
 			action.cardsPlayed = playCardOnTheTable(),
@@ -41,6 +44,15 @@ const matchMiddleware = store => next => action => {
       action.winnerAuction = getWinnerAuction()
     break
 		case 'PLAY_AUCTION':
+    	action.inAuction = isUserInAuction(),
+			action.auctionForUser = setAuctionForUser(action.value),
+      action.inTurn = getNextInTurn(),
+      action.winnerAuction = getWinnerAuction()
+    break
+    case 'EXIT_AUCTION':
+    	action.inAuction = false,
+      action.inTurn = getNextInTurn(),
+      action.winnerAuction = getWinnerAuction()
     break
 		case 'END_AUCTION':
       action.compagno = getCompagno(),
@@ -80,8 +92,13 @@ const matchMiddleware = store => next => action => {
       return compagno;
     }
 
-  function playCardOnTheTable(){
-      let c = getCardToPlay()
+  function playCardOnTheTable(cardToPlay = null){
+      let c = null;
+      if (!cardToPlay) {
+        c = getCardToPlay()
+      } else {
+        c = cardToPlay
+      }
       var newCardsPlayed = state.match.cardsPlayed
       return newCardsPlayed.map( card => {
         if(card.id == state.inTurn){
@@ -196,10 +213,18 @@ const matchMiddleware = store => next => action => {
     }
 
 
-    function setAuctionForUser() {
+    function setAuctionForUser(value = null) {
+      const biggestAuction = getBiggestAuction(state.players);
+
+      if(value){
+        if(value > biggestAuction) {
+          state.players[state.inTurn].auction = value
+        } else {
+          return state.players[state.inTurn].auction
+        }
+      }
 
       if(state.players[state.inTurn].auction.isIn === true) {
-        const biggestAuction = getBiggestAuction(state.players);
         return getAIChoice(state.players[state.inTurn].auction, biggestAuction)
       } else {
         return state.players[state.inTurn].auction

@@ -4,8 +4,13 @@ export const playAuctionBot = () => ({
   inAuction: undefined
 })
 
-export const playAuction = () => ({
-  type: 'PLAY_AUCTION'
+export const playAuction = (value) => ({
+  type: 'PLAY_AUCTION',
+  value: value
+})
+
+export const exitAuction = () => ({
+  type: 'EXIT_AUCTION'
 })
 
 export const changeTurnAuction = () => ({
