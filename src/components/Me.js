@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { Card } from './Card'
+import Card from './Card'
 import  ChoosePoints  from './ChoosePoints'
 class Me extends React.Component {
 

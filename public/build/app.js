@@ -24874,20 +24874,16 @@
 	var _reactRedux=__webpack_require__(204);
 	var _match=__webpack_require__(182);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function");}}function _possibleConstructorReturn(self,call){if(!self){throw new ReferenceError("this hasn't been initialised - super() hasn't been called");}return call&&(typeof call==="object"||typeof call==="function")?call:self;}function _inherits(subClass,superClass){if(typeof superClass!=="function"&&superClass!==null){throw new TypeError("Super expression must either be null or a function, not "+typeof superClass);}subClass.prototype=Object.create(superClass&&superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__=superClass;}var
 
-	Card=exports.Card=function(_React$Component){_inherits(Card,_React$Component);function Card(){_classCallCheck(this,Card);return _possibleConstructorReturn(this,(Card.__proto__||Object.getPrototypeOf(Card)).apply(this,arguments));}_createClass(Card,[{key:'play',value:function play(
+	Card=exports.Card=function(_React$Component){_inherits(Card,_React$Component);function Card(){_classCallCheck(this,Card);return _possibleConstructorReturn(this,(Card.__proto__||Object.getPrototypeOf(Card)).apply(this,arguments));}_createClass(Card,[{key:'render',value:function render()
 
-	card){
-	dispatch((0,_match.play)(card));
-	this.props.card=0;
-	}},{key:'render',value:function render()
 
 	{
 	return(
 	_react2.default.createElement('div',null,
 	this.props.animate?
-	_react2.default.createElement('img',{className:this.props.card===0?'hidden':'card',onClick:this.play.bind(this,this.props.card),src:'img/'+this.props.card+'.jpg'}):
+	_react2.default.createElement('img',{id:this.props.card,className:this.props.card===0||this.props.card===undefined?'hidden':'card',onClick:this.props.play,src:'img/'+this.props.card+'.jpg'}):
 
-	_react2.default.createElement('img',{className:this.props.card===0?'hidden':'card',src:'img/'+this.props.card+'.jpg'})));
+	_react2.default.createElement('img',{className:this.props.card===0||this.props.card===undefined?'hidden':'card',src:'img/'+this.props.card+'.jpg'})));
 
 
 
@@ -24904,8 +24900,8 @@
 
 	var mapDispatchToProps=function mapDispatchToProps(dispatch,ownProps){
 	return{
-	play:function play(card){
-	dispatch((0,_match.play)(card));
+	play:function play(){
+	dispatch((0,_match.play)(ownProps.card));
 	}};
 
 	};exports.default=
@@ -24987,7 +24983,7 @@
 	'use strict';Object.defineProperty(exports,"__esModule",{value:true});var _createClass=function(){function defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};}();var _react=__webpack_require__(2);var _react2=_interopRequireDefault(_react);
 	var _reactRedux=__webpack_require__(204);
 
-	var _Card=__webpack_require__(230);
+	var _Card=__webpack_require__(230);var _Card2=_interopRequireDefault(_Card);
 	var _ChoosePoints=__webpack_require__(234);var _ChoosePoints2=_interopRequireDefault(_ChoosePoints);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function");}}function _possibleConstructorReturn(self,call){if(!self){throw new ReferenceError("this hasn't been initialised - super() hasn't been called");}return call&&(typeof call==="object"||typeof call==="function")?call:self;}function _inherits(subClass,superClass){if(typeof superClass!=="function"&&superClass!==null){throw new TypeError("Super expression must either be null or a function, not "+typeof superClass);}subClass.prototype=Object.create(superClass&&superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__=superClass;}var
 	Me=function(_React$Component){_inherits(Me,_React$Component);function Me(){_classCallCheck(this,Me);return _possibleConstructorReturn(this,(Me.__proto__||Object.getPrototypeOf(Me)).apply(this,arguments));}_createClass(Me,[{key:'render',value:function render()
 
@@ -24999,7 +24995,7 @@
 
 	this.props.players[this.props.me].cards.map(function(c){return(
 	_react2.default.createElement('li',{className:'col-xs-1',key:c},
-	_react2.default.createElement(_Card.Card,{card:c,animate:_this2.props.me==_this2.props.inTurn&&_this2.props.area=="match"})));}),
+	_react2.default.createElement(_Card2.default,{card:c,animate:_this2.props.me==_this2.props.inTurn&&_this2.props.area=="match"})));}),
 
 
 	_react2.default.createElement('li',{className:'col-xs-2'},'Info')));
@@ -25136,8 +25132,16 @@
 
 	case'PLAY':
 	console.log("Play");
+	newPlayers=[].concat(_toConsumableArray(state.players));
+	newPlayers[state.inTurn].cards=newPlayers[state.inTurn].cards.map(function(card){
+	if(card!==action.cardPlayed){
+	return card;
+	}
+	});
+
 	return _extends({},
 	state,{
+	players:newPlayers,
 	inTurn:action.inTurn,
 	match:_extends({},state.match,{cardsPlayed:action.cardsPlayed,isTurnFinished:action.turnFinished})});
 
@@ -25169,6 +25173,7 @@
 
 	case'END_AUCTION':
 	console.log("end auction");
+	console.log(state);
 	return _extends({},
 	state,{
 	area:action.area,
@@ -25240,6 +25245,7 @@
 	break;
 	case'PLAY':
 	action.cardsPlayed=playCardOnTheTable(action.value),
+	action.cardPlayed=action.value,
 	action.inTurn=getNextInTurn(),
 	action.turnFinished=isTurnFinished();
 	break;
@@ -25274,7 +25280,7 @@
 	action.winnerAuction=getWinnerAuction();
 	break;
 	case'PLAY_AUCTION':
-	action.inAuction=isUserInAuction(),
+	action.inAuction=true,
 	action.auctionForUser=setAuctionForUser(action.value),
 	action.inTurn=getNextInTurn(),
 	action.winnerAuction=getWinnerAuction();
@@ -25448,7 +25454,7 @@
 
 	if(value){
 	if(value>biggestAuction){
-	state.players[state.inTurn].auction=value;
+	return{points:value,isIn:true};
 	}else{
 	return state.players[state.inTurn].auction;
 	}

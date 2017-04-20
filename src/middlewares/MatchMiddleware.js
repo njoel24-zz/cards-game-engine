@@ -10,6 +10,7 @@ const matchMiddleware = store => next => action => {
     break
 		case 'PLAY':
       action.cardsPlayed = playCardOnTheTable(action.value),
+      action.cardPlayed = action.value,
       action.inTurn = getNextInTurn(),
       action.turnFinished = isTurnFinished()
     break
@@ -44,7 +45,7 @@ const matchMiddleware = store => next => action => {
       action.winnerAuction = getWinnerAuction()
     break
 		case 'PLAY_AUCTION':
-    	action.inAuction = isUserInAuction(),
+    	action.inAuction = true,
 			action.auctionForUser = setAuctionForUser(action.value),
       action.inTurn = getNextInTurn(),
       action.winnerAuction = getWinnerAuction()
@@ -218,7 +219,7 @@ const matchMiddleware = store => next => action => {
 
       if(value){
         if(value > biggestAuction) {
-          state.players[state.inTurn].auction = value
+          return  {points:value, isIn:true}
         } else {
           return state.players[state.inTurn].auction
         }

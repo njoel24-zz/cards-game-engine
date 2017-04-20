@@ -49,8 +49,16 @@ const matchReducer = (state = [], action) => {
 
     case 'PLAY':
       console.log("Play");
+      newPlayers = [...state.players]
+      newPlayers[state.inTurn].cards = newPlayers[state.inTurn].cards.map((card) => {
+        if(card!==action.cardPlayed) {
+          return card
+        }
+      }) 
+
       return {
         ...state,
+          players: newPlayers,
           inTurn: action.inTurn,
           match: { ...state.match, cardsPlayed: action.cardsPlayed, isTurnFinished: action.turnFinished }           
       }
@@ -81,7 +89,8 @@ const matchReducer = (state = [], action) => {
     break;
 
     case 'END_AUCTION':
-    console.log("end auction")    
+    console.log("end auction")   
+    console.log(state) 
       return {
         ...state,
         area: action.area,

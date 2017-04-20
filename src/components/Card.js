@@ -4,18 +4,14 @@ import { play } from '../actions/match'
 
 export class Card extends React.Component {
 
-play(card){
-	dispatch(play(card));
-	this.props.card=0;
-}	
 
 render () {
 	return (
 		<div>
 		{ this.props.animate ?
-        (<img className={(this.props.card === 0) ? 'hidden': 'card'} onClick={this.play.bind(this, this.props.card)}  src={'img/'+this.props.card+'.jpg'} />)
+        (<img id={this.props.card} className={(this.props.card === 0 || this.props.card === undefined) ? 'hidden': 'card'} onClick={this.props.play}  src={'img/'+this.props.card+'.jpg'} />)
 		:
-		(<img className={(this.props.card === 0) ? 'hidden': 'card'}  src={'img/'+this.props.card+'.jpg'} />)
+		(<img className={(this.props.card === 0  || this.props.card === undefined) ? 'hidden': 'card'}  src={'img/'+this.props.card+'.jpg'} />)
 		}
 		</div>
 		)
@@ -32,8 +28,8 @@ const mapStateToProps = function(store) {
 
 const mapDispatchToProps = function(dispatch, ownProps) {
   return {
-    play: (card) => {
-      dispatch(play(card));
+    play: () => {
+      dispatch(play(ownProps.card));
     }
   }
 }
