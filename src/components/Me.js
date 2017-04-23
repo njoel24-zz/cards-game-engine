@@ -9,7 +9,10 @@ render () {
 	return (
 		<ul className='row me'>
 				<li>
-					<ChoosePoints show={(this.props.me==this.props.inTurn) && this.props.area == "auction" }  />
+					<ChooseCompagno show={(this.props.me==this.props.inTurn) && this.props.area == "auction" && this.props.winnerAuction != undefined }  />
+				</li>
+				<li>
+					<ChoosePoints show={(this.props.me==this.props.inTurn) && this.props.area == "auction"  && this.props.winnerAuction == undefined }  />
 				</li>
     		{this.props.players[this.props.me].cards.map(c =>
   				<li className='col-xs-1' key={c}>
@@ -27,7 +30,8 @@ const mapStateToProps = function(store) {
     players: store.players,
 		me: store.me,
 		inTurn: store.inTurn,
-		area: store.area
+		area: store.area,
+		winnerAuction: store.auction.winnerAuction
   };
 }
 

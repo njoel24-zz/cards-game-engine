@@ -8,14 +8,9 @@ export const startMatch = () => ({
   shuffleCards: undefined
 })
 
-export const play = (value) => ({
+export const play = (value = null) => ({
   type: 'PLAY',
   value: value
-})
-
-export const playBot = () => ({
-  type: 'PLAY_BOT',
-  cardsPlayed: undefined
 })
 
 export const changeTurn = () => ({

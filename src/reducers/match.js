@@ -19,6 +19,7 @@ const matchReducer = (state = [], action) => {
         me: 4,
         area: 'auction',
         isStart: false,
+        alleato: undefined,
         cards: cards
       }
 
@@ -36,6 +37,8 @@ const matchReducer = (state = [], action) => {
 
     case 'END_TURN':
       console.log("End turn");
+      newPlayers = [...state.players]
+      newPlayers[action.winnerTurn.winner].points += action.winnerTurn.winner.totalPoints
       return {
         ...state,
         match: { ...state.match, 
@@ -43,7 +46,7 @@ const matchReducer = (state = [], action) => {
                  inTurn: action.inTurn,
                  cardsPlayed: action.cardsPlayed,
                  turns: action.turns, isTurnFinished: false },
-                players: action.players,
+                players: newPlayers,
                 isFinished: action.finishedMatch
       }
 
@@ -63,14 +66,6 @@ const matchReducer = (state = [], action) => {
           match: { ...state.match, cardsPlayed: action.cardsPlayed, isTurnFinished: action.turnFinished }           
       }
 
-    case 'PLAY_BOT':
-      console.log("Play_BOT");
-       return {
-          ...state,
-          inTurn: action.inTurn,
-          match: { ...state.match, cardsPlayed: action.cardsPlayed, isTurnFinished: action.turnFinished }           
-      }      
-
     case 'CHANGE_TURN':
     console.log("Change Turn")
     return {
@@ -88,13 +83,26 @@ const matchReducer = (state = [], action) => {
       }
     break;
 
-    case 'END_AUCTION':
-    console.log("end auction")   
-    console.log(state) 
-      return {
-        ...state,
-        area: action.area,
-        auction: { ...state.auction, seed: action.seed, compagno: action.compagno }
+
+    case 'PLAY_AUCTION':
+      console.log("Play Auction");
+      newPlayers = [...state.players]
+        newPlayers[state.inTurn].auction = action.auctionForUser
+        return {
+          ...state,
+          inTurn: action.inTurn,
+          players: newPlayers,
+          auction: { ...state.auction, winner: action.winnerAuction }
+    }
+
+   case 'CHOOSE_COMPAGNO':
+      console.log("Choose Compagno");
+        return {
+         ...state,
+         inTurn: action.inTurn,
+         area: action.area,
+         alleato: action.alleato,
+         auction: { ...state.auction, compagno: action.compagno, seed: action.seed }
     }
 
     case 'PLAY_AUCTION':
@@ -106,7 +114,7 @@ const matchReducer = (state = [], action) => {
           inTurn: action.inTurn,
           players: newPlayers,
           auction: { ...state.auction, winner: action.winnerAuction }
-        }
+    }
 
     case 'EXIT_AUCTION':
       console.log("Exit Auction");
@@ -127,16 +135,7 @@ const matchReducer = (state = [], action) => {
         auction: { ...state.auction, winner: action.winnerAuction }
     }
 
-    case 'PLAY_AUCTION_BOT':
-      console.log("PLAY_AUCTION_BOT:"+ state.inTurn+ "isIn:"+action.inAuction);
-        newPlayers = [...state.players]
-        newPlayers[state.inTurn].auction = action.auctionForUser
-        return {
-          ...state,
-          inTurn: action.inTurn,
-          players: newPlayers,
-          auction: { ...state.auction, winner: action.winnerAuction }
-        }
+    
 
     default:
       return state

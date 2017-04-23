@@ -21694,14 +21694,9 @@
 	shuffleCards:undefined};};
 
 
-	var play=exports.play=function play(value){return{
+	var play=exports.play=function play(){var value=arguments.length>0&&arguments[0]!==undefined?arguments[0]:null;return{
 	type:'PLAY',
 	value:value};};
-
-
-	var playBot=exports.playBot=function playBot(){return{
-	type:'PLAY_BOT',
-	cardsPlayed:undefined};};
 
 
 	var changeTurn=exports.changeTurn=function changeTurn(){return{
@@ -24710,9 +24705,9 @@
 	timeout){
 	if(this.props.isStart&&this.props.area==="auction"){
 	if(this.props.auction.winner!==undefined){
-	setTimeout(this.props.endAuction.bind(this),timeout);
+	setTimeout(this.props.chooseCompagno.bind(this),timeout);
 	}else{
-	setTimeout(this.props.playAuctionBot.bind(this),timeout);
+	setTimeout(this.props.playAuction.bind(this),timeout);
 	}
 	}else if(this.props.isStart&&this.props.area==="match"){
 	if(this.props.isFinished){
@@ -24720,7 +24715,7 @@
 	}else if(this.props.match.isTurnFinished){
 	setTimeout(this.props.endTurn.bind(this),timeout);
 	}else{
-	setTimeout(this.props.playBot.bind(this),timeout);
+	setTimeout(this.props.play.bind(this),timeout);
 	}
 	}else if(!this.props.isStart&&this.props.area==="match"){
 	setTimeout(this.props.initMatch.bind(this),timeout);
@@ -24752,20 +24747,20 @@
 	setWinner:function setWinner(){
 	dispatch((0,_match.setWinner)());
 	},
-	playBot:function playBot(){
-	dispatch((0,_match.playBot)());
+	play:function play(){
+	dispatch((0,_match.play)());
 	},
 	changeTurn:function changeTurn(){
 	dispatch((0,_match.changeTurn)());
 	},
-	playAuctionBot:function playAuctionBot(){
-	dispatch((0,_auction.playAuctionBot)());
+	playAuction:function playAuction(){
+	dispatch((0,_auction.playAuction)());
 	},
 	changeTurnAuction:function changeTurnAuction(){
 	dispatch((0,_auction.changeTurnAuction)());
 	},
-	endAuction:function endAuction(){
-	dispatch((0,_auction.endAuction)());
+	chooseCompagno:function chooseCompagno(){
+	dispatch((0,_auction.chooseCompagno)());
 	},
 	endTurn:function endTurn(){
 	dispatch((0,_match.endTurn)());
@@ -24950,15 +24945,16 @@
 /* 232 */
 /***/ (function(module, exports) {
 
-	'use strict';Object.defineProperty(exports,"__esModule",{value:true});var playAuctionBot=exports.playAuctionBot=function playAuctionBot(){return{
-	type:'PLAY_AUCTION_BOT',
-	newPlayers:undefined,
-	inAuction:undefined};};
-
-
-	var playAuction=exports.playAuction=function playAuction(value){return{
+	'use strict';Object.defineProperty(exports,"__esModule",{value:true});var playAuction=exports.playAuction=function playAuction(value){return{
 	type:'PLAY_AUCTION',
 	value:value};};
+
+
+	var chooseCompagno=exports.chooseCompagno=function chooseCompagno(){var value=arguments.length>0&&arguments[0]!==undefined?arguments[0]:null;return{
+	type:'CHOOSE_COMPAGNO',
+	compagno:value,
+	newArea:undefined,
+	seed:undefined};};
 
 
 	var exitAuction=exports.exitAuction=function exitAuction(){return{
@@ -24969,12 +24965,6 @@
 	type:'CHANGE_TURN_AUCTION',
 	inTurn:undefined,
 	winner:undefined};};
-
-
-	var endAuction=exports.endAuction=function endAuction(){return{
-	type:'END_AUCTION',
-	newArea:undefined,
-	seed:undefined};};
 
 /***/ }),
 /* 233 */
@@ -24991,7 +24981,10 @@
 	return(
 	_react2.default.createElement('ul',{className:'row me'},
 	_react2.default.createElement('li',null,
-	_react2.default.createElement(_ChoosePoints2.default,{show:this.props.me==this.props.inTurn&&this.props.area=="auction"})),
+	_react2.default.createElement(ChooseCompagno,{show:this.props.me==this.props.inTurn&&this.props.area=="auction"&&this.props.winnerAuction!=undefined})),
+
+	_react2.default.createElement('li',null,
+	_react2.default.createElement(_ChoosePoints2.default,{show:this.props.me==this.props.inTurn&&this.props.area=="auction"&&this.props.winnerAuction==undefined})),
 
 	this.props.players[this.props.me].cards.map(function(c){return(
 	_react2.default.createElement('li',{className:'col-xs-1',key:c},
@@ -25009,7 +25002,8 @@
 	players:store.players,
 	me:store.me,
 	inTurn:store.inTurn,
-	area:store.area};
+	area:store.area,
+	winnerAuction:store.auction.winnerAuction};
 
 	};exports.default=
 
@@ -25102,6 +25096,7 @@
 	me:4,
 	area:'auction',
 	isStart:false,
+	alleato:undefined,
 	cards:_cards2.default};
 
 
@@ -25119,6 +25114,8 @@
 
 	case'END_TURN':
 	console.log("End turn");
+	newPlayers=[].concat(_toConsumableArray(state.players));
+	newPlayers[action.winnerTurn.winner].points+=action.winnerTurn.winner.totalPoints;
 	return _extends({},
 	state,{
 	match:_extends({},state.match,{
@@ -25126,7 +25123,7 @@
 	inTurn:action.inTurn,
 	cardsPlayed:action.cardsPlayed,
 	turns:action.turns,isTurnFinished:false}),
-	players:action.players,
+	players:newPlayers,
 	isFinished:action.finishedMatch});
 
 
@@ -25142,14 +25139,6 @@
 	return _extends({},
 	state,{
 	players:newPlayers,
-	inTurn:action.inTurn,
-	match:_extends({},state.match,{cardsPlayed:action.cardsPlayed,isTurnFinished:action.turnFinished})});
-
-
-	case'PLAY_BOT':
-	console.log("Play_BOT");
-	return _extends({},
-	state,{
 	inTurn:action.inTurn,
 	match:_extends({},state.match,{cardsPlayed:action.cardsPlayed,isTurnFinished:action.turnFinished})});
 
@@ -25171,13 +25160,26 @@
 
 	break;
 
-	case'END_AUCTION':
-	console.log("end auction");
-	console.log(state);
+
+	case'PLAY_AUCTION':
+	console.log("Play Auction");
+	newPlayers=[].concat(_toConsumableArray(state.players));
+	newPlayers[state.inTurn].auction=action.auctionForUser;
 	return _extends({},
 	state,{
+	inTurn:action.inTurn,
+	players:newPlayers,
+	auction:_extends({},state.auction,{winner:action.winnerAuction})});
+
+
+	case'CHOOSE_COMPAGNO':
+	console.log("Choose Compagno");
+	return _extends({},
+	state,{
+	inTurn:action.inTurn,
 	area:action.area,
-	auction:_extends({},state.auction,{seed:action.seed,compagno:action.compagno})});
+	alleato:action.alleato,
+	auction:_extends({},state.auction,{compagno:action.compagno,seed:action.seed})});
 
 
 	case'PLAY_AUCTION':
@@ -25210,15 +25212,6 @@
 	auction:_extends({},state.auction,{winner:action.winnerAuction})});
 
 
-	case'PLAY_AUCTION_BOT':
-	console.log("PLAY_AUCTION_BOT:"+state.inTurn+"isIn:"+action.inAuction);
-	newPlayers=[].concat(_toConsumableArray(state.players));
-	newPlayers[state.inTurn].auction=action.auctionForUser;
-	return _extends({},
-	state,{
-	inTurn:action.inTurn,
-	players:newPlayers,
-	auction:_extends({},state.auction,{winner:action.winnerAuction})});
 
 
 	default:
@@ -25249,18 +25242,12 @@
 	action.inTurn=getNextInTurn(),
 	action.turnFinished=isTurnFinished();
 	break;
-	case'PLAY_BOT':
-	action.cardsPlayed=playCardOnTheTable(),
-	action.inTurn=getNextInTurn(),
-	action.turnFinished=isTurnFinished();
-	break;
 	case'CHANGE_TURN':
 	action.inTurn=getNextInTurn(),
 	action.turnFinished=isTurnFinished();
 	break;
 	case'END_TURN':
 	action.winnerTurn=getWinnerTurn(),
-	action.players=getPlayers(action.winnerTurn),
 	action.inTurn=getNextInTurn(),
 	action.cardsPlayed=resetCardsPlayed(),
 	action.finishedMatch=isMatchFinished(),
@@ -25269,46 +25256,39 @@
 	case'SET_WINNER':
 	action.winner=setWinnerMatch();
 	break;
-	case'PLAY_AUCTION_BOT':
-	action.inAuction=isUserInAuction(),
-	action.auctionForUser=setAuctionForUser(),
-	action.inTurn=getNextInTurn(),
-	action.winnerAuction=getWinnerAuction();
-	break;
 	case'CHANGE_TURN_AUCTION':
 	action.inTurn=getNextInTurn(),
 	action.winnerAuction=getWinnerAuction();
 	break;
 	case'PLAY_AUCTION':
-	action.inAuction=true,
+	action.inAuction=isUserInAuction(),
 	action.auctionForUser=setAuctionForUser(action.value),
 	action.inTurn=getNextInTurn(),
 	action.winnerAuction=getWinnerAuction();
+	break;
+	case'CHOOSE_COMPAGNO':
+	action.compagno=chooseCompagno(action.value),
+	action.inTurn=getNextInTurn(),
+	action.area='match',
+	action.seed=getChoosenSeed(),
+
+	action.alleato=getAlleato();
 	break;
 	case'EXIT_AUCTION':
 	action.inAuction=false,
 	action.inTurn=getNextInTurn(),
 	action.winnerAuction=getWinnerAuction();
-	break;
-	case'END_AUCTION':
-	action.compagno=getCompagno(),
-	action.area='match',
-	action.seed=getSeed();
 	break;}
 
 
-	function getPlayers(winnerTurno){
-	return state.players.map(function(player){
-	if(player.id===winnerTurno.winner){
-	player.points=winnerTurno.totalPoints;
-	return player;
-	}else{
-	return player;
-	}
-	});
-	}
 
 	function getNextInTurn(){
+	if(state.area=="auction"&&state.auction.winnerAuction!=undefined){
+	return state.auction.winnerAuction;
+	}
+	if(state.area=="match"&&state.match.winnerTurn!=undefined&&state.match.cardsPlayed[state.match.winnerTurn]==undefined){
+	return state.match.winnerTurn;
+	}
 	var next=(state.inTurn+1)%5;
 	return next;
 	}
@@ -25318,79 +25298,7 @@
 	return next;
 	}
 
-	function getCompagno(){
-	var compagno=-1;
-	state.players.map(function(player){
-	if(player.cards.filter(function(card){card===state.auction.compagno;}).length>0){
-	compagno=player.id;
-	}
-	});
-	return compagno;
-	}
 
-	function playCardOnTheTable(){var cardToPlay=arguments.length>0&&arguments[0]!==undefined?arguments[0]:null;
-	var c=null;
-	if(!cardToPlay){
-	c=getCardToPlay();
-	}else{
-	c=cardToPlay;
-	}
-	var newCardsPlayed=state.match.cardsPlayed;
-	return newCardsPlayed.map(function(card){
-	if(card.id==state.inTurn){
-	card.value=c;
-	}
-	return card;
-	});
-	}
-
-	function setWinnerMatch(){
-	var team1=0,team2=0;
-	for(var i=0;i<state.players.length;i++){
-	var player=state.players[i];
-	if(player.id===state.auction.winner||player.id===state.auction.compagno){
-	team1+=player.points;
-	}else{
-	team2+=player.points;
-	}
-	}
-	if(team1>team2){
-	return"chiamante";
-	}else{
-	return"others";
-	}
-	}
-
-	function isTurnFinished(){
-	var res=state.match.cardsPlayed.filter(function(c){return c.value==0;});
-	return res.length==0;
-	}
-
-	function isMatchFinished(){
-	return state.match.turns===8;
-	}
-
-	function getWinnerTurn(){
-	var maxValue=0;
-	var winner=0;
-	var totalPoints=0;
-	for(var i=0;i<state.match.cardsPlayed.length;i++){
-	var c=state.match.cardsPlayed[i];
-	var valueCurrentcard=0;
-	if(state.auction.seed===state.cards[c.value].seme){
-	valueCurrentcard=state.cards[c.value].value+100;
-	}else{
-	valueCurrentcard=state.cards[c.value].value;
-	}
-	if(valueCurrentcard>maxValue){
-
-	maxValue=valueCurrentcard;
-	winner=c.id;
-	}
-	totalPoints+=state.cards[c.value].points;
-	}
-	return{winner:winner,totalPoints:totalPoints};
-	}
 
 	function resetCardsPlayed(){
 	return[{id:0,value:0},{id:1,value:0},{id:2,value:0},{id:3,value:0},{id:4,value:0}];
@@ -25414,24 +25322,240 @@
 
 
 
+
+
+
+
+
+	function setWinnerMatch(){
+	var team1=0,team2=0;
+	for(var _i=0;_i<state.players.length;_i++){
+	var player=state.players[_i];
+	if(player.id===state.auction.winner||player.id===state.auction.compagno){
+	team1+=player.points;
+	}else{
+	team2+=player.points;
+	}
+	}
+	if(team1>team2){
+	return"chiamante";
+	}else{
+	return"others";
+	}
+	}
+
+
+
+	function isMatchFinished(){
+	return state.match.turns===8;
+	}
+
+
+
+	function isTurnFinished(){
+	var res=state.match.cardsPlayed.filter(function(c){return c.value==0;});
+	return res.length==0;
+	}
+
+	function getWinnerTurn(){
+	var maxValue=0;
+	var winner=0;
+	var totalPoints=0;
+	for(var _i2=0;_i2<state.match.cardsPlayed.length;_i2++){
+	var c=state.match.cardsPlayed[_i2];
+	var valueCurrentcard=0;
+	if(state.auction.seed===state.cards[c.value].seme){
+	valueCurrentcard=state.cards[c.value].value+100;
+	}else{
+	valueCurrentcard=state.cards[c.value].value;
+	}
+	if(valueCurrentcard>maxValue){
+
+	maxValue=valueCurrentcard;
+	winner=c.id;
+	}
+	totalPoints+=state.cards[c.value].points;
+	}
+	return{winner:winner,totalPoints:totalPoints};
+	}
+
+
+
+	function playCardOnTheTable(){var cardToPlay=arguments.length>0&&arguments[0]!==undefined?arguments[0]:null;
+	var c=null;
+	if(!cardToPlay){
+	c=getCardToPlay();
+	}else{
+	c=cardToPlay;
+	}
+	var newCardsPlayed=state.match.cardsPlayed;
+	return newCardsPlayed.map(function(card){
+	if(card.id==state.inTurn){
+	card.value=c;
+	}
+	return card;
+	});
+	}
+
+
 	function getCardToPlay(){
 	var p=state.players.filter(function(p){return p.id==state.inTurn;})[0];
 	if(p){
+	var maxValuePlayed=getMaxValueFromCardsPlayed();
+	var tmpSumPunti=getTmpMaxPuntiTurno();
+	var auctionValue=state.players[state.auction.winnerAuction].auction.points;
+	var puntiConsumatiByTeam=getPuntiConsumati();
+	var tmpWinnerTeam=getTmpWinnerTurn();
+	var hasCompagnoAlreadyPlayed=state.match.cardsPlayed[state.alleato]!==undefined;
+	var hasChiamanteAlreadyPlayed=state.match.cardsPlayed[state.auction.winnerAuction]!==undefined;
+	var _whichTeamIsTheLastOneToPlay=_whichTeamIsTheLastOneToPlay();
 
-	var randomIndex=Math.floor(Math.random()*7);
-	var choosenCard=p.cards[randomIndex];
 
-	if(choosenCard==0){
-	choosenCard=1;
+
+	if(isChiamante(p)){
+
+
+	}else if(isCompagno(p)){
+
+	}else{
+
 	}
 	return choosenCard;
 	}
 	return 1;
 	}
 
+	function whichTeamIsTheLastOneToPlay(){
+	if(state.turns==1){
+	return 5;
+	}else{
+	return state.players[state.match.winnerTurn-1];
+	}
+	}
 
-	function getSeed(state){
-	return"coppe";
+	function getTmpWinnerTurn(puntiByTeam){
+	if(puntiByTeam.alleati>puntiByTeam.others){
+	return"alleati";
+	}else{
+	return"others";
+	}
+	}
+
+	function getPuntiConsumatiByTeam(){
+	var sumPoints={alleati:0,others:0};
+	state.players.map(function(p){
+	if(p.id===state.auction.winnerAuction||p.id==state.alleato){
+	sumPoints.alleati+=p.points;
+	}else{
+	sumPoints.others+=p.points;
+	}
+	});
+	return sumPoints;
+	}
+
+	function getTmpMaxPuntiTurno(){
+	var sumPoints=0;
+	state.match.cardsPlayed.map(function(card){
+	sumPoints+=state.cards[card].points;
+	});
+	return sumPoints;
+	}
+
+	function getMaxValueFromCardsPlayed(){
+	var maxValue=0;
+	var currentValue=0;
+	state.match.cardsPlayed.map(function(card){
+	currentValue=state.cards[card.value].value;
+	if(state.cards[card.value].seme==state.auction.seed){
+	currentvalue+=100;
+	}
+	if(state.cards[card.value].value>maxValue){
+	maxValue=currentValue;
+	}
+	});
+	return maxValue;
+	}
+
+	function isOthers(p){
+	return!isChiamante&&!isCompagno;
+	}
+
+	function isChiamante(p){
+	return state.auction.winner;
+	}
+
+	function isCompagno(){
+	return state.auction.compagno===p.id;
+	}
+
+
+
+
+
+
+
+
+
+
+
+	function chooseCompagno(card){
+	if(card){
+	return card;
+	}else{
+	cardsBySeed=getCardsBySeed(state.players[state.auction.winner]);
+	valuesBySeed={"coppe":0,"spade":0,"denari":0,"bastoni":0};
+
+	for(var key in cardsBySeed){
+	if(valueBySeed.hasOwnProperty(key)){
+	valueBySeed[key]=getValueFromCardsBySeed(cardsBySeed);
+	}
+	}
+
+	var maxSeed=getBiggestSeedValueFromCardsBySeed(valuesBySeed);
+
+	return getHighestValuedCardFromBiggestSeed(maxSeed,cardsBySeed);
+	}
+	}
+
+
+	function getHighestValuedCardFromBiggestSeed(maxSeed,cardsBySeed){
+	cards=cardsBySeed[maxSeed];
+	for(i=10;i<=1;i--){
+	if(cards.filter(function(card){
+	return card.value==i;
+	}).length==0){
+	var allCards=state.cards;
+	for(var key in allCards){
+	if(allCards.hasOwnProperty(key)){
+	if(allCards[key].value==i&&allCards[key].seed==maxSeed){
+	return key;
+	}
+	}
+	}
+	}
+	}
+	}
+
+	function getAlleato(){
+	state.players.map(function(p){
+	for(i=0;i<p.cards.length;i++){
+	if(p.cards[i]==state.auction.compagno)
+	return p.id;
+	}
+	});
+	}
+
+
+	function getChoosenSeed(){
+	cardsBySeed=getCardsBySeed(state.cards);
+	valuesBySeed={"coppe":0,"spade":0,"denari":0,"bastoni":0};
+	for(var key in cardsBySeed){
+	if(valueBySeed.hasOwnProperty(key)){
+	valueBySeed[key]=getValueFromCardsBySeed(cardsBySeed);
+	}
+	}
+
+	return getChoosenSeedFromCardsBySeed(valuesBySeed);
 	}
 
 
@@ -25443,6 +25567,11 @@
 	return undefined;
 	}
 	}
+
+
+
+
+
 
 	function isUserInAuction(){
 	return state.players[state.inTurn].auction.isIn;
@@ -25478,17 +25607,118 @@
 	}
 
 
+
+
+
+
 	function getAIChoice(auction,biggestAuction){
 
-	var tmpVal=Math.floor(Math.random()*120);
+	var tmpVal=getAuctionValue();
 	if(tmpVal<biggestAuction){
 	auction.isIn=false;
+	auction.points=tmpVal;
 	}else{
 	auction.isIn=true;
+	auction.points=biggestAuction+1;
 	}
-	auction.points=tmpVal;
 
 	return auction;
+	}
+
+
+	function getCardsBySeed(){
+	cardsBySeed={"coppe":[],"spade":[],"denari":[],"bastoni":[]};
+	state.cards.map(function(card){
+	var c=state.cards[card];
+	cardsBySeed[c.seme].push(card);
+	});
+	return cardsBySeed;
+	}
+
+	function getValueFromCardsBySeed(cards){
+	var value=0;
+	cards.map(function(card){
+	var c=state.cards[card];
+	value+=c.value;
+	});
+	return value;
+	}
+
+	function getBiggestValueFromCardsBySeed(valueBySeed){
+	var biggestValue=0;
+	for(var key in valueBySeed){
+	if(valueBySeed.hasOwnProperty(key)){
+	if(valueBySeed[key]>biggestValue){
+	biggestValue=valueBySeed[key];
+	}
+	}
+	}
+	return biggestValue;
+	}
+
+	function getBiggestSeedValueFromCardsBySeed(valueBySeed){
+	var biggestSeed=null;
+	for(var key in valueBySeed){
+	if(valueBySeed.hasOwnProperty(key)){
+	if(valueBySeed[key]>biggestValue){
+	biggestSeed=key;
+	}
+	}
+	}
+	return biggestSeed;
+	}
+
+	function getChoosenSeedFromCardsBySeed(valueBySeed){
+	var choosenSeed=null;
+	for(var key in valueBySeed){
+	if(valueBySeed.hasOwnProperty(key)){
+	if(valueBySeed[key]>biggestValue){
+	choosenSeed=key;
+	}
+	}
+	}
+	return biggestValue;
+	}
+
+	function getAuctionValue(cards){
+	cardsBySeed=getCardsBySeed(cards);
+	valuesBySeed={"coppe":0,"spade":0,"denari":0,"bastoni":0};
+
+	for(var key in cardsBySeed){
+	if(valueBySeed.hasOwnProperty(key)){
+	valueBySeed[key]=getValueFromCardsBySeed(cardsBySeed);
+	}
+	}
+
+	var maxValue=getBiggestValueFromCardsBySeed(valuesBySeed);
+
+	if(myValue>=27){
+	myMaxAuction=70;
+	}
+	if(myValue>=35){
+	myMaxAuction=80;
+	}
+	if(myValue>=40){
+	myMaxAuction=90;
+	}
+	if(myValue>=45){
+	myMaxAuction=100;
+	}
+
+	if(myValue>=50){
+	myMaxAuction=100;
+	}
+
+	if(myValue>=52){
+	myMaxAuction=110;
+	}
+
+	if(myValue==55){
+	myMaxAuction=120;
+	}
+
+	return myMaxAuction;
+
 	}
 
 	next(action);

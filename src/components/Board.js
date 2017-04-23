@@ -5,10 +5,10 @@ import Common from './Common'
 import Me from './Me' 
 
 import { initMatch,  setWinner,  endTurn,
-		changeTurn, play, playBot} from '../actions/match'
-import { playAuctionBot, 
+		changeTurn, play} from '../actions/match'
+import {  
 	 playAuction,
-	 endAuction, 
+	 chooseCompagno, 
 	 changeTurnAuction } from '../actions/auction'
 
 class Board extends React.Component {
@@ -31,9 +31,9 @@ class Board extends React.Component {
   prepareAsyncAction (timeout) {
     if (this.props.isStart && this.props.area === "auction") {
       if (this.props.auction.winner !== undefined) {
-        setTimeout(this.props.endAuction.bind(this), timeout);
+        setTimeout(this.props.chooseCompagno.bind(this), timeout);
       } else {
-        setTimeout(this.props.playAuctionBot.bind(this), timeout);
+        setTimeout(this.props.playAuction.bind(this), timeout);
       }
     } else if (this.props.isStart && this.props.area === "match") {
       if(this.props.isFinished) {
@@ -41,7 +41,7 @@ class Board extends React.Component {
 		  } else if(this.props.match.isTurnFinished) {
         setTimeout(this.props.endTurn.bind(this), timeout);
       } else  {
-        setTimeout(this.props.playBot.bind(this), timeout);
+        setTimeout(this.props.play.bind(this), timeout);
 		  }		  
     } else if (!this.props.isStart && this.props.area === "match") {
       setTimeout(this.props.initMatch.bind(this), timeout);
@@ -73,20 +73,20 @@ const mapDispatchToProps = function(dispatch, ownProps) {
 		setWinner: () => {
       dispatch(setWinner());
     },
-		playBot: () => {
-      dispatch(playBot());
+		play: () => {
+      dispatch(play());
     },
 		changeTurn: () => {
       dispatch(changeTurn());
     },
-		playAuctionBot: () => {
-      dispatch(playAuctionBot());
+		playAuction: () => {
+      dispatch(playAuction());
     },
 		changeTurnAuction: () => {
       dispatch(changeTurnAuction());
     },
-		endAuction: () => {
-      dispatch(endAuction());
+		chooseCompagno: () => {
+      dispatch(chooseCompagno());
     },
 		endTurn: () => {
       dispatch(endTurn());
