@@ -38,7 +38,7 @@ class ChooseCompagno extends React.Component {
 
 const mapStateToProps = function(store) {
   return {
-      allCards: state.cards
+      allCards: store.cards
   };
 }
 

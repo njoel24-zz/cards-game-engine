@@ -3,13 +3,14 @@ import { connect } from 'react-redux'
 
 import Card from './Card'
 import  ChoosePoints  from './ChoosePoints'
+import  ChooseCompagno  from './ChooseCompagno'
 class Me extends React.Component {
 
 render () {
 	return (
 		<ul className='row me'>
 				<li>
-					<ChooseCompagno show={(this.props.me==this.props.inTurn) && this.props.area == "auction" && this.props.winnerAuction != undefined }  />
+					<ChooseCompagno show={(this.props.me==this.props.inTurn) && this.props.area == "auction" && this.props.winnerAuction !== undefined }  />
 				</li>
 				<li>
 					<ChoosePoints show={(this.props.me==this.props.inTurn) && this.props.area == "auction"  && this.props.winnerAuction == undefined }  />
@@ -31,7 +32,7 @@ const mapStateToProps = function(store) {
 		me: store.me,
 		inTurn: store.inTurn,
 		area: store.area,
-		winnerAuction: store.auction.winnerAuction
+		winnerAuction: store.auction.winner
   };
 }
 

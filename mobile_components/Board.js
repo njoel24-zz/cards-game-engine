@@ -3,39 +3,38 @@ import { connect } from 'react-redux'
 import Players from './Players'
 import Common from './Common'
 import Me from './Me' 
+import { View, Text } from 'react-native';
 
 import { initMatch,  setWinner,  endTurn,
-		changeTurn, play} from '../actions/match'
-import {  
+		changeTurn, play, playBot} from '../actions/match'
+import { playAuctionBot, 
 	 playAuction,
-	 chooseCompagno, 
+	 endAuction, 
 	 changeTurnAuction } from '../actions/auction'
 
 class Board extends React.Component {
 	
   render() {
-    
-    if(this.props.inTurn !== this.props.me 
-    || (this.props.inTurn === this.props.me && this.props.area === "auction" 
-        && !this.props.players[this.props.me].auction.isIn)) {
-      this.prepareAsyncAction(500)  
+
+    if(this.props.inTurn !== this.props.me) {
+      this.prepareAsyncAction(3000)  
     }
 
     return (
-    <div className='board'>
+    <View style={{flex: 1}}>
       <Players/>
-      <Common />
-    	<Me/>
-    </div>
-    )
+      <Common/>
+      <Me/>
+    </View>
+    );
   }
 
   prepareAsyncAction (timeout) {
     if (this.props.isStart && this.props.area === "auction") {
       if (this.props.auction.winner !== undefined) {
-        setTimeout(this.props.chooseCompagno.bind(this), timeout);
+        setTimeout(this.props.endAuction.bind(this), timeout);
       } else {
-        setTimeout(this.props.playAuction.bind(this), timeout);
+        setTimeout(this.props.playAuctionBot.bind(this), timeout);
       }
     } else if (this.props.isStart && this.props.area === "match") {
       if(this.props.isFinished) {
@@ -43,7 +42,7 @@ class Board extends React.Component {
 		  } else if(this.props.match.isTurnFinished) {
         setTimeout(this.props.endTurn.bind(this), timeout);
       } else  {
-        setTimeout(this.props.play.bind(this), timeout);
+        setTimeout(this.props.playBot.bind(this), timeout);
 		  }		  
     } else if (!this.props.isStart && this.props.area === "match") {
       setTimeout(this.props.initMatch.bind(this), timeout);
@@ -63,7 +62,6 @@ const mapStateToProps = function(store) {
 		inTurn: store.inTurn,
 		auction: store.auction,
     isFinished: store.isFinished,
-    players: store.players
   };
 }
 
@@ -76,20 +74,20 @@ const mapDispatchToProps = function(dispatch, ownProps) {
 		setWinner: () => {
       dispatch(setWinner());
     },
-		play: () => {
-      dispatch(play());
+		playBot: () => {
+      dispatch(playBot());
     },
 		changeTurn: () => {
       dispatch(changeTurn());
     },
-		playAuction: () => {
-      dispatch(playAuction());
+		playAuctionBot: () => {
+      dispatch(playAuctionBot());
     },
 		changeTurnAuction: () => {
       dispatch(changeTurnAuction());
     },
-		chooseCompagno: () => {
-      dispatch(chooseCompagno());
+		endAuction: () => {
+      dispatch(endAuction());
     },
 		endTurn: () => {
       dispatch(endTurn());

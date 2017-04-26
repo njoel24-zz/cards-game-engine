@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 const matchMiddleware = store => next => action => {
   const state = store.getState() // perché ?
 	switch(action.type){
@@ -39,12 +41,13 @@ const matchMiddleware = store => next => action => {
       action.winnerAuction = getWinnerAuction()
     break
  		case 'CHOOSE_COMPAGNO':
-    	action.compagno = chooseCompagno(action.value),
+      const choosenCard = chooseCompagno(action.compagno)
+    	action.compagno = choosenCard.id,
       action.inTurn = getNextInTurn(),
-      action.area = 'match',
-      action.seed = getChoosenSeed(),
-      //TODO: do not know it this works
-      action.alleato = getAlleato()
+      action.area = 'match'
+      //TODO: do not know if this works
+      action.seed = choosenCard.seme
+      // action.alleato = getAlleato()
     break
     case 'EXIT_AUCTION':
     	action.inAuction = false,
@@ -55,8 +58,8 @@ const matchMiddleware = store => next => action => {
 
   
   function getNextInTurn() {
-    if(state.area == "auction" && state.auction.winnerAuction != undefined){
-      return state.auction.winnerAuction
+    if(state.area == "auction" && state.auction.winner != undefined){
+      return state.auction.winner
     }
     if(state.area == "match" && state.match.winnerTurn != undefined && state.match.cardsPlayed[state.match.winnerTurn] == undefined){
       return state.match.winnerTurn
@@ -95,7 +98,7 @@ const matchMiddleware = store => next => action => {
 function getMyAllCards(cards){
   const allCards = state.cards
   const myAllCards = []
-  for(i=0; i<cards.length; i++){
+  for(let i=0; i<cards.length; i++){
      for (var key in allCards) {
         if(allCards.hasOwnProperty(key)){
           if(allCards[key].id == cards[i]){
@@ -204,11 +207,11 @@ function addBriscolaValueToMyAllCards(myAllCards) {
       if(p) {
         const maxValuePlayed = getMaxValueFromCardsPlayed();
         const tmpSumPunti = getTmpMaxPuntiTurno();
-        const auctionValue =  state.players[state.auction.winnerAuction].auction.points
-        const puntiConsumatiByTeam = getPuntiConsumati();
-        const tmpWinnerTeam = getTmpWinnerTurn();
-        const hasCompagnoAlreadyPlayed = state.match.cardsPlayed[state.alleato]!==undefined
-        const hasChiamanteAlreadyPlayed = state.match.cardsPlayed[state.auction.winnerAuction]!==undefined
+        const auctionValue =  state.players[state.auction.winner].auction.points
+        const puntiConsumatiByTeam = getPuntiConsumatiByTeam();
+        const tmpWinnerTeam = getTmpWinnerTurn(puntiConsumatiByTeam);
+        const hasCompagnoAlreadyPlayed = state.match.cardsPlayed[getAlleato()]!==undefined
+        const hasChiamanteAlreadyPlayed = state.match.cardsPlayed[state.auction.winner]!==undefined
         const lastOneToPlay = whichIsTheLastOneToPlay()
         
         // se sn l'ultimo
@@ -216,7 +219,7 @@ function addBriscolaValueToMyAllCards(myAllCards) {
           if (isChiamante(p)) {
             const tryToWinCard = tryToWin(maxValuePlayed)
             if(!tryToWinCard){
-              playSafe();
+              return playSafe();
             }else{
               return tryToWinCard
             }
@@ -224,19 +227,18 @@ function addBriscolaValueToMyAllCards(myAllCards) {
           } else if(isCompagno(p)) {
             const tryToWinCard = tryToWin(maxValuePlayed)
             if(!tryToWinCard){
-              playSafe();
+              return playSafe();
             }else{
               return tryToWinCard
             }
           } else {
             const tryToWinCard = tryToWin(maxValuePlayed)
             if(!tryToWinCard){
-              playSafe();
+              return playSafe();
             }else{
               return tryToWinCard
             }
           }
-        return choosenCard;
       }
       return 1
     }
@@ -245,9 +247,9 @@ function addBriscolaValueToMyAllCards(myAllCards) {
 // deve considerare il primo seme giocato che puo non essere briscola ma ha piu valore di un altro seme
   function tryToWin(maxValuePlayed) {
     const myAllCards = getMyAllCards(state.players[state.inTurn].cards)
-    myAllCardsByValue = _.sortBy(myAllCards, ['value'])
+    const myAllCardsByValue = _.sortBy(myAllCards, ['value'])
 
-    for(i =0; i<myAllCardsByValue.length; i++) {
+    for(let i =0; i<myAllCardsByValue.length; i++) {
       let tmpVal = myAllCardsByValue[i].value
       const firstPlayedSeed = getFirstPlayedSeed()
 
@@ -265,9 +267,9 @@ function addBriscolaValueToMyAllCards(myAllCards) {
 
 // case null
   function getFirstPlayedSeed() {
-    state.cardsPlayed.map( (card) => {
+    return state.match.cardsPlayed.map( (card) => {
         if(card.id === state.match.winnerTurn){
-          return state.cards[card.id].seed
+          return state.cards[card.id].seme
         }
     } )
   }
@@ -277,10 +279,10 @@ function addBriscolaValueToMyAllCards(myAllCards) {
     let minValue = 1000;
     let tmpCard = 0
     const myAllCards = getMyAllCards(state.players[state.inTurn].cards)
-    myAllCardsByValue = _.sortBy(myAllCards, ['value'])
+    const myAllCardsByValue = _.sortBy(myAllCards, ['value'])
 
-    for(i =0; i<myAllCardsByValue.length; i++) {
-      if(myAllCardsByValue[i].value < minValue && (myAllCardsByValue[i].seed !== state.auction.seed )){
+    for(let i =0; i<myAllCardsByValue.length; i++) {
+      if(myAllCardsByValue[i].value < minValue && (myAllCardsByValue[i].seme !== state.auction.seed )){
         minValue = myAllCardsByValue[i].value
         tmpCard = myAllCardsByValue[i].id
       }
@@ -316,7 +318,7 @@ function addBriscolaValueToMyAllCards(myAllCards) {
     function getPuntiConsumatiByTeam() {
       let sumPoints = {alleati: 0, others: 0}
       state.players.map(p => {
-        if(p.id === state.auction.winnerAuction ||  p.id == state.alleato){
+        if(p.id === state.auction.winner ||  p.id == getAlleato()){
           sumPoints.alleati += p.points
         }else {
           sumPoints.others += p.points
@@ -328,7 +330,9 @@ function addBriscolaValueToMyAllCards(myAllCards) {
     function getTmpMaxPuntiTurno() {
       var sumPoints = 0
       state.match.cardsPlayed.map(card => {
-        sumPoints += state.cards[card].points
+        if(card.value > 0 ) {
+          sumPoints += state.cards[card.value].points
+        }
       })
       return sumPoints
     }
@@ -337,12 +341,14 @@ function addBriscolaValueToMyAllCards(myAllCards) {
       let maxValue = 0
       let currentValue = 0
       state.match.cardsPlayed.map(card => {
+        if(card.value > 0) {
         currentValue = state.cards[card.value].value
         if(state.cards[card.value].seme == state.auction.seed){
-              currentvalue += 100
+              currentValue += 100
         }
         if(state.cards[card.value].value > maxValue){
           maxValue = currentValue
+        }
         }
       })
       return maxValue
@@ -372,26 +378,28 @@ function addBriscolaValueToMyAllCards(myAllCards) {
     //END AUCTION CHOOSE COMPAGNO
     function chooseCompagno(card) {
       if(card){
-        return card
+        return state.cards[card]
       } else {
-        cardsBySeed = getCardsBySeed(state.players[state.auction.winner])
-        valuesBySeed = {"coppe": 0, "spade": 0, "denari": 0, "bastoni": 0}
+        const cardsBySeed = getCardsBySeed(state.players[state.auction.winner])
+        const valuesBySeed = {"coppe": 0, "spade": 0, "denari": 0, "bastoni": 0}
 
       for (var key in cardsBySeed) {
-        if(valueBySeed.hasOwnProperty(key)){
-          valueBySeed[key] = getValueFromCardsBySeed(cardsBySeed)
+        if(valuesBySeed.hasOwnProperty(key)){
+          valuesBySeed[key] = getValueFromCardsBySeed(cardsBySeed)
         }
       } 
 
-      const maxSeed = getBiggestSeedValueFromCardsBySeed(valuesBySeed);
+      const maxSeed = getBiggestSeedValueFromValuesBySeed(valuesBySeed);
         // does not work if you have all 10 cards belongs to the same seed
-        return  getHighestValuedCardFromBiggestSeed(maxSeed, cardsBySeed)
+      const choosenCard = getHighestValuedCardFromBiggestSeed(maxSeed, cardsBySeed)
+      
+      return state.cards[choosenCard]
       }
     }
 
     
   function getHighestValuedCardFromBiggestSeed(maxSeed, cardsBySeed) {
-    cards = cardsBySeed[maxSeed]
+    const cards = cardsBySeed[maxSeed]
     for(i=10; i>=1; i-- ){
      if(cards.filter((card) => {
        return card.value == i
@@ -410,26 +418,12 @@ function addBriscolaValueToMyAllCards(myAllCards) {
 
     function getAlleato() {
       state.players.map(p => {
-        for(i=0; i<p.cards.length; i++){
+        for(let i=0; i<p.cards.length; i++){
           if(p.cards[i] == state.auction.compagno)
           return p.id
         }
       })
     }
-
-
-    function getChoosenSeed() {
-      cardsBySeed = getCardsBySeed(state.cards)
-      valuesBySeed = {"coppe": 0, "spade": 0, "denari": 0, "bastoni": 0}
-      for (var key in cardsBySeed) {
-        if(valueBySeed.hasOwnProperty(key)){
-          valueBySeed[key] = getValueFromCardsBySeed(cardsBySeed)
-        }
-      }
-
-      return  getChoosenSeedFromCardsBySeed(valuesBySeed);
-    }
-
 
     function getWinnerAuction() {
       let playersInAuction = state.players.filter( p => {  return p.auction.isIn === true })
@@ -485,7 +479,7 @@ function addBriscolaValueToMyAllCards(myAllCards) {
     
     function getAIChoice(auction, biggestAuction) {
       
-      let tmpVal = getAuctionValue()
+      let tmpVal = getAuctionValue(state.players[state.inTurn].cards)
       if(tmpVal < biggestAuction) {
         auction.isIn = false
         auction.points = tmpVal
@@ -498,20 +492,19 @@ function addBriscolaValueToMyAllCards(myAllCards) {
     }
 
   
-  function getCardsBySeed() {
-    cardsBySeed = {"coppe": [], "spade": [], "denari": [], "bastoni": []}
-    state.cards.map(card => {
-      let c = state.cards[card]
-      cardsBySeed[c.seme].push(card)  
+  function getCardsBySeed(cards) {
+    const myAllcards = getMyAllCards(cards)
+    const cardsBySeed = {"coppe": [], "spade": [], "denari": [], "bastoni": []}
+    myAllcards.map((card) => {
+      cardsBySeed[card.seme].push(card)  
     })
     return cardsBySeed
   }
 
   function getValueFromCardsBySeed(cards) {
     let value = 0
-    cards.map(card => {
-      let c = state.cards[card]
-      value += c.value
+    cards.map((card) => {
+      value += card.value
     })
     return value
   }
@@ -528,11 +521,12 @@ function addBriscolaValueToMyAllCards(myAllCards) {
     return biggestValue  
   }
 
-  function getBiggestSeedValueFromCardsBySeed(valueBySeed){
+  function getBiggestSeedValueFromValuesBySeed(valueBySeed){
     let biggestSeed = null
     for (var key in valueBySeed) {
       if(valueBySeed.hasOwnProperty(key)){
         if(valueBySeed[key] > biggestValue ){
+          biggestValue = valueBySeed[key]
           biggestSeed = key
         }
       }
@@ -540,7 +534,7 @@ function addBriscolaValueToMyAllCards(myAllCards) {
     return biggestSeed
   }
 
-  function getChoosenSeedFromCardsBySeed(valueBySeed){
+/*  function getChoosenSeedFromCardsBySeed(valueBySeed){
     let choosenSeed = null
     for (var key in valueBySeed) {
       if(valueBySeed.hasOwnProperty(key)){
@@ -549,43 +543,43 @@ function addBriscolaValueToMyAllCards(myAllCards) {
         }
       }
     }
-    return biggestValue  
-  }
+    return choosenSeed  
+  } */
 
   function getAuctionValue(cards){
-    cardsBySeed = getCardsBySeed(cards)
-    valuesBySeed = {"coppe": 0, "spade": 0, "denari": 0, "bastoni": 0}
+    const cardsBySeed = getCardsBySeed(cards)
+    const valueBySeed = {"coppe": 0, "spade": 0, "denari": 0, "bastoni": 0}
 
     for (var key in cardsBySeed) {
       if(valueBySeed.hasOwnProperty(key)){
-        valueBySeed[key] = getValueFromCardsBySeed(cardsBySeed)
+        valueBySeed[key] = getValueFromCardsBySeed(cardsBySeed[key])
       }
     } 
 
-    const maxValue = getBiggestValueFromCardsBySeed(valuesBySeed);
-
-    if(myValue >= 27 ){
+    const maxValue = getBiggestValueFromCardsBySeed(valueBySeed);
+    let myMaxAuction = 70; 
+    if(maxValue >= 27 ){
       myMaxAuction = 70;
     }
-    if(myValue >= 35 ){
+    if(maxValue >= 35 ){
       myMaxAuction = 80;
     }
-    if(myValue >= 40 ){
+    if(maxValue >= 40 ){
       myMaxAuction = 90;
     }
-    if(myValue >= 45 ){
+    if(maxValue >= 45 ){
       myMaxAuction = 100;
     }
 
-    if(myValue >= 50 ){
+    if(maxValue >= 50 ){
       myMaxAuction = 100;
     }
 
-    if(myValue >= 52 ){
+    if(maxValue >= 52 ){
       myMaxAuction = 110;
     }
 
-    if(myValue == 55 ){
+    if(maxValue == 55 ){
       myMaxAuction = 120;
     }
 
