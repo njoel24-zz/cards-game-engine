@@ -24694,7 +24694,7 @@
 	!this.props.players[this.props.me].auction.isIn||
 	this.props.inTurn===this.props.me&&this.props.area==="match"&&
 	this.props.match.isTurnFinished){
-	this.prepareAsyncAction(1000);
+	this.prepareAsyncAction(1500);
 	}
 
 	return(
@@ -24727,7 +24727,8 @@
 	setTimeout(this.props.play.bind(this),timeout);
 	}
 	}else if(!this.props.isStart&&this.props.area==="match"){
-	setTimeout(this.props.initMatch.bind(this),timeout);
+	console.log(this.props.match.winner);
+
 	}
 	}}]);return Board;}(_react2.default.Component);
 
@@ -24798,7 +24799,6 @@
 	_react2.default.createElement('div',{className:!player.auction.isIn?'hidden':'inAuction'}),
 	_react2.default.createElement('div',null,' ',player.points,' Punti'),
 	_react2.default.createElement('div',{className:player.id!==_this2.props.inTurn?'hidden':'inTurn'}),
-	_react2.default.createElement('div',{className:player.id!==_this2.props.match.winner?'hidden':''},'Vincitore!'),
 	_react2.default.createElement('div',{className:player.id!==_this2.props.auction.winner?'hidden':''},'Vincitore Asta!'),
 	_react2.default.createElement('div',{className:player.id!==_this2.props.match.winnerTurn?'hidden':'winnerTurn'})));})));
 
@@ -24882,12 +24882,16 @@
 
 
 	{
+	this.className="card";
+	if(this.props.class){
+	this.className+=" "+this.props.class;
+	}
 	return(
 	_react2.default.createElement('div',null,
 	this.props.animate?
-	_react2.default.createElement('img',{id:this.props.card,className:this.props.card===0||this.props.card===undefined?'hidden':'card',onClick:this.props.play,src:'img/'+this.props.card+'.jpg'}):
+	_react2.default.createElement('img',{id:this.props.card,className:this.props.card===0||this.props.card===undefined?'hidden':this.className,onClick:this.props.play,src:'img/'+this.props.card+'.jpg'}):
 
-	_react2.default.createElement('img',{className:this.props.card===0||this.props.card===undefined?'hidden':'card',src:'img/'+this.props.card+'.jpg'})));
+	_react2.default.createElement('img',{className:this.props.card===0||this.props.card===undefined?'hidden':this.className,src:'img/'+this.props.card+'.jpg'})));
 
 
 
@@ -25001,9 +25005,13 @@
 	_react2.default.createElement(_Card2.default,{card:c,animate:_this2.props.me==_this2.props.inTurn&&_this2.props.area=="match"})));}),
 
 
-	_react2.default.createElement('li',{className:'col-xs-2'},'Briscola: ',this.props.seed),
-	_react2.default.createElement('li',{className:'col-xs-2'},'Compagno:',
-	_react2.default.createElement(_Card2.default,{card:this.props.compagno,animate:'false'}))));
+	_react2.default.createElement('li',{className:'col-xs-2'},
+	_react2.default.createElement('div',{className:'compagno'},'Compagno'),
+	_react2.default.createElement(_Card2.default,{card:this.props.compagno,'class':'card-mini',animate:'false'})),
+
+	_react2.default.createElement('li',{className:'col-xs-2'},
+	_react2.default.createElement('div',{className:'compagno'},'Vincitore'),
+	_react2.default.createElement('div',{'class':'card card-mini'},this.props.winnerMatch))));
 
 
 
@@ -25018,7 +25026,8 @@
 	area:store.area,
 	winnerAuction:store.auction.winner,
 	seed:store.auction.seed,
-	compagno:store.auction.compagno};
+	compagno:store.auction.compagno,
+	winnerMatch:store.match.winner};
 
 	};exports.default=
 
@@ -25235,7 +25244,7 @@
 	console.log("End Match");
 	return _extends({},
 	state,{
-	match:_extends({},state.match,{winner:action.setWinnerMatch}),
+	match:_extends({},state.match,{winner:action.winner}),
 	isStart:false});
 
 

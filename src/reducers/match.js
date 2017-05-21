@@ -81,7 +81,7 @@ const matchReducer = (state = [], action) => {
       console.log("End Match");
       return {
         ...state,
-        match: { ...state.match,  winner: action.setWinnerMatch },
+        match: { ...state.match,  winner: action.winner },
         isStart: false
       }
 

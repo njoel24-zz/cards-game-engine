@@ -20,7 +20,7 @@ class Board extends React.Component {
         && !this.props.players[this.props.me].auction.isIn)
         || (this.props.inTurn === this.props.me && this.props.area === "match" 
         && this.props.match.isTurnFinished)) {
-      this.prepareAsyncAction(1000)  
+      this.prepareAsyncAction(1500)  
     }
 
     return (
@@ -53,7 +53,8 @@ class Board extends React.Component {
         setTimeout(this.props.play.bind(this), timeout);
 		  }		  
     } else if (!this.props.isStart && this.props.area === "match") {
-      setTimeout(this.props.initMatch.bind(this), timeout);
+      console.log(this.props.match.winner);
+      // setTimeout(this.props.initMatch.bind(this), timeout);
     }
   }
 

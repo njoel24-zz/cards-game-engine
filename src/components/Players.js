@@ -12,7 +12,6 @@ render () {
 						<div className={!player.auction.isIn ? 'hidden': 'inAuction'}></div>
 						<div> {player.points} Punti</div>
 						<div className={(player.id !== this.props.inTurn) ? 'hidden': 'inTurn'}></div>
-						<div className={(player.id !== this.props.match.winner)? 'hidden': ''}>Vincitore!</div>
 						<div className={(player.id !== this.props.auction.winner)? 'hidden': ''}>Vincitore Asta!</div>
 						<div className={(player.id !== this.props.match.winnerTurn)? 'hidden': 'winnerTurn'}></div>
 					</li>
