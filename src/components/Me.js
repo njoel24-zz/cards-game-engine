@@ -26,7 +26,7 @@ render () {
 				</li>
 				<li className='col-xs-2'>
 					<div className="compagno">Vincitore</div>
-					<div class="card card-mini">{this.props.winnerMatch}</div>
+					<div className="card card-mini ">{this.props.winnerMatch}</div>
 				</li>
   	</ul>
 		)
