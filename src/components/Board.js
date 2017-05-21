@@ -25,6 +25,7 @@ class Board extends React.Component {
 
     return (
     <div className='board'>
+      <img className="logo" src="img/titolo.png"/>
       <Players/>
       <Common />
     	<Me/>
