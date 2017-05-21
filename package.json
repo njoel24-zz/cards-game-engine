@@ -1,6 +1,6 @@
 {
 	"name": "Briscolain5",
-	"version": "2.0.0",
+	"version": "1.0.0",
 	"main": "public/index.html",
 	"scripts": {
 		"start": "browser-sync start --server --files '*.html, *.css, *.js '  | webpack -w ",
