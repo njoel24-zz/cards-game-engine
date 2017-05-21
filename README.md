@@ -1,7 +1,9 @@
-Board Game Engine written in React/Redux 
+Card Game written in React/Redux.
+I used Webpack as the module bundle, Yarn as package manager and
+bootstrap 4 as css framework.
 npm install / npm start 
-The aim of this project is to create a configurable board for card games.
 The game comes with two version: desktop and native.
+For the native version I used React-Native
 Feel free to collaborate.
 
 
