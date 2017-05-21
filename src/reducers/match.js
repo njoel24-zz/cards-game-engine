@@ -38,16 +38,16 @@ const matchReducer = (state = [], action) => {
     case 'END_TURN':
       console.log("End turn");
       newPlayers = [...state.players]
-      newPlayers[action.winnerTurn.winner].points += action.winnerTurn.winner.totalPoints
+      newPlayers[action.winnerTurn.winner].points += action.winnerTurn.totalPoints
       return {
         ...state,
         match: { ...state.match, 
                  winnerTurn: action.winnerTurn.winner,
-                 inTurn: action.inTurn,
                  cardsPlayed: action.cardsPlayed,
                  turns: action.turns, isTurnFinished: false },
                 players: newPlayers,
-                isFinished: action.finishedMatch
+                isFinished: action.finishedMatch,
+                inTurn: action.inTurn
       }
 
     case 'PLAY':
@@ -59,11 +59,14 @@ const matchReducer = (state = [], action) => {
         }
       }) 
 
+      let  newCardsPlayed = [...state.match.cardsPlayed]
+      newCardsPlayed[state.inTurn].value = action.cardPlayed
+
       return {
         ...state,
           players: newPlayers,
           inTurn: action.inTurn,
-          match: { ...state.match, cardsPlayed: action.cardsPlayed, isTurnFinished: action.turnFinished }           
+          match: { ...state.match, cardsPlayed: newCardsPlayed, isTurnFinished: action.turnFinished }           
       }
 
     case 'CHANGE_TURN':
@@ -81,7 +84,6 @@ const matchReducer = (state = [], action) => {
         match: { ...state.match,  winner: action.setWinnerMatch },
         isStart: false
       }
-    break;
 
 
     case 'PLAY_AUCTION':

@@ -20,7 +20,10 @@ render () {
 							<Card card={c} animate={(this.props.me==this.props.inTurn) && this.props.area == "match" } />
 					</li>
     		)}
-				<li className='col-xs-2'>Info</li>
+				<li className='col-xs-2'>Briscola: { this.props.seed }</li>
+				<li className='col-xs-2'>Compagno: 
+					<Card card={this.props.compagno} animate="false" />
+				</li>
   	</ul>
 		)
 	}
@@ -32,7 +35,9 @@ const mapStateToProps = function(store) {
 		me: store.me,
 		inTurn: store.inTurn,
 		area: store.area,
-		winnerAuction: store.auction.winner
+		winnerAuction: store.auction.winner,
+		seed: store.auction.seed,
+		compagno: store.auction.compagno
   };
 }
 

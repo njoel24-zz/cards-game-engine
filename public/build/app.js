@@ -24691,8 +24691,10 @@
 
 	if(this.props.inTurn!==this.props.me||
 	this.props.inTurn===this.props.me&&this.props.area==="auction"&&
-	!this.props.players[this.props.me].auction.isIn){
-	this.prepareAsyncAction(500);
+	!this.props.players[this.props.me].auction.isIn||
+	this.props.inTurn===this.props.me&&this.props.area==="match"&&
+	this.props.match.isTurnFinished){
+	this.prepareAsyncAction(1000);
 	}
 
 	return(
@@ -24705,6 +24707,11 @@
 	}},{key:'prepareAsyncAction',value:function prepareAsyncAction(
 
 	timeout){
+	var id=window.setTimeout(function(){},0);
+	while(id--){
+	window.clearTimeout(id);
+	}
+	console.log(this.props.players);
 	if(this.props.isStart&&this.props.area==="auction"){
 	if(this.props.auction.winner!==undefined){
 	setTimeout(this.props.chooseCompagno.bind(this),timeout);
@@ -24793,7 +24800,6 @@
 	_react2.default.createElement('div',{className:player.id!==_this2.props.inTurn?'hidden':'inTurn'}),
 	_react2.default.createElement('div',{className:player.id!==_this2.props.match.winner?'hidden':''},'Vincitore!'),
 	_react2.default.createElement('div',{className:player.id!==_this2.props.auction.winner?'hidden':''},'Vincitore Asta!'),
-	_react2.default.createElement('div',{className:player.id!==_this2.props.auction.compagno?'hidden':''},'Compagno!'),
 	_react2.default.createElement('div',{className:player.id!==_this2.props.match.winnerTurn?'hidden':'winnerTurn'})));})));
 
 
@@ -24995,7 +25001,10 @@
 	_react2.default.createElement(_Card2.default,{card:c,animate:_this2.props.me==_this2.props.inTurn&&_this2.props.area=="match"})));}),
 
 
-	_react2.default.createElement('li',{className:'col-xs-2'},'Info')));
+	_react2.default.createElement('li',{className:'col-xs-2'},'Briscola: ',this.props.seed),
+	_react2.default.createElement('li',{className:'col-xs-2'},'Compagno:',
+	_react2.default.createElement(_Card2.default,{card:this.props.compagno,animate:'false'}))));
+
 
 
 	}}]);return Me;}(_react2.default.Component);
@@ -25007,7 +25016,9 @@
 	me:store.me,
 	inTurn:store.inTurn,
 	area:store.area,
-	winnerAuction:store.auction.winner};
+	winnerAuction:store.auction.winner,
+	seed:store.auction.seed,
+	compagno:store.auction.compagno};
 
 	};exports.default=
 
@@ -25181,16 +25192,16 @@
 	case'END_TURN':
 	console.log("End turn");
 	newPlayers=[].concat(_toConsumableArray(state.players));
-	newPlayers[action.winnerTurn.winner].points+=action.winnerTurn.winner.totalPoints;
+	newPlayers[action.winnerTurn.winner].points+=action.winnerTurn.totalPoints;
 	return _extends({},
 	state,{
 	match:_extends({},state.match,{
 	winnerTurn:action.winnerTurn.winner,
-	inTurn:action.inTurn,
 	cardsPlayed:action.cardsPlayed,
 	turns:action.turns,isTurnFinished:false}),
 	players:newPlayers,
-	isFinished:action.finishedMatch});
+	isFinished:action.finishedMatch,
+	inTurn:action.inTurn});
 
 
 	case'PLAY':
@@ -25202,11 +25213,14 @@
 	}
 	});
 
+	var newCardsPlayed=[].concat(_toConsumableArray(state.match.cardsPlayed));
+	newCardsPlayed[state.inTurn].value=action.cardPlayed;
+
 	return _extends({},
 	state,{
 	players:newPlayers,
 	inTurn:action.inTurn,
-	match:_extends({},state.match,{cardsPlayed:action.cardsPlayed,isTurnFinished:action.turnFinished})});
+	match:_extends({},state.match,{cardsPlayed:newCardsPlayed,isTurnFinished:action.turnFinished})});
 
 
 	case'CHANGE_TURN':
@@ -25224,7 +25238,6 @@
 	match:_extends({},state.match,{winner:action.setWinnerMatch}),
 	isStart:false});
 
-	break;
 
 
 	case'PLAY_AUCTION':
@@ -25346,7 +25359,7 @@
 /* 238 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	'use strict';Object.defineProperty(exports,"__esModule",{value:true});var _lodash=__webpack_require__(239);var _lodash2=_interopRequireDefault(_lodash);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}
+	'use strict';Object.defineProperty(exports,"__esModule",{value:true});var _typeof=typeof Symbol==="function"&&typeof(typeof Symbol==='function'?Symbol.iterator:'@@iterator')==="symbol"?function(obj){return typeof obj;}:function(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol&&obj!==(typeof Symbol==='function'?Symbol.prototype:'@@prototype')?"symbol":typeof obj;};var _lodash=__webpack_require__(239);var _lodash2=_interopRequireDefault(_lodash);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}
 
 	var matchMiddleware=function matchMiddleware(store){return function(next){return function(action){
 	var state=store.getState();
@@ -25359,58 +25372,60 @@
 	action.cardsPlayed=resetCardsPlayed();
 	break;
 	case'PLAY':
-	action.cardsPlayed=playCardOnTheTable(action.value),
-	action.cardPlayed=action.value,
-	action.inTurn=getNextInTurn(),
+	var card=playCardOnTheTable(action.value);
+	action.cardPlayed=card;
+	action.inTurn=getNextInTurn();
 	action.turnFinished=isTurnFinished();
 	break;
 	case'CHANGE_TURN':
-	action.inTurn=getNextInTurn(),
+	action.inTurn=getNextInTurn();
 	action.turnFinished=isTurnFinished();
 	break;
 	case'END_TURN':
-	action.winnerTurn=getWinnerTurn(),
-	action.inTurn=getNextInTurn(),
-	action.cardsPlayed=resetCardsPlayed(),
-	action.finishedMatch=isMatchFinished(),
+	action.winnerTurn=getWinnerTurn();
+	action.cardsPlayed=resetCardsPlayed();
+	action.inTurn=getNextInTurn(action.winnerTurn);
+	action.turnFinished=false;
 	action.turns=getNextTurn();
+	action.finishedMatch=isMatchFinished();
 	break;
 	case'SET_WINNER':
 	action.winner=setWinnerMatch();
+	action.cardsPlayed=resetCardsPlayed();
 	break;
 	case'CHANGE_TURN_AUCTION':
-	action.inTurn=getNextInTurn(),
+	action.inTurn=getNextInTurn();
 	action.winnerAuction=getWinnerAuction();
 	break;
 	case'PLAY_AUCTION':
-	action.inAuction=isUserInAuction(),
-	action.auctionForUser=setAuctionForUser(action.value),
-	action.inTurn=getNextInTurn(),
+	action.inAuction=isUserInAuction();
+	action.auctionForUser=setAuctionForUser(action.value);
+	action.inTurn=getNextInTurn();
 	action.winnerAuction=getWinnerAuction();
 	break;
 	case'CHOOSE_COMPAGNO':
 	var choosenCard=chooseCompagno(action.compagno);
-	action.compagno=choosenCard.id,
-	action.inTurn=getNextInTurn(),
+	action.compagno=choosenCard.id;
+	action.inTurn=getNextInTurn();
 	action.area='match';
 
 	action.seed=choosenCard.seme;
 
 	break;
 	case'EXIT_AUCTION':
-	action.inAuction=false,
-	action.inTurn=getNextInTurn(),
+	action.inAuction=false;
+	action.inTurn=getNextInTurn();
 	action.winnerAuction=getWinnerAuction();
 	break;}
 
 
 
-	function getNextInTurn(){
+	function getNextInTurn(winnerTurn){
 	if(state.area=="auction"&&state.auction.winner!=undefined){
 	return state.auction.winner;
 	}
-	if(state.area=="match"&&state.match.winnerTurn!=undefined&&state.match.cardsPlayed[state.match.winnerTurn]==undefined){
-	return state.match.winnerTurn;
+	if(state.area=="match"&&state.match.isTurnFinished){
+	return winnerTurn.winner;
 	}
 	var next=(state.inTurn+1)%5;
 	return next;
@@ -25420,7 +25435,6 @@
 	var next=(state.match.turns+1)%9;
 	return next;
 	}
-
 
 
 	function resetCardsPlayed(){
@@ -25447,10 +25461,12 @@
 	var allCards=state.cards;
 	var myAllCards=[];
 	for(var _i=0;_i<cards.length;_i++){
+	if(cards[_i]){
 	for(var key in allCards){
 	if(allCards.hasOwnProperty(key)){
 	if(allCards[key].id==cards[_i]){
 	myAllCards.push(allCards[key]);
+	}
 	}
 	}
 	}
@@ -25506,15 +25522,23 @@
 
 	function isTurnFinished(){
 	var res=state.match.cardsPlayed.filter(function(c){return c.value==0;});
-	return res.length==0;
+	return res.length==1;
 	}
 
 	function getWinnerTurn(){
 	var maxValue=0;
 	var winner=0;
 	var totalPoints=0;
-	for(var _i3=0;_i3<state.match.cardsPlayed.length;_i3++){
-	var c=state.match.cardsPlayed[_i3];
+	var startFrom=0;
+	if(state.match.winnerTurn){
+	startFrom=state.match.winnerTurn;
+	}else{
+	startFrom=state.auction.winner;
+	}
+
+	for(var _i3=startFrom;_i3<5+startFrom;_i3++){
+	var indexPlayer=_i3%5;
+	var c=state.match.cardsPlayed[indexPlayer];
 	var valueCurrentcard=0;
 	if(state.auction.seed===state.cards[c.value].seme){
 	valueCurrentcard=state.cards[c.value].value+100;
@@ -25522,7 +25546,6 @@
 	valueCurrentcard=state.cards[c.value].value;
 	}
 	if(valueCurrentcard>maxValue){
-
 	maxValue=valueCurrentcard;
 	winner=c.id;
 	}
@@ -25536,17 +25559,10 @@
 	function playCardOnTheTable(){var cardToPlay=arguments.length>0&&arguments[0]!==undefined?arguments[0]:null;
 	var c=null;
 	if(!cardToPlay){
-	c=getCardToPlay();
+	return getCardToPlay();
 	}else{
-	c=cardToPlay;
+	return cardToPlay;
 	}
-	var newCardsPlayed=state.match.cardsPlayed;
-	return newCardsPlayed.map(function(card){
-	if(card.id==state.inTurn){
-	card.value=c;
-	}
-	return card;
-	});
 	}
 
 
@@ -25601,7 +25617,7 @@
 	var tmpVal=myAllCardsByValue[_i4].value;
 	var firstPlayedSeed=getFirstPlayedSeed();
 
-	if(myAllCardsByValue[_i4].seed==firstPlayedSeed&&myAllCardsByValue[_i4].seed!=state.auction.seed){
+	if(firstPlayedSeed&&myAllCardsByValue[_i4].seed==firstPlayedSeed&&myAllCardsByValue[_i4].seed!=state.auction.seed){
 	tmpVal+=100;
 	}else if(myAllCardsByValue[_i4].seed==state.auction.seed){
 	tmpVal+=1000;
@@ -25616,8 +25632,8 @@
 
 	function getFirstPlayedSeed(){
 	return state.match.cardsPlayed.map(function(card){
-	if(card.id===state.match.winnerTurn){
-	return state.cards[card.id].seme;
+	if(card.id===state.match.winnerTurn&&card.value){
+	return state.cards[card.value].seme;
 	}
 	});
 	}
@@ -25635,6 +25651,11 @@
 	tmpCard=myAllCardsByValue[_i5].id;
 	}
 	}
+
+	if(tmpCard==0){
+	tmpCard=myAllCardsByValue[0].id;
+	}
+
 	return tmpCard;
 	}
 
@@ -25728,12 +25749,12 @@
 	if(card){
 	return state.cards[card];
 	}else{
-	var cardsBySeed=getCardsBySeed(state.players[state.auction.winner]);
+	var cardsBySeed=getCardsBySeed(state.players[state.auction.winner].cards);
 	var valuesBySeed={"coppe":0,"spade":0,"denari":0,"bastoni":0};
 
 	for(var key in cardsBySeed){
 	if(valuesBySeed.hasOwnProperty(key)){
-	valuesBySeed[key]=getValueFromCardsBySeed(cardsBySeed);
+	valuesBySeed[key]=getValueFromCardsBySeed(cardsBySeed[key]);
 	}
 	}
 
@@ -25747,27 +25768,27 @@
 
 
 	function getHighestValuedCardFromBiggestSeed(maxSeed,cardsBySeed){
-	var cards=cardsBySeed[maxSeed];
-	for(i=10;i>=1;i--){
+	var cards=cardsBySeed[maxSeed];var _loop=function _loop(
+	_i6){
 	if(cards.filter(function(card){
-	return card.value==i;
+	return card.value==_i6;
 	}).length==0){
 	var allCards=state.cards;
-	for(var key in allCards){
+	for(key in allCards){
 	if(allCards.hasOwnProperty(key)){
-	if(allCards[key].value==i&&allCards[key].seed==maxSeed){
-	return key;
+	if(allCards[key].value==_i6&&allCards[key].seme==maxSeed){
+	return{v:key};
 	}
 	}
 	}
-	}
+	}};for(var _i6=10;_i6>=1;_i6--){var key;var _ret=_loop(_i6);if((typeof _ret==='undefined'?'undefined':_typeof(_ret))==="object")return _ret.v;
 	}
 	}
 
 	function getAlleato(){
 	state.players.map(function(p){
-	for(var _i6=0;_i6<p.cards.length;_i6++){
-	if(p.cards[_i6]==state.auction.compagno)
+	for(var _i7=0;_i7<p.cards.length;_i7++){
+	if(p.cards[_i7]==state.auction.compagno)
 	return p.id;
 	}
 	});
@@ -25811,7 +25832,7 @@
 	}
 
 	function getBiggestAuction(players){
-	var tmpMax=0;
+	var tmpMax=60;
 	players.map(function(player){
 	if(player.auction.points>tmpMax){
 	tmpMax=player.auction.points;
@@ -25833,7 +25854,7 @@
 	auction.points=tmpVal;
 	}else{
 	auction.isIn=true;
-	auction.points=biggestAuction+1;
+	auction.points=biggestAuction+5;
 	}
 
 	return auction;
@@ -25871,6 +25892,7 @@
 
 	function getBiggestSeedValueFromValuesBySeed(valueBySeed){
 	var biggestSeed=null;
+	var biggestValue=0;
 	for(var key in valueBySeed){
 	if(valueBySeed.hasOwnProperty(key)){
 	if(valueBySeed[key]>biggestValue){

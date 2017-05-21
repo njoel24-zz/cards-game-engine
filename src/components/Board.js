@@ -17,8 +17,10 @@ class Board extends React.Component {
     
     if(this.props.inTurn !== this.props.me 
     || (this.props.inTurn === this.props.me && this.props.area === "auction" 
-        && !this.props.players[this.props.me].auction.isIn)) {
-      this.prepareAsyncAction(500)  
+        && !this.props.players[this.props.me].auction.isIn)
+        || (this.props.inTurn === this.props.me && this.props.area === "match" 
+        && this.props.match.isTurnFinished)) {
+      this.prepareAsyncAction(1000)  
     }
 
     return (
@@ -31,6 +33,11 @@ class Board extends React.Component {
   }
 
   prepareAsyncAction (timeout) {
+    var id = window.setTimeout(function() {}, 0);
+    while (id--) {
+      window.clearTimeout(id); // will do nothing if no timeout with id is present
+    }
+    console.log(this.props.players)
     if (this.props.isStart && this.props.area === "auction") {
       if (this.props.auction.winner !== undefined) {
         setTimeout(this.props.chooseCompagno.bind(this), timeout);

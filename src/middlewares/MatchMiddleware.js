@@ -11,58 +11,60 @@ const matchMiddleware = store => next => action => {
       action.cardsPlayed = resetCardsPlayed()
     break
 		case 'PLAY':
-      action.cardsPlayed = playCardOnTheTable(action.value),
-      action.cardPlayed = action.value,
-      action.inTurn = getNextInTurn(),
+      const card = playCardOnTheTable(action.value)
+      action.cardPlayed = card
+      action.inTurn = getNextInTurn()
       action.turnFinished = isTurnFinished()
     break
     case 'CHANGE_TURN':
-      action.inTurn = getNextInTurn(),
+      action.inTurn = getNextInTurn()
       action.turnFinished = isTurnFinished()
     break
-		case 'END_TURN':
-			action.winnerTurn = getWinnerTurn(),
-  		action.inTurn = getNextInTurn(),
-  		action.cardsPlayed = resetCardsPlayed(),
-  		action.finishedMatch = isMatchFinished(),
-  		action.turns = getNextTurn() // increase a value
+		case 'END_TURN':  
+			action.winnerTurn = getWinnerTurn()
+  		action.cardsPlayed = resetCardsPlayed()
+      action.inTurn = getNextInTurn(action.winnerTurn)
+      action.turnFinished = false
+      action.turns = getNextTurn() // increase a value      
+  		action.finishedMatch = isMatchFinished()
     break
 		case 'SET_WINNER':
 			action.winner = setWinnerMatch()
+      action.cardsPlayed = resetCardsPlayed()
     break
     case 'CHANGE_TURN_AUCTION':
-			action.inTurn = getNextInTurn(),
+			action.inTurn = getNextInTurn()
       action.winnerAuction = getWinnerAuction()
     break
 		case 'PLAY_AUCTION':
-    	action.inAuction = isUserInAuction(),
-			action.auctionForUser = setAuctionForUser(action.value),
-      action.inTurn = getNextInTurn(),
+    	action.inAuction = isUserInAuction()
+			action.auctionForUser = setAuctionForUser(action.value)
+      action.inTurn = getNextInTurn()
       action.winnerAuction = getWinnerAuction()
     break
  		case 'CHOOSE_COMPAGNO':
       const choosenCard = chooseCompagno(action.compagno)
-    	action.compagno = choosenCard.id,
-      action.inTurn = getNextInTurn(),
+    	action.compagno = choosenCard.id
+      action.inTurn = getNextInTurn()
       action.area = 'match'
       //TODO: do not know if this works
       action.seed = choosenCard.seme
       // action.alleato = getAlleato()
     break
     case 'EXIT_AUCTION':
-    	action.inAuction = false,
-      action.inTurn = getNextInTurn(),
+    	action.inAuction = false
+      action.inTurn = getNextInTurn()
       action.winnerAuction = getWinnerAuction()
     break
 	}
 
   
-  function getNextInTurn() {
+  function getNextInTurn(winnerTurn) {
     if(state.area == "auction" && state.auction.winner != undefined){
       return state.auction.winner
     }
-    if(state.area == "match" && state.match.winnerTurn != undefined && state.match.cardsPlayed[state.match.winnerTurn] == undefined){
-      return state.match.winnerTurn
+    if(state.area == "match" && state.match.isTurnFinished ){
+      return winnerTurn.winner;
     }
       var next = (state.inTurn+1)%5
       return next
@@ -72,7 +74,6 @@ const matchMiddleware = store => next => action => {
       var next = (state.match.turns+1)%9
       return next
     }
-
 
 
     function resetCardsPlayed() {
@@ -99,6 +100,7 @@ function getMyAllCards(cards){
   const allCards = state.cards
   const myAllCards = []
   for(let i=0; i<cards.length; i++){
+    if(cards[i]) {
      for (var key in allCards) {
         if(allCards.hasOwnProperty(key)){
           if(allCards[key].id == cards[i]){
@@ -106,6 +108,7 @@ function getMyAllCards(cards){
           }
         }
       }
+    }
   }
   return myAllCards
 }
@@ -158,23 +161,30 @@ function addBriscolaValueToMyAllCards(myAllCards) {
     // WINNER TURN
      function isTurnFinished(){
       var res = state.match.cardsPlayed.filter( c => { return c.value == 0 } );
-      return res.length == 0
+      return res.length == 1
     }
 
     function getWinnerTurn(){
       let maxValue = 0;
       let winner =0;
       let totalPoints = 0;
-      for( let i = 0; i< state.match.cardsPlayed.length; i++ ) {
-          let c = state.match.cardsPlayed[i];
+      let startFrom = 0;
+      if(state.match.winnerTurn) {
+        startFrom = state.match.winnerTurn
+      } else {
+        startFrom = state.auction.winner;
+      }
+
+      for( let i = startFrom; i< 5+startFrom; i++ ) {
+          let indexPlayer = i%5;
+          let c = state.match.cardsPlayed[indexPlayer];
           let valueCurrentcard =  0
           if(state.auction.seed === state.cards[c.value].seme ) {
             valueCurrentcard = state.cards[c.value].value + 100
           } else {
             valueCurrentcard = state.cards[c.value].value
           }
-          if(valueCurrentcard > maxValue) {
-            
+          if(valueCurrentcard > maxValue) {            
             maxValue = valueCurrentcard
             winner = c.id
           }
@@ -188,17 +198,10 @@ function addBriscolaValueToMyAllCards(myAllCards) {
   function playCardOnTheTable(cardToPlay = null){
       let c = null;
       if (!cardToPlay) {
-        c = getCardToPlay()
+        return getCardToPlay()
       } else {
-        c = cardToPlay
+        return cardToPlay
       }
-      var newCardsPlayed = state.match.cardsPlayed
-      return newCardsPlayed.map( card => {
-        if(card.id == state.inTurn){
-          card.value = c
-        }
-        return card;
-      })
     }
 
     
@@ -253,7 +256,7 @@ function addBriscolaValueToMyAllCards(myAllCards) {
       let tmpVal = myAllCardsByValue[i].value
       const firstPlayedSeed = getFirstPlayedSeed()
 
-      if(myAllCardsByValue[i].seed == firstPlayedSeed  && (myAllCardsByValue[i].seed != state.auction.seed)){
+      if(firstPlayedSeed && (myAllCardsByValue[i].seed == firstPlayedSeed)  && (myAllCardsByValue[i].seed != state.auction.seed)){
         tmpVal += 100
       } else if(myAllCardsByValue[i].seed == state.auction.seed){
         tmpVal += 1000
@@ -268,8 +271,8 @@ function addBriscolaValueToMyAllCards(myAllCards) {
 // case null
   function getFirstPlayedSeed() {
     return state.match.cardsPlayed.map( (card) => {
-        if(card.id === state.match.winnerTurn){
-          return state.cards[card.id].seme
+        if(card.id === state.match.winnerTurn && card.value){
+          return state.cards[card.value].seme
         }
     } )
   }
@@ -287,6 +290,11 @@ function addBriscolaValueToMyAllCards(myAllCards) {
         tmpCard = myAllCardsByValue[i].id
       }
     }
+
+    if(tmpCard == 0) {
+      tmpCard = myAllCardsByValue[0].id
+    }
+
     return tmpCard
   }
 
@@ -380,12 +388,12 @@ function addBriscolaValueToMyAllCards(myAllCards) {
       if(card){
         return state.cards[card]
       } else {
-        const cardsBySeed = getCardsBySeed(state.players[state.auction.winner])
+        const cardsBySeed = getCardsBySeed(state.players[state.auction.winner].cards)
         const valuesBySeed = {"coppe": 0, "spade": 0, "denari": 0, "bastoni": 0}
 
       for (var key in cardsBySeed) {
         if(valuesBySeed.hasOwnProperty(key)){
-          valuesBySeed[key] = getValueFromCardsBySeed(cardsBySeed)
+          valuesBySeed[key] = getValueFromCardsBySeed(cardsBySeed[key])
         }
       } 
 
@@ -400,14 +408,14 @@ function addBriscolaValueToMyAllCards(myAllCards) {
     
   function getHighestValuedCardFromBiggestSeed(maxSeed, cardsBySeed) {
     const cards = cardsBySeed[maxSeed]
-    for(i=10; i>=1; i-- ){
+    for(let i=10; i>=1; i-- ){
      if(cards.filter((card) => {
        return card.value == i
      }).length==0){
        const allCards = state.cards
        for (var key in allCards) {
           if(allCards.hasOwnProperty(key)){
-            if(allCards[key].value == i && allCards[key].seed == maxSeed){
+            if(allCards[key].value == i && allCards[key].seme == maxSeed){
               return key
             }
           }
@@ -463,7 +471,7 @@ function addBriscolaValueToMyAllCards(myAllCards) {
     }
 
     function getBiggestAuction(players) {
-      let tmpMax = 0
+      let tmpMax = 60
       players.map((player) => {
         if(player.auction.points > tmpMax ){
           tmpMax = player.auction.points
@@ -485,7 +493,7 @@ function addBriscolaValueToMyAllCards(myAllCards) {
         auction.points = tmpVal
       } else {
         auction.isIn = true
-        auction.points = biggestAuction+1;
+        auction.points = biggestAuction+5;
       }
 
       return auction
@@ -523,6 +531,7 @@ function addBriscolaValueToMyAllCards(myAllCards) {
 
   function getBiggestSeedValueFromValuesBySeed(valueBySeed){
     let biggestSeed = null
+    let biggestValue = 0
     for (var key in valueBySeed) {
       if(valueBySeed.hasOwnProperty(key)){
         if(valueBySeed[key] > biggestValue ){
