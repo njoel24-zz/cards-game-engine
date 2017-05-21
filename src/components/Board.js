@@ -55,7 +55,7 @@ class Board extends React.Component {
 		  }		  
     } else if (!this.props.isStart && this.props.area === "match") {
       console.log(this.props.match.winner);
-      // setTimeout(this.props.initMatch.bind(this), timeout);
+      setTimeout(this.props.initMatch.bind(this), 5000);
     }
   }
 

@@ -7,11 +7,11 @@ const matchReducer = (state = [], action) => {
     case 'INIT_MATCH':
       return {
         players: [
-        {id:0, name: 'Pippo3',  cards: [] , points: 0, auction: {points: 0, isIn: true }},
-        {id:1, name: 'Ugo',  cards: [], points: 0, auction: {points: 0, isIn: true }},
-        {id:2, name: 'Mario',  cards: [], points: 0, auction: {points: 0, isIn: true }},
-        {id:3, name: 'John', cards: [], points: 0, auction: {points: 0, isIn: true }},
-        {id:4, name: 'Franz', cards: [], points: 0, auction: {points: 0, isIn: true }}],        
+        {id:0, name: 'Pippo3',  cards: [] , points: 0, profile: "aggressive",  auction: {points: 0, isIn: true }},
+        {id:1, name: 'Ugo',  cards: [], points: 0, profile: "aggressive", auction: {points: 0, isIn: true }},
+        {id:2, name: 'Mario',  cards: [], points: 0, profile: "safe", auction: {points: 0, isIn: true }},
+        {id:3, name: 'John', cards: [], points: 0, profile: "safe", auction: {points: 0, isIn: true }},
+        {id:4, name: 'Tu', cards: [], points: 0, auction: {points: 0, isIn: true }}],        
         match: {  winner: undefined, winnerTurn: undefined, isTurnFinished: false, turns: 1, cardsPlayed: action.cardsPlayed },
         auction: { winner: undefined, seed: undefined, compagno:  undefined },
         isFinished: false,

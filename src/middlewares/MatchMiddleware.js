@@ -204,6 +204,14 @@ function addBriscolaValueToMyAllCards(myAllCards) {
       }
     }
 
+    function getCardByPlayerProfile () {
+      if(state.players[state.inTurn].profile === "aggressive") {
+        return playSafe();
+      } else {
+        return playSafe();
+      }
+    }
+
     
     function getCardToPlay() {
       let p = state.players.filter( p => { return p.id == state.inTurn } )[0]
@@ -222,7 +230,7 @@ function addBriscolaValueToMyAllCards(myAllCards) {
           if (isChiamante(p)) {
             const tryToWinCard = tryToWin(maxValuePlayed)
             if(!tryToWinCard){
-              return playSafe();
+              return getCardByPlayerProfile();
             }else{
               return tryToWinCard
             }
@@ -230,14 +238,14 @@ function addBriscolaValueToMyAllCards(myAllCards) {
           } else if(isCompagno(p)) {
             const tryToWinCard = tryToWin(maxValuePlayed)
             if(!tryToWinCard){
-              return playSafe();
+              return getCardByPlayerProfile();
             }else{
               return tryToWinCard
             }
           } else {
             const tryToWinCard = tryToWin(maxValuePlayed)
             if(!tryToWinCard){
-              return playSafe();
+              return getCardByPlayerProfile();
             }else{
               return tryToWinCard
             }
@@ -299,7 +307,23 @@ function addBriscolaValueToMyAllCards(myAllCards) {
   }
 
     function playAggressive(){
+      let minValue = 1;
+      let tmpCard = 0
+      const myAllCards = getMyAllCards(state.players[state.inTurn].cards)
+      const myAllCardsByValue = _.sortBy(myAllCards, ['value'], ['desc'])
 
+      for(let i =0; i<myAllCardsByValue.length; i++) {
+        if(myAllCardsByValue[i].value > minValue){
+          minValue = myAllCardsByValue[i].value
+          tmpCard = myAllCardsByValue[i].id
+        }
+      }
+
+      if(tmpCard == 0) {
+        tmpCard = myAllCardsByValue[0].id
+      }
+
+      return tmpCard
     }
 
     function playStandard(){
@@ -370,7 +394,7 @@ function addBriscolaValueToMyAllCards(myAllCards) {
       return state.auction.winner
     }
 
-    function isCompagno() {
+    function isCompagno(p) {
       return state.auction.compagno === p.id
     }
 
@@ -459,7 +483,7 @@ function addBriscolaValueToMyAllCards(myAllCards) {
         if(value > biggestAuction) {
           return  {points:value, isIn:true}
         } else {
-          return state.players[state.inTurn].auction
+          return {points:value, isIn:false}
         }
       }
 
@@ -494,6 +518,9 @@ function addBriscolaValueToMyAllCards(myAllCards) {
       } else {
         auction.isIn = true
         auction.points = biggestAuction+5;
+        if(auction.points > 120) {
+          auction.points = 120
+        }
       }
 
       return auction
@@ -543,18 +570,6 @@ function addBriscolaValueToMyAllCards(myAllCards) {
     return biggestSeed
   }
 
-/*  function getChoosenSeedFromCardsBySeed(valueBySeed){
-    let choosenSeed = null
-    for (var key in valueBySeed) {
-      if(valueBySeed.hasOwnProperty(key)){
-        if(valueBySeed[key] > biggestValue ){
-          choosenSeed = key;
-        }
-      }
-    }
-    return choosenSeed  
-  } */
-
   function getAuctionValue(cards){
     const cardsBySeed = getCardsBySeed(cards)
     const valueBySeed = {"coppe": 0, "spade": 0, "denari": 0, "bastoni": 0}
@@ -567,28 +582,28 @@ function addBriscolaValueToMyAllCards(myAllCards) {
 
     const maxValue = getBiggestValueFromCardsBySeed(valueBySeed);
     let myMaxAuction = 70; 
-    if(maxValue >= 27 ){
+    if(maxValue >= 20 ){
       myMaxAuction = 70;
     }
-    if(maxValue >= 35 ){
+    if(maxValue >= 25 ){
       myMaxAuction = 80;
     }
-    if(maxValue >= 40 ){
+    if(maxValue >= 30 ){
       myMaxAuction = 90;
     }
+    if(maxValue >= 35 ){
+      myMaxAuction = 100;
+    }
+
+    if(maxValue >= 40 ){
+      myMaxAuction = 105;
+    }
+
     if(maxValue >= 45 ){
-      myMaxAuction = 100;
-    }
-
-    if(maxValue >= 50 ){
-      myMaxAuction = 100;
-    }
-
-    if(maxValue >= 52 ){
       myMaxAuction = 110;
     }
 
-    if(maxValue == 55 ){
+    if(maxValue == 50 ){
       myMaxAuction = 120;
     }
 
