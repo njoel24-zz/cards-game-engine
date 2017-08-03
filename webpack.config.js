@@ -25,10 +25,6 @@ const config = {
       {
         test: /\.sass$/,
         loader: ExtractTextPlugin.extract('style-loader', sassLoaders.join('!'))
-      },
-      {
-        test: /react-native/,
-        loader: null
       }
     ]
   },

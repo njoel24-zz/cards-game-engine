@@ -212,38 +212,46 @@ function addBriscolaValueToMyAllCards(myAllCards) {
       }
     }
 
+    function getCurrentContext(p){
+      return {
+        maxValuePlayed: getMaxValueFromCardsPlayed(),
+        tmpSumPunti: getTmpMaxPuntiTurno(),
+        auctionValue:  state.players[state.auction.winner].auction.points,
+        puntiConsumatiByTeam: getPuntiConsumatiByTeam(),
+        tmpWinnerTeam: getTmpWinnerTurn(getPuntiConsumatiByTeam()),
+        hasCompagnoAlreadyPlayed: state.match.cardsPlayed[getAlleato()]!==undefined,
+        hasChiamanteAlreadyPlayed: state.match.cardsPlayed[state.auction.winner]!==undefined,
+        lastOneToPlay: whichIsTheLastOneToPlay(),
+        isOther: !(state.auction.winner === p.id) && !(state.auction.compagno === p.id),
+        isChiamante: state.auction.winner === p.id,
+        isCompagno: state.auction.compagno === p.id,
+        currentTurn: state.turns,
+        amITheLastOne: state.match.cardsPlayed.length === 4,
+        amItheFirstOne: state.match.cardsPlayed.length === 0
+      }
+    }
     
     function getCardToPlay() {
       let p = state.players.filter( p => { return p.id == state.inTurn } )[0]
       if(p) {
-        const maxValuePlayed = getMaxValueFromCardsPlayed();
-        const tmpSumPunti = getTmpMaxPuntiTurno();
-        const auctionValue =  state.players[state.auction.winner].auction.points
-        const puntiConsumatiByTeam = getPuntiConsumatiByTeam();
-        const tmpWinnerTeam = getTmpWinnerTurn(puntiConsumatiByTeam);
-        const hasCompagnoAlreadyPlayed = state.match.cardsPlayed[getAlleato()]!==undefined
-        const hasChiamanteAlreadyPlayed = state.match.cardsPlayed[state.auction.winner]!==undefined
-        const lastOneToPlay = whichIsTheLastOneToPlay()
-        
-        // se sn l'ultimo
-        // quanti altri hanno giocato
-          if (isChiamante(p)) {
-            const tryToWinCard = tryToWin(maxValuePlayed)
-            if(!tryToWinCard){
-              return getCardByPlayerProfile();
-            }else{
-              return tryToWinCard
-            }
+        const context = getCurrentContext(p);
+          if (context.isChiamante) {
+              const tryToWinCard = tryToWin(context.maxValuePlayed)
+              if(!tryToWinCard){
+                return getCardByPlayerProfile();
+              }else{
+                return tryToWinCard
+              }
 
-          } else if(isCompagno(p)) {
-            const tryToWinCard = tryToWin(maxValuePlayed)
+          } else if(context.isCompagno) {
+            const tryToWinCard = tryToWin(context.maxValuePlayed)
             if(!tryToWinCard){
               return getCardByPlayerProfile();
             }else{
               return tryToWinCard
             }
           } else {
-            const tryToWinCard = tryToWin(maxValuePlayed)
+            const tryToWinCard = tryToWin(context.maxValuePlayed)
             if(!tryToWinCard){
               return getCardByPlayerProfile();
             }else{
@@ -257,32 +265,41 @@ function addBriscolaValueToMyAllCards(myAllCards) {
 
 // deve considerare il primo seme giocato che puo non essere briscola ma ha piu valore di un altro seme
   function tryToWin(maxValuePlayed) {
+    console.log("-----------------------------------")
     const myAllCards = getMyAllCards(state.players[state.inTurn].cards)
     const myAllCardsByValue = _.sortBy(myAllCards, ['value'])
-
+    console.log("maxValuePlayed:"+ maxValuePlayed);
     for(let i =0; i<myAllCardsByValue.length; i++) {
       let tmpVal = myAllCardsByValue[i].value
       const firstPlayedSeed = getFirstPlayedSeed()
-
-      if(firstPlayedSeed && (myAllCardsByValue[i].seed == firstPlayedSeed)  && (myAllCardsByValue[i].seed != state.auction.seed)){
+      console.log(myAllCardsByValue[i].seme)
+      if(firstPlayedSeed && (myAllCardsByValue[i].seme == firstPlayedSeed)  && (myAllCardsByValue[i].seme != state.auction.seed)) {
         tmpVal += 100
-      } else if(myAllCardsByValue[i].seed == state.auction.seed){
+      } else if(myAllCardsByValue[i].seme == state.auction.seed){
         tmpVal += 1000
       }
-
-      if(tmpVal > maxValuePlayed){
+      console.log("tmpVal:"+ tmpVal);
+      if(tmpVal > maxValuePlayed) {
+        
         return myAllCardsByValue[i].id
       }
     }
+    console.log("-----------------------------------")
   }
 
 // case null
   function getFirstPlayedSeed() {
-    return state.match.cardsPlayed.map( (card) => {
-        if(card.id === state.match.winnerTurn && card.value){
-          return state.cards[card.value].seme
+    for(let i=0; i<state.match.cardsPlayed.length; i++) {
+      const currentIndexCard = state.match.cardsPlayed[i].value;
+      const player = state.match.cardsPlayed[i].id;
+      if(currentIndexCard > 0 ) {
+        if(state.match.winnerTurn && state.match.winnerTurn === player ) {
+          return currentIndexCard
+        } else if (state.auction.winner && state.auction.winner === player ) {
+          return currentIndexCard
         }
-    } )
+      }
+    }
   }
 
   // try to play a low value card, no briscola
@@ -374,29 +391,23 @@ function addBriscolaValueToMyAllCards(myAllCards) {
       let currentValue = 0
       state.match.cardsPlayed.map(card => {
         if(card.value > 0) {
-        currentValue = state.cards[card.value].value
-        if(state.cards[card.value].seme == state.auction.seed){
+          currentValue = state.cards[card.value].value
+          console.log("state.cards[card.value].seme:"+state.cards[card.value].seme);
+          console.log("getFirstPlayedSeed:"+getFirstPlayedSeed());
+          console.log(state.cards[card.value]);
+          if(state.cards[card.value].seme == state.auction.seed){
+              currentValue += 1000
+          } else if(state.cards[card.value].seme == getFirstPlayedSeed()){
               currentValue += 100
-        }
-        if(state.cards[card.value].value > maxValue){
-          maxValue = currentValue
-        }
+          }
+          if(currentValue > maxValue){
+            maxValue = currentValue
+          }
         }
       })
       return maxValue
     }
 
-    function isOthers(p){
-      return (!isChiamante && !isCompagno)
-    }
-
-    function isChiamante(p) {
-      return state.auction.winner
-    }
-
-    function isCompagno(p) {
-      return state.auction.compagno === p.id
-    }
 
 
 

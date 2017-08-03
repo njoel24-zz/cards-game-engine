@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 
-import { startMatch } from '../actions/match'
+import { startMatch } from '../src/actions/match'
 import { Card } from './Card'
 import { View, Text, StyleSheet, Button } from 'react-native';
 

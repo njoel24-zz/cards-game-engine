@@ -4,7 +4,7 @@ import { View, Text, Image, StyleSheet,  Animated,
 
 import { connect } from 'react-redux'
 
-import { play } from '../actions/match'
+import { play } from '../src/actions/match'
 
 export class Card extends React.Component {
 

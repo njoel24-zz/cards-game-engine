@@ -360,6 +360,10 @@
 	process.removeListener = noop;
 	process.removeAllListeners = noop;
 	process.emit = noop;
+	process.prependListener = noop;
+	process.prependOnceListener = noop;
+
+	process.listeners = function (name) { return [] }
 
 	process.binding = function (name) {
 	    throw new Error('process.binding is not supported');
@@ -777,45 +781,43 @@
 	var warning = emptyFunction;
 
 	if (process.env.NODE_ENV !== 'production') {
-	  (function () {
-	    var printWarning = function printWarning(format) {
-	      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-	        args[_key - 1] = arguments[_key];
+	  var printWarning = function printWarning(format) {
+	    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	      args[_key - 1] = arguments[_key];
+	    }
+
+	    var argIndex = 0;
+	    var message = 'Warning: ' + format.replace(/%s/g, function () {
+	      return args[argIndex++];
+	    });
+	    if (typeof console !== 'undefined') {
+	      console.error(message);
+	    }
+	    try {
+	      // --- Welcome to debugging React ---
+	      // This error was thrown as a convenience so that you can use this stack
+	      // to find the callsite that caused this warning to fire.
+	      throw new Error(message);
+	    } catch (x) {}
+	  };
+
+	  warning = function warning(condition, format) {
+	    if (format === undefined) {
+	      throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
+	    }
+
+	    if (format.indexOf('Failed Composite propType: ') === 0) {
+	      return; // Ignore CompositeComponent proptype check.
+	    }
+
+	    if (!condition) {
+	      for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+	        args[_key2 - 2] = arguments[_key2];
 	      }
 
-	      var argIndex = 0;
-	      var message = 'Warning: ' + format.replace(/%s/g, function () {
-	        return args[argIndex++];
-	      });
-	      if (typeof console !== 'undefined') {
-	        console.error(message);
-	      }
-	      try {
-	        // --- Welcome to debugging React ---
-	        // This error was thrown as a convenience so that you can use this stack
-	        // to find the callsite that caused this warning to fire.
-	        throw new Error(message);
-	      } catch (x) {}
-	    };
-
-	    warning = function warning(condition, format) {
-	      if (format === undefined) {
-	        throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
-	      }
-
-	      if (format.indexOf('Failed Composite propType: ') === 0) {
-	        return; // Ignore CompositeComponent proptype check.
-	      }
-
-	      if (!condition) {
-	        for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
-	          args[_key2 - 2] = arguments[_key2];
-	        }
-
-	        printWarning.apply(undefined, [format].concat(args));
-	      }
-	    };
-	  })();
+	      printWarning.apply(undefined, [format].concat(args));
+	    }
+	  };
 	}
 
 	module.exports = warning;
@@ -18350,18 +18352,11 @@
 
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
+	 * All rights reserved.
 	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
 	 * @typechecks
 	 */
@@ -21797,34 +21792,33 @@
 	 */
 	var ActionTypes = exports.ActionTypes = {
 	  INIT: '@@redux/INIT'
-	};
 
-	/**
-	 * Creates a Redux store that holds the state tree.
-	 * The only way to change the data in the store is to call `dispatch()` on it.
-	 *
-	 * There should only be a single store in your app. To specify how different
-	 * parts of the state tree respond to actions, you may combine several reducers
-	 * into a single reducer function by using `combineReducers`.
-	 *
-	 * @param {Function} reducer A function that returns the next state tree, given
-	 * the current state tree and the action to handle.
-	 *
-	 * @param {any} [preloadedState] The initial state. You may optionally specify it
-	 * to hydrate the state from the server in universal apps, or to restore a
-	 * previously serialized user session.
-	 * If you use `combineReducers` to produce the root reducer function, this must be
-	 * an object with the same shape as `combineReducers` keys.
-	 *
-	 * @param {Function} enhancer The store enhancer. You may optionally specify it
-	 * to enhance the store with third-party capabilities such as middleware,
-	 * time travel, persistence, etc. The only store enhancer that ships with Redux
-	 * is `applyMiddleware()`.
-	 *
-	 * @returns {Store} A Redux store that lets you read the state, dispatch actions
-	 * and subscribe to changes.
-	 */
-	function createStore(reducer, preloadedState, enhancer) {
+	  /**
+	   * Creates a Redux store that holds the state tree.
+	   * The only way to change the data in the store is to call `dispatch()` on it.
+	   *
+	   * There should only be a single store in your app. To specify how different
+	   * parts of the state tree respond to actions, you may combine several reducers
+	   * into a single reducer function by using `combineReducers`.
+	   *
+	   * @param {Function} reducer A function that returns the next state tree, given
+	   * the current state tree and the action to handle.
+	   *
+	   * @param {any} [preloadedState] The initial state. You may optionally specify it
+	   * to hydrate the state from the server in universal apps, or to restore a
+	   * previously serialized user session.
+	   * If you use `combineReducers` to produce the root reducer function, this must be
+	   * an object with the same shape as `combineReducers` keys.
+	   *
+	   * @param {Function} [enhancer] The store enhancer. You may optionally specify it
+	   * to enhance the store with third-party capabilities such as middleware,
+	   * time travel, persistence, etc. The only store enhancer that ships with Redux
+	   * is `applyMiddleware()`.
+	   *
+	   * @returns {Store} A Redux store that lets you read the state, dispatch actions
+	   * and subscribe to changes.
+	   */
+	};function createStore(reducer, preloadedState, enhancer) {
 	  var _ref2;
 
 	  if (typeof preloadedState === 'function' && typeof enhancer === 'undefined') {
@@ -21958,7 +21952,8 @@
 
 	    var listeners = currentListeners = nextListeners;
 	    for (var i = 0; i < listeners.length; i++) {
-	      listeners[i]();
+	      var listener = listeners[i];
+	      listener();
 	    }
 
 	    return action;
@@ -21987,7 +21982,7 @@
 	   * Interoperability point for observable/reactive libraries.
 	   * @returns {observable} A minimal observable of state changes.
 	   * For more information, see the observable proposal:
-	   * https://github.com/zenparsing/es-observable
+	   * https://github.com/tc39/proposal-observable
 	   */
 	  function observable() {
 	    var _ref;
@@ -22434,7 +22429,7 @@
 	  var actionType = action && action.type;
 	  var actionName = actionType && '"' + actionType.toString() + '"' || 'an action';
 
-	  return 'Given action ' + actionName + ', reducer "' + key + '" returned undefined. ' + 'To ignore an action, you must explicitly return the previous state.';
+	  return 'Given action ' + actionName + ', reducer "' + key + '" returned undefined. ' + 'To ignore an action, you must explicitly return the previous state. ' + 'If you want this reducer to hold no value, you can return null instead of undefined.';
 	}
 
 	function getUnexpectedStateShapeWarningMessage(inputState, reducers, action, unexpectedKeyCache) {
@@ -22462,18 +22457,18 @@
 	  }
 	}
 
-	function assertReducerSanity(reducers) {
+	function assertReducerShape(reducers) {
 	  Object.keys(reducers).forEach(function (key) {
 	    var reducer = reducers[key];
 	    var initialState = reducer(undefined, { type: _createStore.ActionTypes.INIT });
 
 	    if (typeof initialState === 'undefined') {
-	      throw new Error('Reducer "' + key + '" returned undefined during initialization. ' + 'If the state passed to the reducer is undefined, you must ' + 'explicitly return the initial state. The initial state may ' + 'not be undefined.');
+	      throw new Error('Reducer "' + key + '" returned undefined during initialization. ' + 'If the state passed to the reducer is undefined, you must ' + 'explicitly return the initial state. The initial state may ' + 'not be undefined. If you don\'t want to set a value for this reducer, ' + 'you can use null instead of undefined.');
 	    }
 
 	    var type = '@@redux/PROBE_UNKNOWN_ACTION_' + Math.random().toString(36).substring(7).split('').join('.');
 	    if (typeof reducer(undefined, { type: type }) === 'undefined') {
-	      throw new Error('Reducer "' + key + '" returned undefined when probed with a random type. ' + ('Don\'t try to handle ' + _createStore.ActionTypes.INIT + ' or other actions in "redux/*" ') + 'namespace. They are considered private. Instead, you must return the ' + 'current state for any unknown actions, unless it is undefined, ' + 'in which case you must return the initial state, regardless of the ' + 'action type. The initial state may not be undefined.');
+	      throw new Error('Reducer "' + key + '" returned undefined when probed with a random type. ' + ('Don\'t try to handle ' + _createStore.ActionTypes.INIT + ' or other actions in "redux/*" ') + 'namespace. They are considered private. Instead, you must return the ' + 'current state for any unknown actions, unless it is undefined, ' + 'in which case you must return the initial state, regardless of the ' + 'action type. The initial state may not be undefined, but can be null.');
 	    }
 	  });
 	}
@@ -22512,23 +22507,24 @@
 	  }
 	  var finalReducerKeys = Object.keys(finalReducers);
 
+	  var unexpectedKeyCache = void 0;
 	  if (process.env.NODE_ENV !== 'production') {
-	    var unexpectedKeyCache = {};
+	    unexpectedKeyCache = {};
 	  }
 
-	  var sanityError;
+	  var shapeAssertionError = void 0;
 	  try {
-	    assertReducerSanity(finalReducers);
+	    assertReducerShape(finalReducers);
 	  } catch (e) {
-	    sanityError = e;
+	    shapeAssertionError = e;
 	  }
 
 	  return function combination() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	    var action = arguments[1];
 
-	    if (sanityError) {
-	      throw sanityError;
+	    if (shapeAssertionError) {
+	      throw shapeAssertionError;
 	    }
 
 	    if (process.env.NODE_ENV !== 'production') {
@@ -22540,16 +22536,16 @@
 
 	    var hasChanged = false;
 	    var nextState = {};
-	    for (var i = 0; i < finalReducerKeys.length; i++) {
-	      var key = finalReducerKeys[i];
-	      var reducer = finalReducers[key];
-	      var previousStateForKey = state[key];
+	    for (var _i = 0; _i < finalReducerKeys.length; _i++) {
+	      var _key = finalReducerKeys[_i];
+	      var reducer = finalReducers[_key];
+	      var previousStateForKey = state[_key];
 	      var nextStateForKey = reducer(previousStateForKey, action);
 	      if (typeof nextStateForKey === 'undefined') {
-	        var errorMessage = getUndefinedStateErrorMessage(key, action);
+	        var errorMessage = getUndefinedStateErrorMessage(_key, action);
 	        throw new Error(errorMessage);
 	      }
-	      nextState[key] = nextStateForKey;
+	      nextState[_key] = nextStateForKey;
 	      hasChanged = hasChanged || nextStateForKey !== previousStateForKey;
 	    }
 	    return hasChanged ? nextState : state;
@@ -22740,13 +22736,11 @@
 	    return funcs[0];
 	  }
 
-	  var last = funcs[funcs.length - 1];
-	  var rest = funcs.slice(0, -1);
-	  return function () {
-	    return rest.reduceRight(function (composed, f) {
-	      return f(composed);
-	    }, last.apply(undefined, arguments));
-	  };
+	  return funcs.reduce(function (a, b) {
+	    return function () {
+	      return a(b.apply(undefined, arguments));
+	    };
+	  });
 	}
 
 /***/ }),
@@ -22756,7 +22750,7 @@
 	'use strict';
 
 	exports.__esModule = true;
-	exports.connect = exports.connectAdvanced = exports.Provider = undefined;
+	exports.connect = exports.connectAdvanced = exports.createProvider = exports.Provider = undefined;
 
 	var _Provider = __webpack_require__(205);
 
@@ -22773,6 +22767,7 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.Provider = _Provider2.default;
+	exports.createProvider = _Provider.createProvider;
 	exports.connectAdvanced = _connectAdvanced2.default;
 	exports.connect = _connect2.default;
 
@@ -22783,7 +22778,7 @@
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 
 	exports.__esModule = true;
-	exports.default = undefined;
+	exports.createProvider = createProvider;
 
 	var _react = __webpack_require__(2);
 
@@ -22815,53 +22810,58 @@
 	  (0, _warning2.default)('<Provider> does not support changing `store` on the fly. ' + 'It is most likely that you see this error because you updated to ' + 'Redux 2.x and React Redux 2.x which no longer hot reload reducers ' + 'automatically. See https://github.com/reactjs/react-redux/releases/' + 'tag/v2.0.0 for the migration instructions.');
 	}
 
-	var Provider = function (_Component) {
-	  _inherits(Provider, _Component);
+	function createProvider() {
+	  var _Provider$childContex;
 
-	  Provider.prototype.getChildContext = function getChildContext() {
-	    return { store: this.store, storeSubscription: null };
-	  };
+	  var storeKey = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'store';
+	  var subKey = arguments[1];
 
-	  function Provider(props, context) {
-	    _classCallCheck(this, Provider);
+	  var subscriptionKey = subKey || storeKey + 'Subscription';
 
-	    var _this = _possibleConstructorReturn(this, _Component.call(this, props, context));
+	  var Provider = function (_Component) {
+	    _inherits(Provider, _Component);
 
-	    _this.store = props.store;
-	    return _this;
+	    Provider.prototype.getChildContext = function getChildContext() {
+	      var _ref;
+
+	      return _ref = {}, _ref[storeKey] = this[storeKey], _ref[subscriptionKey] = null, _ref;
+	    };
+
+	    function Provider(props, context) {
+	      _classCallCheck(this, Provider);
+
+	      var _this = _possibleConstructorReturn(this, _Component.call(this, props, context));
+
+	      _this[storeKey] = props.store;
+	      return _this;
+	    }
+
+	    Provider.prototype.render = function render() {
+	      return _react.Children.only(this.props.children);
+	    };
+
+	    return Provider;
+	  }(_react.Component);
+
+	  if (process.env.NODE_ENV !== 'production') {
+	    Provider.prototype.componentWillReceiveProps = function (nextProps) {
+	      if (this[storeKey] !== nextProps.store) {
+	        warnAboutReceivingStore();
+	      }
+	    };
 	  }
 
-	  Provider.prototype.render = function render() {
-	    return _react.Children.only(this.props.children);
+	  Provider.propTypes = {
+	    store: _PropTypes.storeShape.isRequired,
+	    children: _propTypes2.default.element.isRequired
 	  };
+	  Provider.childContextTypes = (_Provider$childContex = {}, _Provider$childContex[storeKey] = _PropTypes.storeShape.isRequired, _Provider$childContex[subscriptionKey] = _PropTypes.subscriptionShape, _Provider$childContex);
+	  Provider.displayName = 'Provider';
 
 	  return Provider;
-	}(_react.Component);
-
-	exports.default = Provider;
-
-
-	if (process.env.NODE_ENV !== 'production') {
-	  Provider.prototype.componentWillReceiveProps = function (nextProps) {
-	    var store = this.store;
-	    var nextStore = nextProps.store;
-
-
-	    if (store !== nextStore) {
-	      warnAboutReceivingStore();
-	    }
-	  };
 	}
 
-	Provider.propTypes = {
-	  store: _PropTypes.storeShape.isRequired,
-	  children: _propTypes2.default.element.isRequired
-	};
-	Provider.childContextTypes = {
-	  store: _PropTypes.storeShape.isRequired,
-	  storeSubscription: _PropTypes.subscriptionShape
-	};
-	Provider.displayName = 'Provider';
+	exports.default = createProvider();
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
@@ -23227,6 +23227,20 @@
 	      return emptyFunction.thatReturnsNull;
 	    }
 
+	    for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+	      var checker = arrayOfTypeCheckers[i];
+	      if (typeof checker !== 'function') {
+	        warning(
+	          false,
+	          'Invalid argument supplid to oneOfType. Expected an array of check functions, but ' +
+	          'received %s at index %s.',
+	          getPostfixForTypeWarning(checker),
+	          i
+	        );
+	        return emptyFunction.thatReturnsNull;
+	      }
+	    }
+
 	    function validate(props, propName, componentName, location, propFullName) {
 	      for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
 	        var checker = arrayOfTypeCheckers[i];
@@ -23359,6 +23373,9 @@
 	  // This handles more types than `getPropType`. Only used for error messages.
 	  // See `createPrimitiveTypeChecker`.
 	  function getPreciseType(propValue) {
+	    if (typeof propValue === 'undefined' || propValue === null) {
+	      return '' + propValue;
+	    }
 	    var propType = getPropType(propValue);
 	    if (propType === 'object') {
 	      if (propValue instanceof Date) {
@@ -23368,6 +23385,23 @@
 	      }
 	    }
 	    return propType;
+	  }
+
+	  // Returns a string that is postfixed to a warning about an invalid type.
+	  // For example, "undefined" or "of type array"
+	  function getPostfixForTypeWarning(value) {
+	    var type = getPreciseType(value);
+	    switch (type) {
+	      case 'array':
+	      case 'object':
+	        return 'an ' + type;
+	      case 'boolean':
+	      case 'date':
+	      case 'regexp':
+	        return 'a ' + type;
+	      default:
+	        return type;
+	    }
 	  }
 
 	  // Returns class name of the object, if any.
@@ -23491,11 +23525,14 @@
 
 	var emptyFunction = __webpack_require__(10);
 	var invariant = __webpack_require__(13);
+	var ReactPropTypesSecret = __webpack_require__(208);
 
 	module.exports = function() {
-	  // Important!
-	  // Keep this list in sync with production version in `./factoryWithTypeCheckers.js`.
-	  function shim() {
+	  function shim(props, propName, componentName, location, propFullName, secret) {
+	    if (secret === ReactPropTypesSecret) {
+	      // It is still safe when called from React.
+	      return;
+	    }
 	    invariant(
 	      false,
 	      'Calling PropTypes validators directly is not supported by the `prop-types` package. ' +
@@ -23507,6 +23544,8 @@
 	  function getShim() {
 	    return shim;
 	  };
+	  // Important!
+	  // Keep this list in sync with production version in `./factoryWithTypeCheckers.js`.
 	  var ReactPropTypes = {
 	    array: shim,
 	    bool: shim,
@@ -24699,6 +24738,7 @@
 
 	return(
 	_react2.default.createElement('div',{className:'board'},
+	_react2.default.createElement('img',{className:'logo',src:'img/titolo.png'}),
 	_react2.default.createElement(_Players2.default,null),
 	_react2.default.createElement(_Common2.default,null),
 	_react2.default.createElement(_Me2.default,null)));
@@ -24728,7 +24768,7 @@
 	}
 	}else if(!this.props.isStart&&this.props.area==="match"){
 	console.log(this.props.match.winner);
-
+	setTimeout(this.props.initMatch.bind(this),5000);
 	}
 	}}]);return Board;}(_react2.default.Component);
 
@@ -25011,7 +25051,7 @@
 
 	_react2.default.createElement('li',{className:'col-xs-2'},
 	_react2.default.createElement('div',{className:'compagno'},'Vincitore'),
-	_react2.default.createElement('div',{'class':'card card-mini'},this.props.winnerMatch))));
+	_react2.default.createElement('div',{className:'card card-mini '},this.props.winnerMatch))));
 
 
 
@@ -25170,11 +25210,11 @@
 	case'INIT_MATCH':
 	return{
 	players:[
-	{id:0,name:'Pippo3',cards:[],points:0,auction:{points:0,isIn:true}},
-	{id:1,name:'Ugo',cards:[],points:0,auction:{points:0,isIn:true}},
-	{id:2,name:'Mario',cards:[],points:0,auction:{points:0,isIn:true}},
-	{id:3,name:'John',cards:[],points:0,auction:{points:0,isIn:true}},
-	{id:4,name:'Franz',cards:[],points:0,auction:{points:0,isIn:true}}],
+	{id:0,name:'Pippo3',cards:[],points:0,profile:"aggressive",auction:{points:0,isIn:true}},
+	{id:1,name:'Ugo',cards:[],points:0,profile:"aggressive",auction:{points:0,isIn:true}},
+	{id:2,name:'Mario',cards:[],points:0,profile:"safe",auction:{points:0,isIn:true}},
+	{id:3,name:'John',cards:[],points:0,profile:"safe",auction:{points:0,isIn:true}},
+	{id:4,name:'Tu',cards:[],points:0,auction:{points:0,isIn:true}}],
 	match:{winner:undefined,winnerTurn:undefined,isTurnFinished:false,turns:1,cardsPlayed:action.cardsPlayed},
 	auction:{winner:undefined,seed:undefined,compagno:undefined},
 	isFinished:false,
@@ -25574,40 +25614,56 @@
 	}
 	}
 
+	function getCardByPlayerProfile(){
+	if(state.players[state.inTurn].profile==="aggressive"){
+	return playSafe();
+	}else{
+	return playSafe();
+	}
+	}
+
+	function getCurrentContext(p){
+	return{
+	maxValuePlayed:getMaxValueFromCardsPlayed(),
+	tmpSumPunti:getTmpMaxPuntiTurno(),
+	auctionValue:state.players[state.auction.winner].auction.points,
+	puntiConsumatiByTeam:getPuntiConsumatiByTeam(),
+	tmpWinnerTeam:getTmpWinnerTurn(getPuntiConsumatiByTeam()),
+	hasCompagnoAlreadyPlayed:state.match.cardsPlayed[getAlleato()]!==undefined,
+	hasChiamanteAlreadyPlayed:state.match.cardsPlayed[state.auction.winner]!==undefined,
+	lastOneToPlay:whichIsTheLastOneToPlay(),
+	isOther:!(state.auction.winner===p.id)&&!(state.auction.compagno===p.id),
+	isChiamante:state.auction.winner===p.id,
+	isCompagno:state.auction.compagno===p.id,
+	currentTurn:state.turns,
+	amITheLastOne:state.match.cardsPlayed.length===4,
+	amItheFirstOne:state.match.cardsPlayed.length===0};
+
+	}
 
 	function getCardToPlay(){
 	var p=state.players.filter(function(p){return p.id==state.inTurn;})[0];
 	if(p){
-	var maxValuePlayed=getMaxValueFromCardsPlayed();
-	var tmpSumPunti=getTmpMaxPuntiTurno();
-	var auctionValue=state.players[state.auction.winner].auction.points;
-	var puntiConsumatiByTeam=getPuntiConsumatiByTeam();
-	var tmpWinnerTeam=getTmpWinnerTurn(puntiConsumatiByTeam);
-	var hasCompagnoAlreadyPlayed=state.match.cardsPlayed[getAlleato()]!==undefined;
-	var hasChiamanteAlreadyPlayed=state.match.cardsPlayed[state.auction.winner]!==undefined;
-	var lastOneToPlay=whichIsTheLastOneToPlay();
-
-
-
-	if(isChiamante(p)){
-	var tryToWinCard=tryToWin(maxValuePlayed);
+	var context=getCurrentContext(p);
+	if(context.isChiamante){
+	var tryToWinCard=tryToWin(context.maxValuePlayed);
 	if(!tryToWinCard){
-	return playSafe();
+	return getCardByPlayerProfile();
 	}else{
 	return tryToWinCard;
 	}
 
-	}else if(isCompagno(p)){
-	var _tryToWinCard=tryToWin(maxValuePlayed);
+	}else if(context.isCompagno){
+	var _tryToWinCard=tryToWin(context.maxValuePlayed);
 	if(!_tryToWinCard){
-	return playSafe();
+	return getCardByPlayerProfile();
 	}else{
 	return _tryToWinCard;
 	}
 	}else{
-	var _tryToWinCard2=tryToWin(maxValuePlayed);
+	var _tryToWinCard2=tryToWin(context.maxValuePlayed);
 	if(!_tryToWinCard2){
-	return playSafe();
+	return getCardByPlayerProfile();
 	}else{
 	return _tryToWinCard2;
 	}
@@ -25619,32 +25675,41 @@
 
 
 	function tryToWin(maxValuePlayed){
+	console.log("-----------------------------------");
 	var myAllCards=getMyAllCards(state.players[state.inTurn].cards);
 	var myAllCardsByValue=_lodash2.default.sortBy(myAllCards,['value']);
-
+	console.log("maxValuePlayed:"+maxValuePlayed);
 	for(var _i4=0;_i4<myAllCardsByValue.length;_i4++){
 	var tmpVal=myAllCardsByValue[_i4].value;
 	var firstPlayedSeed=getFirstPlayedSeed();
-
-	if(firstPlayedSeed&&myAllCardsByValue[_i4].seed==firstPlayedSeed&&myAllCardsByValue[_i4].seed!=state.auction.seed){
+	console.log(myAllCardsByValue[_i4].seme);
+	if(firstPlayedSeed&&myAllCardsByValue[_i4].seme==firstPlayedSeed&&myAllCardsByValue[_i4].seme!=state.auction.seed){
 	tmpVal+=100;
-	}else if(myAllCardsByValue[_i4].seed==state.auction.seed){
+	}else if(myAllCardsByValue[_i4].seme==state.auction.seed){
 	tmpVal+=1000;
 	}
-
+	console.log("tmpVal:"+tmpVal);
 	if(tmpVal>maxValuePlayed){
+
 	return myAllCardsByValue[_i4].id;
 	}
 	}
+	console.log("-----------------------------------");
 	}
 
 
 	function getFirstPlayedSeed(){
-	return state.match.cardsPlayed.map(function(card){
-	if(card.id===state.match.winnerTurn&&card.value){
-	return state.cards[card.value].seme;
+	for(var _i5=0;_i5<state.match.cardsPlayed.length;_i5++){
+	var currentIndexCard=state.match.cardsPlayed[_i5].value;
+	var player=state.match.cardsPlayed[_i5].id;
+	if(currentIndexCard>0){
+	if(state.match.winnerTurn&&state.match.winnerTurn===player){
+	return currentIndexCard;
+	}else if(state.auction.winner&&state.auction.winner===player){
+	return currentIndexCard;
 	}
-	});
+	}
+	}
 	}
 
 
@@ -25654,10 +25719,10 @@
 	var myAllCards=getMyAllCards(state.players[state.inTurn].cards);
 	var myAllCardsByValue=_lodash2.default.sortBy(myAllCards,['value']);
 
-	for(var _i5=0;_i5<myAllCardsByValue.length;_i5++){
-	if(myAllCardsByValue[_i5].value<minValue&&myAllCardsByValue[_i5].seme!==state.auction.seed){
-	minValue=myAllCardsByValue[_i5].value;
-	tmpCard=myAllCardsByValue[_i5].id;
+	for(var _i6=0;_i6<myAllCardsByValue.length;_i6++){
+	if(myAllCardsByValue[_i6].value<minValue&&myAllCardsByValue[_i6].seme!==state.auction.seed){
+	minValue=myAllCardsByValue[_i6].value;
+	tmpCard=myAllCardsByValue[_i6].id;
 	}
 	}
 
@@ -25669,7 +25734,23 @@
 	}
 
 	function playAggressive(){
+	var minValue=1;
+	var tmpCard=0;
+	var myAllCards=getMyAllCards(state.players[state.inTurn].cards);
+	var myAllCardsByValue=_lodash2.default.sortBy(myAllCards,['value'],['desc']);
 
+	for(var _i7=0;_i7<myAllCardsByValue.length;_i7++){
+	if(myAllCardsByValue[_i7].value>minValue){
+	minValue=myAllCardsByValue[_i7].value;
+	tmpCard=myAllCardsByValue[_i7].id;
+	}
+	}
+
+	if(tmpCard==0){
+	tmpCard=myAllCardsByValue[0].id;
+	}
+
+	return tmpCard;
 	}
 
 	function playStandard(){
@@ -25721,10 +25802,15 @@
 	state.match.cardsPlayed.map(function(card){
 	if(card.value>0){
 	currentValue=state.cards[card.value].value;
+	console.log("state.cards[card.value].seme:"+state.cards[card.value].seme);
+	console.log("getFirstPlayedSeed:"+getFirstPlayedSeed());
+	console.log(state.cards[card.value]);
 	if(state.cards[card.value].seme==state.auction.seed){
+	currentValue+=1000;
+	}else if(state.cards[card.value].seme==getFirstPlayedSeed()){
 	currentValue+=100;
 	}
-	if(state.cards[card.value].value>maxValue){
+	if(currentValue>maxValue){
 	maxValue=currentValue;
 	}
 	}
@@ -25732,17 +25818,6 @@
 	return maxValue;
 	}
 
-	function isOthers(p){
-	return!isChiamante&&!isCompagno;
-	}
-
-	function isChiamante(p){
-	return state.auction.winner;
-	}
-
-	function isCompagno(){
-	return state.auction.compagno===p.id;
-	}
 
 
 
@@ -25778,26 +25853,26 @@
 
 	function getHighestValuedCardFromBiggestSeed(maxSeed,cardsBySeed){
 	var cards=cardsBySeed[maxSeed];var _loop=function _loop(
-	_i6){
+	_i8){
 	if(cards.filter(function(card){
-	return card.value==_i6;
+	return card.value==_i8;
 	}).length==0){
 	var allCards=state.cards;
 	for(key in allCards){
 	if(allCards.hasOwnProperty(key)){
-	if(allCards[key].value==_i6&&allCards[key].seme==maxSeed){
+	if(allCards[key].value==_i8&&allCards[key].seme==maxSeed){
 	return{v:key};
 	}
 	}
 	}
-	}};for(var _i6=10;_i6>=1;_i6--){var key;var _ret=_loop(_i6);if((typeof _ret==='undefined'?'undefined':_typeof(_ret))==="object")return _ret.v;
+	}};for(var _i8=10;_i8>=1;_i8--){var key;var _ret=_loop(_i8);if((typeof _ret==='undefined'?'undefined':_typeof(_ret))==="object")return _ret.v;
 	}
 	}
 
 	function getAlleato(){
 	state.players.map(function(p){
-	for(var _i7=0;_i7<p.cards.length;_i7++){
-	if(p.cards[_i7]==state.auction.compagno)
+	for(var _i9=0;_i9<p.cards.length;_i9++){
+	if(p.cards[_i9]==state.auction.compagno)
 	return p.id;
 	}
 	});
@@ -25829,7 +25904,7 @@
 	if(value>biggestAuction){
 	return{points:value,isIn:true};
 	}else{
-	return state.players[state.inTurn].auction;
+	return{points:value,isIn:false};
 	}
 	}
 
@@ -25864,6 +25939,9 @@
 	}else{
 	auction.isIn=true;
 	auction.points=biggestAuction+5;
+	if(auction.points>120){
+	auction.points=120;
+	}
 	}
 
 	return auction;
@@ -25913,18 +25991,6 @@
 	return biggestSeed;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
 	function getAuctionValue(cards){
 	var cardsBySeed=getCardsBySeed(cards);
 	var valueBySeed={"coppe":0,"spade":0,"denari":0,"bastoni":0};
@@ -25937,28 +26003,28 @@
 
 	var maxValue=getBiggestValueFromCardsBySeed(valueBySeed);
 	var myMaxAuction=70;
-	if(maxValue>=27){
+	if(maxValue>=20){
 	myMaxAuction=70;
 	}
-	if(maxValue>=35){
+	if(maxValue>=25){
 	myMaxAuction=80;
 	}
-	if(maxValue>=40){
+	if(maxValue>=30){
 	myMaxAuction=90;
 	}
+	if(maxValue>=35){
+	myMaxAuction=100;
+	}
+
+	if(maxValue>=40){
+	myMaxAuction=105;
+	}
+
 	if(maxValue>=45){
-	myMaxAuction=100;
-	}
-
-	if(maxValue>=50){
-	myMaxAuction=100;
-	}
-
-	if(maxValue>=52){
 	myMaxAuction=110;
 	}
 
-	if(maxValue==55){
+	if(maxValue==50){
 	myMaxAuction=120;
 	}
 

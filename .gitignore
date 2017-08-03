@@ -4,5 +4,8 @@
 /app/*.map
 /typings/*
 npm-debug.log
+package.json
 /android
 /ios
+/node_modules-native/*
+/node_modules-desktop/*

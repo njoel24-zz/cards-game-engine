@@ -6,11 +6,11 @@ import Me from './Me'
 import { View, Text } from 'react-native';
 
 import { initMatch,  setWinner,  endTurn,
-		changeTurn, play, playBot} from '../actions/match'
+		changeTurn, play, playBot} from '../src/actions/match'
 import { playAuctionBot, 
 	 playAuction,
 	 endAuction, 
-	 changeTurnAuction } from '../actions/auction'
+	 changeTurnAuction } from '../src/actions/auction'
 
 class Board extends React.Component {
 	

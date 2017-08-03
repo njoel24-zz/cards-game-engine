@@ -1,0 +1,33 @@
+{
+	"name": "Briscolain5 - Native",
+	"version": "1.0.0",
+	"scripts": {
+		"start-android": "react-native run-android ",
+		"start-ios": "react-native run-ios "
+	},
+	"author": "Cristiano Anselmi",
+	"license": "MIT",
+	"dependencies": {
+		"babel": "^6.5.2",
+		"babel-core": "^6.18.2",
+		"babel-loader": "^6.2.7",
+		"babel-preset-es2015": "^6.18.0",
+		"babel-preset-react": "^6.16.0",
+		"babel-preset-stage-2": "^6.18.0",
+		"react": "^16.0.0-alpha.6",
+		"react-native": "0.43.3",
+		"react-redux": "^5.0.4",
+		"redux": "^3.6.0"
+	},
+	"devDependencies": {
+		"babel-jest": "19.0.0",
+		"babel-preset-react-native": "1.9.1",
+		"jest": "19.0.2",
+		"react-test-renderer": "16.0.0-alpha.6",
+		"react-scripts": "^0.7.0",
+		"redux-devtools": "^3.3.1"
+	},
+	"jest": {
+		"preset": "react-native"
+	}
+}
