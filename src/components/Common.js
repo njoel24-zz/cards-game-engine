@@ -11,7 +11,7 @@ import StartMatch from './StartMatch'
 class Common extends React.Component {
 
 render () {
-	var renderStartMatch = this.getStartMatch()
+	const renderStartMatch = this.getStartMatch()
 	return (
 		<ul className='row common'>
     		{ this.props.match.cardsPlayed.map(card => 
@@ -26,7 +26,6 @@ render () {
 	}
 
 	getStartMatch() {
-    var renderHtml = ""
     if (!this.props.isStart) {
       return  <StartMatch/>  
     } else {

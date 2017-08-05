@@ -8,7 +8,7 @@ import { initMatch,  setWinner,  endTurn,
 		changeTurn, play} from '../actions/match'
 import {  
 	 playAuction,
-	 chooseCompagno, 
+	 choosePartner, 
 	 changeTurnAuction } from '../actions/auction'
 
 class Board extends React.Component {
@@ -34,14 +34,13 @@ class Board extends React.Component {
   }
 
   prepareAsyncAction (timeout) {
-    var id = window.setTimeout(function() {}, 0);
+    let id = window.setTimeout(function() {}, 0);
     while (id--) {
       window.clearTimeout(id); // will do nothing if no timeout with id is present
     }
-    console.log(this.props.players)
     if (this.props.isStart && this.props.area === "auction") {
       if (this.props.auction.winner !== undefined) {
-        setTimeout(this.props.chooseCompagno.bind(this), timeout);
+        setTimeout(this.props.choosePartner.bind(this), timeout);
       } else {
         setTimeout(this.props.playAuction.bind(this), timeout);
       }
@@ -54,13 +53,9 @@ class Board extends React.Component {
         setTimeout(this.props.play.bind(this), timeout);
 		  }		  
     } else if (!this.props.isStart && this.props.area === "match") {
-      console.log(this.props.match.winner);
       setTimeout(this.props.initMatch.bind(this), 5000);
     }
   }
-
-  
-
 }
 
 const mapStateToProps = function(store) {
@@ -97,8 +92,8 @@ const mapDispatchToProps = function(dispatch, ownProps) {
 		changeTurnAuction: () => {
       dispatch(changeTurnAuction());
     },
-		chooseCompagno: () => {
-      dispatch(chooseCompagno());
+		choosePartner: () => {
+      dispatch(choosePartner());
     },
 		endTurn: () => {
       dispatch(endTurn());

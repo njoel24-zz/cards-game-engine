@@ -24751,10 +24751,9 @@
 	while(id--){
 	window.clearTimeout(id);
 	}
-	console.log(this.props.players);
 	if(this.props.isStart&&this.props.area==="auction"){
 	if(this.props.auction.winner!==undefined){
-	setTimeout(this.props.chooseCompagno.bind(this),timeout);
+	setTimeout(this.props.choosePartner.bind(this),timeout);
 	}else{
 	setTimeout(this.props.playAuction.bind(this),timeout);
 	}
@@ -24767,13 +24766,9 @@
 	setTimeout(this.props.play.bind(this),timeout);
 	}
 	}else if(!this.props.isStart&&this.props.area==="match"){
-	console.log(this.props.match.winner);
 	setTimeout(this.props.initMatch.bind(this),5000);
 	}
 	}}]);return Board;}(_react2.default.Component);
-
-
-
 
 
 	var mapStateToProps=function mapStateToProps(store){
@@ -24810,8 +24805,8 @@
 	changeTurnAuction:function changeTurnAuction(){
 	dispatch((0,_auction.changeTurnAuction)());
 	},
-	chooseCompagno:function chooseCompagno(){
-	dispatch((0,_auction.chooseCompagno)());
+	choosePartner:function choosePartner(){
+	dispatch((0,_auction.choosePartner)());
 	},
 	endTurn:function endTurn(){
 	dispatch((0,_match.endTurn)());
@@ -24835,11 +24830,11 @@
 	this.props.players.map(function(player){return(
 	_react2.default.createElement('li',{className:'col-xs-2',key:player.id},
 	_react2.default.createElement('div',null,player.name),
-	_react2.default.createElement('div',{className:!player.auction.isIn?'hidden':''},' Punteggio Asta: ',player.auction.points),
+	_react2.default.createElement('div',{className:!player.auction.isIn?'hidden':''},' Points Auction (Punti Asta): ',player.auction.points),
 	_react2.default.createElement('div',{className:!player.auction.isIn?'hidden':'inAuction'}),
 	_react2.default.createElement('div',null,' ',player.points,' Punti'),
 	_react2.default.createElement('div',{className:player.id!==_this2.props.inTurn?'hidden':'inTurn'}),
-	_react2.default.createElement('div',{className:player.id!==_this2.props.auction.winner?'hidden':''},'Vincitore Asta!'),
+	_react2.default.createElement('div',{className:player.id!==_this2.props.auction.winner?'hidden':''},'Winner Auction (Vincitore Asta)!'),
 	_react2.default.createElement('div',{className:player.id!==_this2.props.match.winnerTurn?'hidden':'winnerTurn'})));})));
 
 
@@ -24891,7 +24886,6 @@
 	}},{key:'getStartMatch',value:function getStartMatch()
 
 	{
-	var renderHtml="";
 	if(!this.props.isStart){
 	return _react2.default.createElement(_StartMatch2.default,null);
 	}else{
@@ -24926,6 +24920,7 @@
 	if(this.props.class){
 	this.className+=" "+this.props.class;
 	}
+
 	return(
 	_react2.default.createElement('div',null,
 	this.props.animate?
@@ -25003,9 +24998,9 @@
 	value:value};};
 
 
-	var chooseCompagno=exports.chooseCompagno=function chooseCompagno(){var value=arguments.length>0&&arguments[0]!==undefined?arguments[0]:null;return{
-	type:'CHOOSE_COMPAGNO',
-	compagno:value,
+	var choosePartner=exports.choosePartner=function choosePartner(){var value=arguments.length>0&&arguments[0]!==undefined?arguments[0]:null;return{
+	type:'CHOOSE_PARTNER',
+	partner:value,
 	newArea:undefined,
 	seed:undefined};};
 
@@ -25028,14 +25023,14 @@
 
 	var _Card=__webpack_require__(230);var _Card2=_interopRequireDefault(_Card);
 	var _ChoosePoints=__webpack_require__(234);var _ChoosePoints2=_interopRequireDefault(_ChoosePoints);
-	var _ChooseCompagno=__webpack_require__(235);var _ChooseCompagno2=_interopRequireDefault(_ChooseCompagno);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function");}}function _possibleConstructorReturn(self,call){if(!self){throw new ReferenceError("this hasn't been initialised - super() hasn't been called");}return call&&(typeof call==="object"||typeof call==="function")?call:self;}function _inherits(subClass,superClass){if(typeof superClass!=="function"&&superClass!==null){throw new TypeError("Super expression must either be null or a function, not "+typeof superClass);}subClass.prototype=Object.create(superClass&&superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__=superClass;}var
+	var _ChoosePartner=__webpack_require__(235);var _ChoosePartner2=_interopRequireDefault(_ChoosePartner);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function");}}function _possibleConstructorReturn(self,call){if(!self){throw new ReferenceError("this hasn't been initialised - super() hasn't been called");}return call&&(typeof call==="object"||typeof call==="function")?call:self;}function _inherits(subClass,superClass){if(typeof superClass!=="function"&&superClass!==null){throw new TypeError("Super expression must either be null or a function, not "+typeof superClass);}subClass.prototype=Object.create(superClass&&superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__=superClass;}var
 	Me=function(_React$Component){_inherits(Me,_React$Component);function Me(){_classCallCheck(this,Me);return _possibleConstructorReturn(this,(Me.__proto__||Object.getPrototypeOf(Me)).apply(this,arguments));}_createClass(Me,[{key:'render',value:function render()
 
 	{var _this2=this;
 	return(
 	_react2.default.createElement('ul',{className:'row me'},
 	_react2.default.createElement('li',null,
-	_react2.default.createElement(_ChooseCompagno2.default,{show:this.props.me==this.props.inTurn&&this.props.area=="auction"&&this.props.winnerAuction!==undefined})),
+	_react2.default.createElement(_ChoosePartner2.default,{show:this.props.me==this.props.inTurn&&this.props.area=="auction"&&this.props.winnerAuction!==undefined})),
 
 	_react2.default.createElement('li',null,
 	_react2.default.createElement(_ChoosePoints2.default,{show:this.props.me==this.props.inTurn&&this.props.area=="auction"&&this.props.winnerAuction==undefined})),
@@ -25046,11 +25041,11 @@
 
 
 	_react2.default.createElement('li',{className:'col-xs-2'},
-	_react2.default.createElement('div',{className:'compagno'},'Compagno'),
-	_react2.default.createElement(_Card2.default,{card:this.props.compagno,'class':'card-mini',animate:'false'})),
+	_react2.default.createElement('div',{className:'partner'},'Partner'),
+	_react2.default.createElement(_Card2.default,{card:this.props.partner,'class':'card-mini',animate:'false'})),
 
 	_react2.default.createElement('li',{className:'col-xs-2'},
-	_react2.default.createElement('div',{className:'compagno'},'Vincitore'),
+	_react2.default.createElement('div',{className:'partner'},'Winner-Vincitore'),
 	_react2.default.createElement('div',{className:'card card-mini '},this.props.winnerMatch))));
 
 
@@ -25066,7 +25061,7 @@
 	area:store.area,
 	winnerAuction:store.auction.winner,
 	seed:store.auction.seed,
-	compagno:store.auction.compagno,
+	partner:store.auction.partner,
 	winnerMatch:store.match.winner};
 
 	};exports.default=
@@ -25103,7 +25098,7 @@
 	_react2.default.createElement('input',{id:'range',type:'range',min:70,max:120,defaultValue:70,step:1,onChange:this.updateValue.bind(this)}),
 	_react2.default.createElement('span',{id:'value'}),
 	_react2.default.createElement('button',{onClick:this.props.playAuction},'Ok'),
-	_react2.default.createElement('button',{onClick:this.props.exitAuction},'Esci')));
+	_react2.default.createElement('button',{onClick:this.props.exitAuction},'Exit')));
 
 
 	}else{
@@ -25149,13 +25144,13 @@
 
 
 
-	ChooseCompagno=function(_React$Component){_inherits(ChooseCompagno,_React$Component);function ChooseCompagno(){_classCallCheck(this,ChooseCompagno);return _possibleConstructorReturn(this,(ChooseCompagno.__proto__||Object.getPrototypeOf(ChooseCompagno)).apply(this,arguments));}_createClass(ChooseCompagno,[{key:'createSelectItems',value:function createSelectItems()
+	ChoosePartner=function(_React$Component){_inherits(ChoosePartner,_React$Component);function ChoosePartner(){_classCallCheck(this,ChoosePartner);return _possibleConstructorReturn(this,(ChoosePartner.__proto__||Object.getPrototypeOf(ChoosePartner)).apply(this,arguments));}_createClass(ChoosePartner,[{key:'createSelectItems',value:function createSelectItems()
 
 	{
 	var items=[];
 	for(var key in this.props.allCards){
 	if(this.props.allCards.hasOwnProperty(key)){
-	items.push(_react2.default.createElement('option',{key:key,value:key},this.props.allCards[key].nome+" "+this.props.allCards[key].seme));
+	items.push(_react2.default.createElement('option',{key:key,value:key},this.props.allCards[key].name+" "+this.props.allCards[key].seed));
 	}
 	}
 	return items;
@@ -25165,16 +25160,16 @@
 	if(this.props.show){
 	return(
 	_react2.default.createElement('div',null,
-	_react2.default.createElement('select',{id:'compagno'},
+	_react2.default.createElement('select',{id:'partner'},
 	this.createSelectItems()),
 
-	_react2.default.createElement('button',{onClick:this.props.chooseCompagno},'Ok')));
+	_react2.default.createElement('button',{onClick:this.props.choosePartner},'Ok')));
 
 
 	}else{
 	return null;
 	}
-	}}]);return ChooseCompagno;}(_react2.default.Component);
+	}}]);return ChoosePartner;}(_react2.default.Component);
 
 
 	var mapStateToProps=function mapStateToProps(store){
@@ -25185,17 +25180,17 @@
 
 	var mapDispatchToProps=function mapDispatchToProps(dispatch,ownProps){
 	return{
-	chooseCompagno:function chooseCompagno(){
+	choosePartner:function choosePartner(){
 	var value=0;
-	if(document.getElementById("compagno")){
-	value=document.getElementById("compagno").value;
+	if(document.getElementById("partner")){
+	value=document.getElementById("partner").value;
 	}
-	dispatch((0,_auction.chooseCompagno)(value));
+	dispatch((0,_auction.choosePartner)(value));
 	}};
 
 	};exports.default=
 
-	(0,_reactRedux.connect)(mapStateToProps,mapDispatchToProps)(ChooseCompagno);
+	(0,_reactRedux.connect)(mapStateToProps,mapDispatchToProps)(ChoosePartner);
 
 /***/ }),
 /* 236 */
@@ -25216,9 +25211,10 @@
 	{id:3,name:'John',cards:[],points:0,profile:"safe",auction:{points:0,isIn:true}},
 	{id:4,name:'Tu',cards:[],points:0,auction:{points:0,isIn:true}}],
 	match:{winner:undefined,winnerTurn:undefined,isTurnFinished:false,turns:1,cardsPlayed:action.cardsPlayed},
-	auction:{winner:undefined,seed:undefined,compagno:undefined},
+	auction:{winner:undefined,seed:undefined,partner:undefined,partnerPlayer:undefined},
 	isFinished:false,
 	inTurn:0,
+	matchStarter:0,
 	me:4,
 	area:'auction',
 	isStart:false,
@@ -25235,11 +25231,11 @@
 	state.players[2],{cards:shuffleCards.slice(16,24)}),_extends({},
 	state.players[3],{cards:shuffleCards.slice(24,32)}),_extends({},
 	state.players[4],{cards:shuffleCards.slice(32,40)})],
-	isStart:true});
+	isStart:true,
+	matchStarter:action.matchStarter});
 
 
 	case'END_TURN':
-	console.log("End turn");
 	newPlayers=[].concat(_toConsumableArray(state.players));
 	newPlayers[action.winnerTurn.winner].points+=action.winnerTurn.totalPoints;
 	return _extends({},
@@ -25254,7 +25250,6 @@
 
 
 	case'PLAY':
-	console.log("Play");
 	newPlayers=[].concat(_toConsumableArray(state.players));
 	newPlayers[state.inTurn].cards=newPlayers[state.inTurn].cards.map(function(card){
 	if(card!==action.cardPlayed){
@@ -25273,7 +25268,6 @@
 
 
 	case'CHANGE_TURN':
-	console.log("Change Turn");
 	return _extends({},
 	state,{
 	inTurn:action.inTurn,
@@ -25281,16 +25275,13 @@
 
 
 	case'SET_WINNER':
-	console.log("End Match");
 	return _extends({},
 	state,{
 	match:_extends({},state.match,{winner:action.winner}),
 	isStart:false});
 
 
-
 	case'PLAY_AUCTION':
-	console.log("Play Auction");
 	newPlayers=[].concat(_toConsumableArray(state.players));
 	newPlayers[state.inTurn].auction=action.auctionForUser;
 	return _extends({},
@@ -25300,18 +25291,16 @@
 	auction:_extends({},state.auction,{winner:action.winnerAuction})});
 
 
-	case'CHOOSE_COMPAGNO':
-	console.log("Choose Compagno");
+	case'CHOOSE_PARTNER':
 	return _extends({},
 	state,{
 	inTurn:action.inTurn,
 	area:action.area,
-	alleato:action.alleato,
-	auction:_extends({},state.auction,{compagno:action.compagno,seed:action.seed})});
+	allied:action.allied,
+	auction:_extends({},state.auction,{partner:action.partner,seed:action.seed,partnerPlayer:action.partnerPlayer})});
 
 
 	case'PLAY_AUCTION':
-	console.log("Play Auction");
 	newPlayers=[].concat(_toConsumableArray(state.players));
 	newPlayers[state.inTurn].auction=action.auctionForUser;
 	return _extends({},
@@ -25322,7 +25311,6 @@
 
 
 	case'EXIT_AUCTION':
-	console.log("Exit Auction");
 	var newPlayers=[].concat(_toConsumableArray(state.players));
 	newPlayers[state.inTurn].auction.isIn=action.inAuction;
 	return _extends({},
@@ -25333,7 +25321,6 @@
 
 
 	case'CHANGE_TURN_AUCTION':
-	console.log("Change Turn Auction");
 	return _extends({},
 	state,{
 	inTurn:action.inTurn,
@@ -25356,49 +25343,49 @@
 
 	"use strict";Object.defineProperty(exports,"__esModule",{value:true});var cards={
 
-	1:{id:1,value:10,points:11,seme:"denari",nome:"asso"},
-	2:{id:2,value:1,points:0,seme:"denari",nome:"due"},
-	3:{id:3,value:9,points:10,seme:"denari",nome:"tre"},
-	4:{id:4,value:2,points:0,seme:"denari",nome:"quattro"},
-	5:{id:5,value:3,points:0,seme:"denari",nome:"cinque"},
-	6:{id:6,value:4,points:0,seme:"denari",nome:"sei"},
-	7:{id:7,value:5,points:0,seme:"denari",nome:"sette"},
-	8:{id:8,value:6,points:2,seme:"denari",nome:"donna"},
-	9:{id:9,value:7,points:3,seme:"denari",nome:"cavallo"},
-	10:{id:10,value:8,points:4,seme:"denari",nome:"re"},
+	1:{id:1,value:10,points:11,seed:"denari",name:"asso"},
+	2:{id:2,value:1,points:0,seed:"denari",name:"due"},
+	3:{id:3,value:9,points:10,seed:"denari",name:"tre"},
+	4:{id:4,value:2,points:0,seed:"denari",name:"quattro"},
+	5:{id:5,value:3,points:0,seed:"denari",name:"cinque"},
+	6:{id:6,value:4,points:0,seed:"denari",name:"sei"},
+	7:{id:7,value:5,points:0,seed:"denari",name:"sette"},
+	8:{id:8,value:6,points:2,seed:"denari",name:"donna"},
+	9:{id:9,value:7,points:3,seed:"denari",name:"cavallo"},
+	10:{id:10,value:8,points:4,seed:"denari",name:"re"},
 
-	11:{id:11,value:10,points:11,seme:"spade",nome:"asso"},
-	12:{id:12,value:1,points:0,seme:"spade",nome:"due"},
-	13:{id:13,value:9,points:10,seme:"spade",nome:"tre"},
-	14:{id:14,value:2,points:0,seme:"spade",nome:"quattro"},
-	15:{id:15,value:3,points:0,seme:"spade",nome:"cinque"},
-	16:{id:16,value:4,points:0,seme:"spade",nome:"sei"},
-	17:{id:17,value:5,points:0,seme:"spade",nome:"sette"},
-	18:{id:18,value:6,points:2,seme:"spade",nome:"donna"},
-	19:{id:19,value:7,points:3,seme:"spade",nome:"cavallo"},
-	20:{id:20,value:8,points:4,seme:"spade",nome:"re"},
+	11:{id:11,value:10,points:11,seed:"spade",name:"asso"},
+	12:{id:12,value:1,points:0,seed:"spade",name:"due"},
+	13:{id:13,value:9,points:10,seed:"spade",name:"tre"},
+	14:{id:14,value:2,points:0,seed:"spade",name:"quattro"},
+	15:{id:15,value:3,points:0,seed:"spade",name:"cinque"},
+	16:{id:16,value:4,points:0,seed:"spade",name:"sei"},
+	17:{id:17,value:5,points:0,seed:"spade",name:"sette"},
+	18:{id:18,value:6,points:2,seed:"spade",name:"donna"},
+	19:{id:19,value:7,points:3,seed:"spade",name:"cavallo"},
+	20:{id:20,value:8,points:4,seed:"spade",name:"re"},
 
-	21:{id:21,value:10,points:11,seme:"coppe",nome:"asso"},
-	22:{id:22,value:1,points:0,seme:"coppe",nome:"due"},
-	23:{id:23,value:9,points:10,seme:"coppe",nome:"tre"},
-	24:{id:24,value:2,points:0,seme:"coppe",nome:"quattro"},
-	25:{id:25,value:3,points:0,seme:"coppe",nome:"cinque"},
-	26:{id:26,value:4,points:0,seme:"coppe",nome:"sei"},
-	27:{id:27,value:5,points:0,seme:"coppe",nome:"sette"},
-	28:{id:28,value:6,points:2,seme:"coppe",nome:"donna"},
-	29:{id:29,value:7,points:3,seme:"coppe",nome:"cavallo"},
-	30:{id:30,value:8,points:4,seme:"coppe",nome:"re"},
+	21:{id:21,value:10,points:11,seed:"coppe",name:"asso"},
+	22:{id:22,value:1,points:0,seed:"coppe",name:"due"},
+	23:{id:23,value:9,points:10,seed:"coppe",name:"tre"},
+	24:{id:24,value:2,points:0,seed:"coppe",name:"quattro"},
+	25:{id:25,value:3,points:0,seed:"coppe",name:"cinque"},
+	26:{id:26,value:4,points:0,seed:"coppe",name:"sei"},
+	27:{id:27,value:5,points:0,seed:"coppe",name:"sette"},
+	28:{id:28,value:6,points:2,seed:"coppe",name:"donna"},
+	29:{id:29,value:7,points:3,seed:"coppe",name:"cavallo"},
+	30:{id:30,value:8,points:4,seed:"coppe",name:"re"},
 
-	31:{id:31,value:10,points:11,seme:"bastoni",nome:"asso"},
-	32:{id:32,value:1,points:0,seme:"bastoni",nome:"due"},
-	33:{id:33,value:9,points:10,seme:"bastoni",nome:"tre"},
-	34:{id:34,value:2,points:0,seme:"bastoni",nome:"quattro"},
-	35:{id:35,value:3,points:0,seme:"bastoni",nome:"cinque"},
-	36:{id:36,value:4,points:0,seme:"bastoni",nome:"sei"},
-	37:{id:37,value:5,points:0,seme:"bastoni",nome:"sette"},
-	38:{id:38,value:6,points:2,seme:"bastoni",nome:"donna"},
-	39:{id:39,value:7,points:3,seme:"bastoni",nome:"cavallo"},
-	40:{id:40,value:8,points:4,seme:"bastoni",nome:"re"}};exports.default=
+	31:{id:31,value:10,points:11,seed:"bastoni",name:"asso"},
+	32:{id:32,value:1,points:0,seed:"bastoni",name:"due"},
+	33:{id:33,value:9,points:10,seed:"bastoni",name:"tre"},
+	34:{id:34,value:2,points:0,seed:"bastoni",name:"quattro"},
+	35:{id:35,value:3,points:0,seed:"bastoni",name:"cinque"},
+	36:{id:36,value:4,points:0,seed:"bastoni",name:"sei"},
+	37:{id:37,value:5,points:0,seed:"bastoni",name:"sette"},
+	38:{id:38,value:6,points:2,seed:"bastoni",name:"donna"},
+	39:{id:39,value:7,points:3,seed:"bastoni",name:"cavallo"},
+	40:{id:40,value:8,points:4,seed:"bastoni",name:"re"}};exports.default=
 
 
 
@@ -25408,629 +25395,72 @@
 /* 238 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	'use strict';Object.defineProperty(exports,"__esModule",{value:true});var _typeof=typeof Symbol==="function"&&typeof(typeof Symbol==='function'?Symbol.iterator:'@@iterator')==="symbol"?function(obj){return typeof obj;}:function(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol&&obj!==(typeof Symbol==='function'?Symbol.prototype:'@@prototype')?"symbol":typeof obj;};var _lodash=__webpack_require__(239);var _lodash2=_interopRequireDefault(_lodash);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}
-
+	"use strict";Object.defineProperty(exports,"__esModule",{value:true});var _lodash=__webpack_require__(239);var _lodash2=_interopRequireDefault(_lodash);
+	var _match=__webpack_require__(240);
+	var _auction=__webpack_require__(241);
+	var _common=__webpack_require__(242);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}
+	var matchStarter=0;
 	var matchMiddleware=function matchMiddleware(store){return function(next){return function(action){
 	var state=store.getState();
+	var commonService=new _common.CommonService(store);
+	var matchService=new _match.MatchService(store);
+	var auctionService=new _auction.AuctionService(store);
 	switch(action.type){
 	case'INIT_MATCH':
-	action.cardsPlayed=resetCardsPlayed();
+	action.cardsPlayed=commonService.resetCardsPlayed();
 	break;
 	case'START_MATCH':
-	action.shuffleCards=shuffleCards();
-	action.cardsPlayed=resetCardsPlayed();
+	action.shuffleCards=commonService.shuffleCards();
+	action.cardsPlayed=commonService.resetCardsPlayed();
+	action.matchStarter=matchStarter%5,
+	action.inTurn=matchStarter%5;
 	break;
 	case'PLAY':
-	var card=playCardOnTheTable(action.value);
+	var card=matchService.playCardOnTheTable(action.value);
 	action.cardPlayed=card;
-	action.inTurn=getNextInTurn();
-	action.turnFinished=isTurnFinished();
+	action.inTurn=commonService.getNextInTurn();
+	action.turnFinished=matchService.isTurnFinished();
 	break;
 	case'CHANGE_TURN':
-	action.inTurn=getNextInTurn();
-	action.turnFinished=isTurnFinished();
+	action.inTurn=commonService.getNextInTurn();
+	action.turnFinished=matchService.isTurnFinished();
 	break;
 	case'END_TURN':
-	action.winnerTurn=getWinnerTurn();
-	action.cardsPlayed=resetCardsPlayed();
-	action.inTurn=getNextInTurn(action.winnerTurn);
+	action.winnerTurn=matchService.getWinnerTurn();
+	action.cardsPlayed=commonService.resetCardsPlayed();
+	action.inTurn=commonService.getNextInTurn(action.winnerTurn);
 	action.turnFinished=false;
-	action.turns=getNextTurn();
-	action.finishedMatch=isMatchFinished();
+	action.turns=commonService.getNextTurn();
+	action.finishedMatch=matchService.isMatchFinished();
 	break;
 	case'SET_WINNER':
-	action.winner=setWinnerMatch();
-	action.cardsPlayed=resetCardsPlayed();
+	action.winner=matchService.setWinnerMatch();
+	action.cardsPlayed=commonService.resetCardsPlayed();
 	break;
 	case'CHANGE_TURN_AUCTION':
-	action.inTurn=getNextInTurn();
-	action.winnerAuction=getWinnerAuction();
+	action.inTurn=commonService.getNextInTurn();
+	action.winnerAuction=auctionService.getWinnerAuction();
 	break;
 	case'PLAY_AUCTION':
-	action.inAuction=isUserInAuction();
-	action.auctionForUser=setAuctionForUser(action.value);
-	action.inTurn=getNextInTurn();
-	action.winnerAuction=getWinnerAuction();
+	action.inAuction=auctionService.isUserInAuction();
+	action.auctionForUser=auctionService.setAuctionForUser(action.value);
+	action.inTurn=commonService.getNextInTurn();
+	action.winnerAuction=auctionService.getWinnerAuction();
 	break;
-	case'CHOOSE_COMPAGNO':
-	var choosenCard=chooseCompagno(action.compagno);
-	action.compagno=choosenCard.id;
-	action.inTurn=getNextInTurn();
+	case'CHOOSE_PARTNER':
+	var choosenCard=auctionService.choosePartner(action.partner);
+	action.partner=choosenCard.id;
+	action.inTurn=state.matchStarter;
 	action.area='match';
-
-	action.seed=choosenCard.seme;
-
+	action.seed=choosenCard.seed;
+	action.partnerPlayer=auctionService.getAllied(choosenCard.id);
 	break;
 	case'EXIT_AUCTION':
 	action.inAuction=false;
-	action.inTurn=getNextInTurn();
-	action.winnerAuction=getWinnerAuction();
+	action.inTurn=commonService.getNextInTurn();
+	action.winnerAuction=auctionService.getWinnerAuction();
 	break;}
 
-
-
-	function getNextInTurn(winnerTurn){
-	if(state.area=="auction"&&state.auction.winner!=undefined){
-	return state.auction.winner;
-	}
-	if(state.area=="match"&&state.match.isTurnFinished){
-	return winnerTurn.winner;
-	}
-	var next=(state.inTurn+1)%5;
-	return next;
-	}
-
-	function getNextTurn(){
-	var next=(state.match.turns+1)%9;
-	return next;
-	}
-
-
-	function resetCardsPlayed(){
-	return[{id:0,value:0},{id:1,value:0},{id:2,value:0},{id:3,value:0},{id:4,value:0}];
-	}
-
-	function shuffleCards(){
-	var array=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40];
-	var currentIndex=array.length,temporaryValue,randomIndex;
-
-	while(0!==currentIndex){
-
-	randomIndex=Math.floor(Math.random()*currentIndex);
-	currentIndex-=1;
-
-	temporaryValue=array[currentIndex];
-	array[currentIndex]=array[randomIndex];
-	array[randomIndex]=temporaryValue;
-	}
-	return array;
-	}
-
-	function getMyAllCards(cards){
-	var allCards=state.cards;
-	var myAllCards=[];
-	for(var _i=0;_i<cards.length;_i++){
-	if(cards[_i]){
-	for(var key in allCards){
-	if(allCards.hasOwnProperty(key)){
-	if(allCards[key].id==cards[_i]){
-	myAllCards.push(allCards[key]);
-	}
-	}
-	}
-	}
-	}
-	return myAllCards;
-	}
-
-	function addBriscolaValueToMyAllCards(myAllCards){
-	var myNewAllCards=[];
-	for(i=0;i<myAllCards.length;i++){
-	if(myAllCards[i].seed===state.auction.seed){
-	var tmpObject={
-	value:myAllCards[i].value+100,
-	points:myAllCards[i].points,
-	seme:myAllCards[i].seme,
-	nome:myAllCards[i].nome};
-	myNewAllCards.push(tmpObject);
-	}else{
-	myNewAllCards.push(myAllCards[i]);
-	}
-	}
-	}
-
-
-
-
-
-
-	function setWinnerMatch(){
-	var team1=0,team2=0;
-	for(var _i2=0;_i2<state.players.length;_i2++){
-	var player=state.players[_i2];
-	if(player.id===state.auction.winner||player.id===state.auction.compagno){
-	team1+=player.points;
-	}else{
-	team2+=player.points;
-	}
-	}
-	if(team1>team2){
-	return"chiamante";
-	}else{
-	return"others";
-	}
-	}
-
-
-
-	function isMatchFinished(){
-	return state.match.turns===8;
-	}
-
-
-
-	function isTurnFinished(){
-	var res=state.match.cardsPlayed.filter(function(c){return c.value==0;});
-	return res.length==1;
-	}
-
-	function getWinnerTurn(){
-	var maxValue=0;
-	var winner=0;
-	var totalPoints=0;
-	var startFrom=0;
-	if(state.match.winnerTurn){
-	startFrom=state.match.winnerTurn;
-	}else{
-	startFrom=state.auction.winner;
-	}
-
-	for(var _i3=startFrom;_i3<5+startFrom;_i3++){
-	var indexPlayer=_i3%5;
-	var c=state.match.cardsPlayed[indexPlayer];
-	var valueCurrentcard=0;
-	if(state.auction.seed===state.cards[c.value].seme){
-	valueCurrentcard=state.cards[c.value].value+100;
-	}else{
-	valueCurrentcard=state.cards[c.value].value;
-	}
-	if(valueCurrentcard>maxValue){
-	maxValue=valueCurrentcard;
-	winner=c.id;
-	}
-	totalPoints+=state.cards[c.value].points;
-	}
-	return{winner:winner,totalPoints:totalPoints};
-	}
-
-
-
-	function playCardOnTheTable(){var cardToPlay=arguments.length>0&&arguments[0]!==undefined?arguments[0]:null;
-	var c=null;
-	if(!cardToPlay){
-	return getCardToPlay();
-	}else{
-	return cardToPlay;
-	}
-	}
-
-	function getCardByPlayerProfile(){
-	if(state.players[state.inTurn].profile==="aggressive"){
-	return playSafe();
-	}else{
-	return playSafe();
-	}
-	}
-
-	function getCurrentContext(p){
-	return{
-	maxValuePlayed:getMaxValueFromCardsPlayed(),
-	tmpSumPunti:getTmpMaxPuntiTurno(),
-	auctionValue:state.players[state.auction.winner].auction.points,
-	puntiConsumatiByTeam:getPuntiConsumatiByTeam(),
-	tmpWinnerTeam:getTmpWinnerTurn(getPuntiConsumatiByTeam()),
-	hasCompagnoAlreadyPlayed:state.match.cardsPlayed[getAlleato()]!==undefined,
-	hasChiamanteAlreadyPlayed:state.match.cardsPlayed[state.auction.winner]!==undefined,
-	lastOneToPlay:whichIsTheLastOneToPlay(),
-	isOther:!(state.auction.winner===p.id)&&!(state.auction.compagno===p.id),
-	isChiamante:state.auction.winner===p.id,
-	isCompagno:state.auction.compagno===p.id,
-	currentTurn:state.turns,
-	amITheLastOne:state.match.cardsPlayed.length===4,
-	amItheFirstOne:state.match.cardsPlayed.length===0};
-
-	}
-
-	function getCardToPlay(){
-	var p=state.players.filter(function(p){return p.id==state.inTurn;})[0];
-	if(p){
-	var context=getCurrentContext(p);
-	if(context.isChiamante){
-	var tryToWinCard=tryToWin(context.maxValuePlayed);
-	if(!tryToWinCard){
-	return getCardByPlayerProfile();
-	}else{
-	return tryToWinCard;
-	}
-
-	}else if(context.isCompagno){
-	var _tryToWinCard=tryToWin(context.maxValuePlayed);
-	if(!_tryToWinCard){
-	return getCardByPlayerProfile();
-	}else{
-	return _tryToWinCard;
-	}
-	}else{
-	var _tryToWinCard2=tryToWin(context.maxValuePlayed);
-	if(!_tryToWinCard2){
-	return getCardByPlayerProfile();
-	}else{
-	return _tryToWinCard2;
-	}
-	}
-	}
-	return 1;
-	}
-
-
-
-	function tryToWin(maxValuePlayed){
-	console.log("-----------------------------------");
-	var myAllCards=getMyAllCards(state.players[state.inTurn].cards);
-	var myAllCardsByValue=_lodash2.default.sortBy(myAllCards,['value']);
-	console.log("maxValuePlayed:"+maxValuePlayed);
-	for(var _i4=0;_i4<myAllCardsByValue.length;_i4++){
-	var tmpVal=myAllCardsByValue[_i4].value;
-	var firstPlayedSeed=getFirstPlayedSeed();
-	console.log(myAllCardsByValue[_i4].seme);
-	if(firstPlayedSeed&&myAllCardsByValue[_i4].seme==firstPlayedSeed&&myAllCardsByValue[_i4].seme!=state.auction.seed){
-	tmpVal+=100;
-	}else if(myAllCardsByValue[_i4].seme==state.auction.seed){
-	tmpVal+=1000;
-	}
-	console.log("tmpVal:"+tmpVal);
-	if(tmpVal>maxValuePlayed){
-
-	return myAllCardsByValue[_i4].id;
-	}
-	}
-	console.log("-----------------------------------");
-	}
-
-
-	function getFirstPlayedSeed(){
-	for(var _i5=0;_i5<state.match.cardsPlayed.length;_i5++){
-	var currentIndexCard=state.match.cardsPlayed[_i5].value;
-	var player=state.match.cardsPlayed[_i5].id;
-	if(currentIndexCard>0){
-	if(state.match.winnerTurn&&state.match.winnerTurn===player){
-	return currentIndexCard;
-	}else if(state.auction.winner&&state.auction.winner===player){
-	return currentIndexCard;
-	}
-	}
-	}
-	}
-
-
-	function playSafe(){
-	var minValue=1000;
-	var tmpCard=0;
-	var myAllCards=getMyAllCards(state.players[state.inTurn].cards);
-	var myAllCardsByValue=_lodash2.default.sortBy(myAllCards,['value']);
-
-	for(var _i6=0;_i6<myAllCardsByValue.length;_i6++){
-	if(myAllCardsByValue[_i6].value<minValue&&myAllCardsByValue[_i6].seme!==state.auction.seed){
-	minValue=myAllCardsByValue[_i6].value;
-	tmpCard=myAllCardsByValue[_i6].id;
-	}
-	}
-
-	if(tmpCard==0){
-	tmpCard=myAllCardsByValue[0].id;
-	}
-
-	return tmpCard;
-	}
-
-	function playAggressive(){
-	var minValue=1;
-	var tmpCard=0;
-	var myAllCards=getMyAllCards(state.players[state.inTurn].cards);
-	var myAllCardsByValue=_lodash2.default.sortBy(myAllCards,['value'],['desc']);
-
-	for(var _i7=0;_i7<myAllCardsByValue.length;_i7++){
-	if(myAllCardsByValue[_i7].value>minValue){
-	minValue=myAllCardsByValue[_i7].value;
-	tmpCard=myAllCardsByValue[_i7].id;
-	}
-	}
-
-	if(tmpCard==0){
-	tmpCard=myAllCardsByValue[0].id;
-	}
-
-	return tmpCard;
-	}
-
-	function playStandard(){
-
-	}
-
-
-	function whichIsTheLastOneToPlay(){
-	if(state.turns==1){
-	return 5;
-	}else{
-	return state.players[state.match.winnerTurn-1];
-	}
-	}
-
-	function getTmpWinnerTurn(puntiByTeam){
-	if(puntiByTeam.alleati>puntiByTeam.others){
-	return"alleati";
-	}else{
-	return"others";
-	}
-	}
-
-	function getPuntiConsumatiByTeam(){
-	var sumPoints={alleati:0,others:0};
-	state.players.map(function(p){
-	if(p.id===state.auction.winner||p.id==getAlleato()){
-	sumPoints.alleati+=p.points;
-	}else{
-	sumPoints.others+=p.points;
-	}
-	});
-	return sumPoints;
-	}
-
-	function getTmpMaxPuntiTurno(){
-	var sumPoints=0;
-	state.match.cardsPlayed.map(function(card){
-	if(card.value>0){
-	sumPoints+=state.cards[card.value].points;
-	}
-	});
-	return sumPoints;
-	}
-
-	function getMaxValueFromCardsPlayed(){
-	var maxValue=0;
-	var currentValue=0;
-	state.match.cardsPlayed.map(function(card){
-	if(card.value>0){
-	currentValue=state.cards[card.value].value;
-	console.log("state.cards[card.value].seme:"+state.cards[card.value].seme);
-	console.log("getFirstPlayedSeed:"+getFirstPlayedSeed());
-	console.log(state.cards[card.value]);
-	if(state.cards[card.value].seme==state.auction.seed){
-	currentValue+=1000;
-	}else if(state.cards[card.value].seme==getFirstPlayedSeed()){
-	currentValue+=100;
-	}
-	if(currentValue>maxValue){
-	maxValue=currentValue;
-	}
-	}
-	});
-	return maxValue;
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-	function chooseCompagno(card){
-	if(card){
-	return state.cards[card];
-	}else{
-	var cardsBySeed=getCardsBySeed(state.players[state.auction.winner].cards);
-	var valuesBySeed={"coppe":0,"spade":0,"denari":0,"bastoni":0};
-
-	for(var key in cardsBySeed){
-	if(valuesBySeed.hasOwnProperty(key)){
-	valuesBySeed[key]=getValueFromCardsBySeed(cardsBySeed[key]);
-	}
-	}
-
-	var maxSeed=getBiggestSeedValueFromValuesBySeed(valuesBySeed);
-
-	var _choosenCard=getHighestValuedCardFromBiggestSeed(maxSeed,cardsBySeed);
-
-	return state.cards[_choosenCard];
-	}
-	}
-
-
-	function getHighestValuedCardFromBiggestSeed(maxSeed,cardsBySeed){
-	var cards=cardsBySeed[maxSeed];var _loop=function _loop(
-	_i8){
-	if(cards.filter(function(card){
-	return card.value==_i8;
-	}).length==0){
-	var allCards=state.cards;
-	for(key in allCards){
-	if(allCards.hasOwnProperty(key)){
-	if(allCards[key].value==_i8&&allCards[key].seme==maxSeed){
-	return{v:key};
-	}
-	}
-	}
-	}};for(var _i8=10;_i8>=1;_i8--){var key;var _ret=_loop(_i8);if((typeof _ret==='undefined'?'undefined':_typeof(_ret))==="object")return _ret.v;
-	}
-	}
-
-	function getAlleato(){
-	state.players.map(function(p){
-	for(var _i9=0;_i9<p.cards.length;_i9++){
-	if(p.cards[_i9]==state.auction.compagno)
-	return p.id;
-	}
-	});
-	}
-
-	function getWinnerAuction(){
-	var playersInAuction=state.players.filter(function(p){return p.auction.isIn===true;});
-	if(playersInAuction.length==1){
-	return playersInAuction[0].id;
-	}else{
-	return undefined;
-	}
-	}
-
-
-
-
-
-
-	function isUserInAuction(){
-	return state.players[state.inTurn].auction.isIn;
-	}
-
-
-	function setAuctionForUser(){var value=arguments.length>0&&arguments[0]!==undefined?arguments[0]:null;
-	var biggestAuction=getBiggestAuction(state.players);
-
-	if(value){
-	if(value>biggestAuction){
-	return{points:value,isIn:true};
-	}else{
-	return{points:value,isIn:false};
-	}
-	}
-
-	if(state.players[state.inTurn].auction.isIn===true){
-	return getAIChoice(state.players[state.inTurn].auction,biggestAuction);
-	}else{
-	return state.players[state.inTurn].auction;
-	}
-	}
-
-	function getBiggestAuction(players){
-	var tmpMax=60;
-	players.map(function(player){
-	if(player.auction.points>tmpMax){
-	tmpMax=player.auction.points;
-	}
-	});
-	return tmpMax;
-	}
-
-
-
-
-
-
-	function getAIChoice(auction,biggestAuction){
-
-	var tmpVal=getAuctionValue(state.players[state.inTurn].cards);
-	if(tmpVal<biggestAuction){
-	auction.isIn=false;
-	auction.points=tmpVal;
-	}else{
-	auction.isIn=true;
-	auction.points=biggestAuction+5;
-	if(auction.points>120){
-	auction.points=120;
-	}
-	}
-
-	return auction;
-	}
-
-
-	function getCardsBySeed(cards){
-	var myAllcards=getMyAllCards(cards);
-	var cardsBySeed={"coppe":[],"spade":[],"denari":[],"bastoni":[]};
-	myAllcards.map(function(card){
-	cardsBySeed[card.seme].push(card);
-	});
-	return cardsBySeed;
-	}
-
-	function getValueFromCardsBySeed(cards){
-	var value=0;
-	cards.map(function(card){
-	value+=card.value;
-	});
-	return value;
-	}
-
-	function getBiggestValueFromCardsBySeed(valueBySeed){
-	var biggestValue=0;
-	for(var key in valueBySeed){
-	if(valueBySeed.hasOwnProperty(key)){
-	if(valueBySeed[key]>biggestValue){
-	biggestValue=valueBySeed[key];
-	}
-	}
-	}
-	return biggestValue;
-	}
-
-	function getBiggestSeedValueFromValuesBySeed(valueBySeed){
-	var biggestSeed=null;
-	var biggestValue=0;
-	for(var key in valueBySeed){
-	if(valueBySeed.hasOwnProperty(key)){
-	if(valueBySeed[key]>biggestValue){
-	biggestValue=valueBySeed[key];
-	biggestSeed=key;
-	}
-	}
-	}
-	return biggestSeed;
-	}
-
-	function getAuctionValue(cards){
-	var cardsBySeed=getCardsBySeed(cards);
-	var valueBySeed={"coppe":0,"spade":0,"denari":0,"bastoni":0};
-
-	for(var key in cardsBySeed){
-	if(valueBySeed.hasOwnProperty(key)){
-	valueBySeed[key]=getValueFromCardsBySeed(cardsBySeed[key]);
-	}
-	}
-
-	var maxValue=getBiggestValueFromCardsBySeed(valueBySeed);
-	var myMaxAuction=70;
-	if(maxValue>=20){
-	myMaxAuction=70;
-	}
-	if(maxValue>=25){
-	myMaxAuction=80;
-	}
-	if(maxValue>=30){
-	myMaxAuction=90;
-	}
-	if(maxValue>=35){
-	myMaxAuction=100;
-	}
-
-	if(maxValue>=40){
-	myMaxAuction=105;
-	}
-
-	if(maxValue>=45){
-	myMaxAuction=110;
-	}
-
-	if(maxValue==50){
-	myMaxAuction=120;
-	}
-
-	return myMaxAuction;
-
-	}
 
 	next(action);
 	};};};exports.default=
@@ -43128,6 +42558,629 @@
 	}.call(this));
 
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(197)(module)))
+
+/***/ }),
+/* 240 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";Object.defineProperty(exports,"__esModule",{value:true});exports.MatchService=undefined;var _createClass=function(){function defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};}();var _auction=__webpack_require__(241);
+	var _common=__webpack_require__(242);function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function");}}var
+
+	MatchService=exports.MatchService=function(){
+
+	function MatchService(store){_classCallCheck(this,MatchService);
+	this.state=store.getState();
+	this.auctionService=new _auction.AuctionService(store);
+	this.commonService=new _common.CommonService(store);
+	}_createClass(MatchService,[{key:"setWinnerMatch",value:function setWinnerMatch()
+
+	{
+	var team1=0,team2=0;
+	for(var i=0;i<this.state.players.length;i++){
+	var player=this.state.players[i];
+	if(player.id===this.state.auction.winner||player.id===this.state.auction.partnerPlayer){
+	team1+=player.points;
+	}else{
+	team2+=player.points;
+	}
+	}
+	if(team1>team2){
+	return"caller";
+	}else{
+	return"others";
+	}
+	}},{key:"isMatchFinished",value:function isMatchFinished()
+
+	{
+	return this.state.match.turns===8;
+	}},{key:"isTurnFinished",value:function isTurnFinished()
+
+
+	{
+	var res=this.state.match.cardsPlayed.filter(function(c){return c.value==0;});
+	return res.length==1;
+	}},{key:"getWinnerTurn",value:function getWinnerTurn()
+
+
+	{
+	var maxValue=0;
+	var winner=0;
+	var totalPoints=0;
+	var startFrom=0;
+	if(this.state.match.winnerTurn){
+	startFrom=this.state.match.winnerTurn;
+	}else{
+	startFrom=this.state.matchStarter;
+	}
+
+	for(var i=startFrom;i<5+startFrom;i++){
+	var indexPlayer=i%5;
+	var c=this.state.match.cardsPlayed[indexPlayer];
+	var valueCurrentcard=0;
+	if(c.value){
+	if(this.state.auction.seed===this.state.cards[c.value].seed){
+	valueCurrentcard=this.state.cards[c.value].value+1000;
+	}else if(i===startFrom){
+	valueCurrentcard=this.state.cards[c.value].value+100;
+	}else if(this.state.cards[c.value].seed===this.state.cards[this.state.match.cardsPlayed[startFrom].value].seed){
+	valueCurrentcard=this.state.cards[c.value].value+100;
+	}else{
+	valueCurrentcard=this.state.cards[c.value].value;
+	}
+
+	if(valueCurrentcard>maxValue){
+	maxValue=valueCurrentcard;
+	winner=c.id;
+	}
+	totalPoints+=this.state.cards[c.value].points;
+	}
+	}
+	return{winner:winner,totalPoints:totalPoints};
+	}},{key:"playCardOnTheTable",value:function playCardOnTheTable()
+
+	{var cardToPlay=arguments.length>0&&arguments[0]!==undefined?arguments[0]:null;
+	var c=null;
+	if(!cardToPlay){
+	return this.getCardToPlay();
+	}else{
+	return cardToPlay;
+	}
+	}},{key:"amITheFirstOne",value:function amITheFirstOne()
+
+	{
+	var cardsPlayed=this.state.match.cardsPlayed;
+	return cardsPlayed.filter(function(c){return c.value!==0;}).length==0;
+	}},{key:"amITheLastOne",value:function amITheLastOne()
+
+	{
+	var cardsPlayed=this.state.match.cardsPlayed;
+	return cardsPlayed.filter(function(c){return c.value!==0;}).length==4;
+	}},{key:"getCurrentContext",value:function getCurrentContext(
+
+	p){
+	var winnerTmpTurn=this.getWinnerTurn().winner;
+	return{
+	maxValuePlayed:this.getMaxValueFromCardsPlayed(),
+	tmpSumPoints:this.getTmpMaxPointsTurn(),
+	auctionValue:this.state.players[this.state.auction.winner].auction.points,
+	puntiConsumedByTeam:this.getPuntiConsumedByTeam(),
+	tmpWinnerTeamTurn:winnerTmpTurn,
+	lastOneToPlay:this.whichIsTheLastOneToPlay(),
+	isOther:this.isOther(p),
+	isCaller:this.isCaller(p),
+	isPartner:this.isPartner(p),
+	currentTurn:this.state.turns,
+	amITheLastOne:this.amITheLastOne(),
+	amItheFirstOne:this.amITheFirstOne(),
+	amIAlreadyWonTheMatch:this.amIAlreadyWonTheMatch(p),
+	myAllCardsByValue:_.sortBy(this.commonService.getMyAllCards(p.cards),['value']),
+	myAllCardsByPoints:_.sortBy(this.commonService.getMyAllCards(p.cards),['points']),
+	myTeamIsWinningTurn:this.isOther(p)&&
+	winnerTmpTurn!==this.state.auction.winner&&winnerTmpTurn!==this.state.auction.partnerPlayer||
+	(this.isPartner(p)||this.isCaller(p))&&(winnerTmpTurn===this.state.auction.winner||winnerTmpTurn===this.state.auction.partnerPlayer)};
+
+	}},{key:"addPoints",value:function addPoints(
+
+	context){
+	var myAllCardsByPoints=context.myAllCardsByPoints;
+	for(var i=0;i<myAllCardsByPoints.length-1;i++){
+	if(myAllCardsByPoints[myAllCardsByPoints.length-1].seed!==this.state.auction.seed){
+	return myAllCardsByPoints[myAllCardsByPoints.length-1].id;
+	}
+	}
+	return myAllCardsByPoints[myAllCardsByPoints.length-1].id;
+	}},{key:"getStrategy",value:function getStrategy(
+
+	context){
+
+	if(context.amIAlreadyWonTheMatch){
+	return this.playSafe(context);
+	}
+
+	if(context.amItheFirstOne){
+	if(context.isOther){
+	return this.addPoints(context);
+	}else{
+	return this.playSafe(context);
+	}
+	}else if(context.amITheLastOne){
+	if(context.myTeamIsWinningTurn){
+	return this.addPoints(context);
+	}else{
+	var tryToWinCard=this.tryToWin(context);
+	if(!tryToWinCard){
+	return this.playSafe(context);
+	}else{
+	return tryToWinCard;
+	}
+	}
+	}
+
+	if(context.myTeamIsWinningTurn){
+	return this.addPoints(context);
+	}else{
+	var _tryToWinCard=this.tryToWin(context);
+	if(!_tryToWinCard){
+	return this.playSafe(context);
+	}else{
+	return _tryToWinCard;
+	}
+	}
+	}},{key:"getInTurnPlayer",value:function getInTurnPlayer()
+
+	{var _this=this;
+	return this.state.players.filter(function(p){return p.id==_this.state.inTurn;})[0];
+	}},{key:"getCardToPlay",value:function getCardToPlay()
+
+	{
+	var p=this.getInTurnPlayer();
+	if(p){
+	var context=this.getCurrentContext(p);
+	if(context.isCaller){
+	return this.getStrategy(context);
+	}else if(context.isPartner){
+	return this.getStrategy(context);
+	}else{
+	return this.getStrategy(context);
+	}
+	}
+	return 1;
+	}},{key:"tryToWin",value:function tryToWin(
+
+
+	context){
+	var myAllCardsByValue=context.myAllCardsByValue;
+	for(var i=0;i<myAllCardsByValue.length;i++){
+	var tmpVal=myAllCardsByValue[i].value;
+	var firstPlayedSeed=this.getFirstPlayedSeed();
+	if(firstPlayedSeed&&myAllCardsByValue[i].seed==firstPlayedSeed&&myAllCardsByValue[i].seed!=this.state.auction.seed){
+	tmpVal+=100;
+	}else if(myAllCardsByValue[i].seed==this.state.auction.seed){
+	tmpVal+=1000;
+	}
+	if(tmpVal>context.maxValuePlayed){
+	return myAllCardsByValue[i].id;
+	}
+	}
+	}},{key:"getFirstPlayedSeed",value:function getFirstPlayedSeed()
+
+
+	{
+	for(var i=0;i<this.state.match.cardsPlayed.length;i++){
+	var currentIndexCard=this.state.match.cardsPlayed[i].value;
+	var player=this.state.match.cardsPlayed[i].id;
+	if(currentIndexCard>0){
+	if(this.state.match.winnerTurn&&this.state.match.winnerTurn===player){
+	return currentIndexCard;
+	}else if(this.state.auction.winner&&this.state.auction.winner===player){
+	return currentIndexCard;
+	}
+	}
+	}
+	}},{key:"playSafe",value:function playSafe(
+
+	context){
+	var minValue=1000;
+	var tmpCard=0;
+	var myAllCardsByValue=context.myAllCardsByValue;
+	for(var i=0;i<myAllCardsByValue.length;i++){
+	if(myAllCardsByValue[i].value<minValue&&myAllCardsByValue[i].seed!==this.state.auction.seed){
+	minValue=myAllCardsByValue[i].value;
+	tmpCard=myAllCardsByValue[i].id;
+	}
+	}
+	if(tmpCard==0){
+	tmpCard=myAllCardsByValue[0].id;
+	}
+	return tmpCard;
+	}},{key:"whichIsTheLastOneToPlay",value:function whichIsTheLastOneToPlay()
+
+	{
+	if(this.state.turns==1){
+	return 5;
+	}else{
+	return this.state.players[this.state.match.winnerTurn-1];
+	}
+	}},{key:"getTmpWinnerMatch",value:function getTmpWinnerMatch(
+
+	puntiByTeam){
+	if(puntiByTeam.allied>puntiByTeam.others){
+	return"allied";
+	}else{
+	return"others";
+	}
+	}},{key:"getPuntiConsumedByTeam",value:function getPuntiConsumedByTeam()
+
+	{var _this2=this;
+	var sumPoints={allied:0,others:0};
+	this.state.players.map(function(p){
+	if(p.id===_this2.state.auction.winner||p.id==_this2.state.auction.partnerPlayer){
+	sumPoints.allied+=p.points;
+	}else{
+	sumPoints.others+=p.points;
+	}
+	});
+	return sumPoints;
+	}},{key:"isOther",value:function isOther(
+
+	p){
+	return!(this.state.auction.winner===p.id)&&!(this.state.auction.partnerPlayer===p.id);
+	}},{key:"isPartner",value:function isPartner(
+
+	p){
+	return this.state.auction.partnerPlayer===p.id;
+	}},{key:"isCaller",value:function isCaller(
+
+	p){
+	return this.state.auction.winner===p.id;
+	}},{key:"getProportionValueByPoints",value:function getProportionValueByPoints(
+
+	p,context){
+	var pointsOnTable=context.tmpSumPoints;
+	var myOrderedValues=context.myAllCardsByValue;
+	var breakpoints=myOrderedValues.length/3;
+
+	if(pointsOnTable<10){
+	return myOrderedValues[0];
+	}else if(pointsOnTable<20){
+	return myOrderedValues[myOrderedValues.length-1];
+	}else{
+	return myOrderedValues[myOrderedValues.length-1];
+	}
+	}},{key:"amIAlreadyWonTheMatch",value:function amIAlreadyWonTheMatch(
+
+	p){
+	var auction=this.auctionService.getBiggestAuction(this.state.players);
+	var puntiByTeam=this.getPuntiConsumedByTeam();
+	if(this.isCaller(p)||this.isPartner(p)){
+	return puntiByTeam.alleati>auction;
+	}else{
+	return puntiByTeam.others>auction;
+	}
+	}},{key:"getTmpMaxPointsTurn",value:function getTmpMaxPointsTurn()
+
+	{var _this3=this;
+	var sumPoints=0;
+	this.state.match.cardsPlayed.map(function(card){
+	if(card.value>0){
+	sumPoints+=_this3.state.cards[card.value].points;
+	}
+	});
+	return sumPoints;
+	}},{key:"getMaxValueFromCardsPlayed",value:function getMaxValueFromCardsPlayed()
+
+	{
+	var maxValue=0;
+	var startFrom=0;
+	if(this.state.match.winnerTurn){
+	startFrom=this.state.match.winnerTurn;
+	}else{
+	startFrom=this.state.matchStarter;
+	}
+
+	for(var i=startFrom;i<5+startFrom;i++){
+	var indexPlayer=i%5;
+	var c=this.state.match.cardsPlayed[indexPlayer];
+
+	var valueCurrentcard=0;
+	if(c.value){
+	if(this.state.auction.seed===this.state.cards[c.value].seed){
+	valueCurrentcard=this.state.cards[c.value].value+1000;
+	}else if(i===startFrom){
+	valueCurrentcard=this.state.cards[c.value].value+100;
+	}else if(this.state.cards[c.value].seed===this.state.cards[this.state.match.cardsPlayed[startFrom].value].seed){
+	valueCurrentcard=this.state.cards[c.value].value+100;
+	}else{
+	valueCurrentcard=this.state.cards[c.value].value;
+	}
+	if(valueCurrentcard>maxValue){
+	maxValue=valueCurrentcard;
+	}
+	}
+	}
+	return maxValue;
+	}}]);return MatchService;}();exports.default=
+
+
+	MatchService;
+
+/***/ }),
+/* 241 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";Object.defineProperty(exports,"__esModule",{value:true});exports.AuctionService=undefined;var _typeof=typeof Symbol==="function"&&typeof(typeof Symbol==="function"?Symbol.iterator:"@@iterator")==="symbol"?function(obj){return typeof obj;}:function(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol&&obj!==(typeof Symbol==="function"?Symbol.prototype:"@@prototype")?"symbol":typeof obj;};var _createClass=function(){function defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};}();var _common=__webpack_require__(242);function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function");}}var
+
+	AuctionService=exports.AuctionService=function(){
+
+	function AuctionService(store){_classCallCheck(this,AuctionService);
+	this.state=store.getState();
+	this.commonService=new _common.CommonService(store);
+	}_createClass(AuctionService,[{key:"choosePartner",value:function choosePartner(
+
+	card){
+	if(card){
+	return this.state.cards[card];
+	}else{
+	var cardsBySeed=this.getCardsBySeed(this.state.players[this.state.auction.winner].cards);
+	var valuesBySeed={"coppe":0,"spade":0,"denari":0,"bastoni":0};
+
+	for(var key in cardsBySeed){
+	if(valuesBySeed.hasOwnProperty(key)){
+	valuesBySeed[key]=this.getValueFromCardsBySeed(cardsBySeed[key]);
+	}
+	}
+	var maxSeed=this.getBiggestSeedValueFromValuesBySeed(valuesBySeed);
+	var choosenCard=this.getHighestValuedCardFromBiggestSeed(maxSeed,cardsBySeed);
+	return this.state.cards[choosenCard];
+	}
+	}},{key:"getHighestValuedCardFromBiggestSeed",value:function getHighestValuedCardFromBiggestSeed(
+
+	maxSeed,cardsBySeed){var _this=this;
+	var cards=cardsBySeed[maxSeed];var _loop=function _loop(
+	i){
+	if(cards.filter(function(card){
+	return card.value==i;
+	}).length==0){
+	var allCards=_this.state.cards;
+	for(var key in allCards){
+	if(allCards.hasOwnProperty(key)){
+	if(allCards[key].value==i&&allCards[key].seed==maxSeed){
+	return{v:key};
+	}
+	}
+	}
+	}};for(var i=10;i>=1;i--){var _ret=_loop(i);if((typeof _ret==="undefined"?"undefined":_typeof(_ret))==="object")return _ret.v;
+	}
+	}},{key:"getAllied",value:function getAllied(
+
+	cardId){
+	for(var i=0;i<this.state.players.length;i++){
+	for(var j=0;j<this.state.players[i].cards.length;j++){
+	if(this.state.players[i].cards[j]==cardId)
+	return this.state.players[i].id;
+	}
+	}
+	}},{key:"getWinnerAuction",value:function getWinnerAuction()
+
+	{
+	var playersInAuction=this.state.players.filter(function(p){return p.auction.isIn===true;});
+	if(playersInAuction.length==1){
+	return playersInAuction[0].id;
+	}else{
+	return undefined;
+	}
+	}},{key:"isUserInAuction",value:function isUserInAuction()
+
+	{
+	return this.state.players[this.state.inTurn].auction.isIn;
+	}},{key:"setAuctionForUser",value:function setAuctionForUser()
+
+	{var value=arguments.length>0&&arguments[0]!==undefined?arguments[0]:null;
+	var biggestAuction=this.getBiggestAuction(this.state.players);
+
+	if(value){
+	if(value>biggestAuction){
+	return{points:value,isIn:true};
+	}else{
+	return{points:value,isIn:false};
+	}
+	}
+
+	if(this.state.players[this.state.inTurn].auction.isIn===true){
+	return this.getAIChoice(this.state.players[this.state.inTurn].auction,biggestAuction);
+	}else{
+	return this.state.players[this.state.inTurn].auction;
+	}
+	}},{key:"getBiggestAuction",value:function getBiggestAuction(
+
+	players){
+	var tmpMax=60;
+	players.map(function(player){
+	if(player.auction.points>tmpMax){
+	tmpMax=player.auction.points;
+	}
+	});
+	return tmpMax;
+	}},{key:"getAIChoice",value:function getAIChoice(
+
+	auction,biggestAuction){
+	var tmpVal=this.getAuctionValue(this.state.players[this.state.inTurn].cards);
+	if(tmpVal<biggestAuction){
+	auction.isIn=false;
+	auction.points=tmpVal;
+	}else{
+	auction.isIn=true;
+	auction.points=biggestAuction+5;
+	}
+	return auction;
+	}},{key:"getCardsBySeed",value:function getCardsBySeed(
+
+
+	cards){
+	var myAllcards=this.commonService.getMyAllCards(cards);
+	var cardsBySeed={"coppe":[],"spade":[],"denari":[],"bastoni":[]};
+	myAllcards.map(function(card){
+	cardsBySeed[card.seed].push(card);
+	});
+	return cardsBySeed;
+	}},{key:"getValueFromCardsBySeed",value:function getValueFromCardsBySeed(
+
+	cards){
+	var value=0;
+	cards.map(function(card){
+	value+=card.value;
+	});
+	return value;
+	}},{key:"getBiggestValueFromCardsBySeed",value:function getBiggestValueFromCardsBySeed(
+
+	valueBySeed){
+	var biggestValue=0;
+	for(var key in valueBySeed){
+	if(valueBySeed.hasOwnProperty(key)){
+	if(valueBySeed[key]>biggestValue){
+	biggestValue=valueBySeed[key];
+	}
+	}
+	}
+	return biggestValue;
+	}},{key:"getBiggestSeedValueFromValuesBySeed",value:function getBiggestSeedValueFromValuesBySeed(
+
+	valueBySeed){
+	var biggestSeed=null;
+	var biggestValue=0;
+	for(var key in valueBySeed){
+	if(valueBySeed.hasOwnProperty(key)){
+	if(valueBySeed[key]>biggestValue){
+	biggestValue=valueBySeed[key];
+	biggestSeed=key;
+	}
+	}
+	}
+	return biggestSeed;
+	}},{key:"getAuctionValue",value:function getAuctionValue(
+
+	cards){
+	var cardsBySeed=this.getCardsBySeed(cards);
+	var valueBySeed={"coppe":0,"spade":0,"denari":0,"bastoni":0};
+	for(var key in cardsBySeed){
+	if(valueBySeed.hasOwnProperty(key)){
+	valueBySeed[key]=this.getValueFromCardsBySeed(cardsBySeed[key]);
+	}
+	}
+
+	var maxValue=this.getBiggestValueFromCardsBySeed(valueBySeed);
+	var myMaxAuction=70;
+	if(maxValue>=20){
+	myMaxAuction=70;
+	}
+	if(maxValue>=25){
+	myMaxAuction=80;
+	}
+	if(maxValue>=30){
+	myMaxAuction=90;
+	}
+	if(maxValue>=35){
+	myMaxAuction=100;
+	}
+
+	if(maxValue>=40){
+	myMaxAuction=105;
+	}
+
+	if(maxValue>=45){
+	myMaxAuction=110;
+	}
+
+	if(maxValue==70){
+	myMaxAuction=120;
+	}
+
+	return myMaxAuction;
+
+	}}]);return AuctionService;}();exports.default=
+
+
+
+	AuctionService;
+
+/***/ }),
+/* 242 */
+/***/ (function(module, exports) {
+
+	"use strict";Object.defineProperty(exports,"__esModule",{value:true});var _createClass=function(){function defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};}();function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function");}}var CommonService=exports.CommonService=function(){
+	function CommonService(store){_classCallCheck(this,CommonService);
+	this.state=store.getState();
+	}_createClass(CommonService,[{key:"getNextInTurn",value:function getNextInTurn(
+	winnerTurn){
+	if(this.state.area=="auction"&&this.state.auction.winner!=undefined){
+	return this.state.auction.winner;
+	}
+	if(this.state.area=="match"&&this.state.match.isTurnFinished){
+	return winnerTurn.winner;
+	}
+	var next=(this.state.inTurn+1)%5;
+	return next;
+	}},{key:"getNextTurn",value:function getNextTurn()
+
+	{
+	var next=(this.state.match.turns+1)%9;
+	return next;
+	}},{key:"resetCardsPlayed",value:function resetCardsPlayed()
+
+	{
+	return[{id:0,value:0},{id:1,value:0},{id:2,value:0},{id:3,value:0},{id:4,value:0}];
+	}},{key:"shuffleCards",value:function shuffleCards()
+
+	{
+	var array=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40];
+	var currentIndex=array.length;
+	var temporaryValue=0;
+	var randomIndex=0;
+	while(0!==currentIndex){
+	randomIndex=Math.floor(Math.random()*currentIndex);
+	currentIndex-=1;
+	temporaryValue=array[currentIndex];
+	array[currentIndex]=array[randomIndex];
+	array[randomIndex]=temporaryValue;
+	}
+	return array;
+	}},{key:"getMyAllCards",value:function getMyAllCards(
+
+	cards){
+	var allCards=this.state.cards;
+	var myAllCards=[];
+	for(var _i=0;_i<cards.length;_i++){
+	if(cards[_i]){
+	for(var key in allCards){
+	if(allCards.hasOwnProperty(key)){
+	if(allCards[key].id==cards[_i]){
+	myAllCards.push(allCards[key]);
+	}
+	}
+	}
+	}
+	}
+	return myAllCards;
+	}},{key:"addBriscolaValueToMyAllCards",value:function addBriscolaValueToMyAllCards(
+
+	myAllCards){
+	var myNewAllCards=[];
+	for(i=0;i<myAllCards.length;i++){
+	if(myAllCards[i].seed===this.state.auction.seed){
+	var tmpObject={
+	value:myAllCards[i].value+100,
+	points:myAllCards[i].points,
+	seed:myAllCards[i].seed,
+	name:myAllCards[i].name};
+	myNewAllCards.push(tmpObject);
+	}else{
+	myNewAllCards.push(myAllCards[i]);
+	}
+	}
+	}}]);return CommonService;}();exports.default=
+
+
+	CommonService;
 
 /***/ })
 /******/ ]);

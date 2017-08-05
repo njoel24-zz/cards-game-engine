@@ -6,15 +6,15 @@ import { playAuctionBot,
 	 playAuction,
 	 endAuction, 
 	 exitAuction,
-	 changeTurnAuction, chooseCompagno } from '../actions/auction'
+	 changeTurnAuction, choosePartner } from '../actions/auction'
 
-class ChooseCompagno extends React.Component {
+class ChoosePartner extends React.Component {
 
     createSelectItems() {
      let items = [];         
-     for (var key in this.props.allCards) {
+     for (const key in this.props.allCards) {
         if(this.props.allCards.hasOwnProperty(key)){
-          items.push(<option key={key} value={key}>{this.props.allCards[key].nome + " " + this.props.allCards[key].seme}</option>);   
+          items.push(<option key={key} value={key}>{this.props.allCards[key].name + " " + this.props.allCards[key].seed}</option>);   
         }
      }
      return items;
@@ -24,10 +24,10 @@ class ChooseCompagno extends React.Component {
 		if(this.props.show) {	
 		return (
 			<div>
-                <select id="compagno">
+                <select id="partner">
                     {this.createSelectItems()}
                 </select>
-				<button onClick={ this.props.chooseCompagno}>Ok</button>
+				<button onClick={ this.props.choosePartner}>Ok</button>
 			</div>
 		)
 		} else {
@@ -44,14 +44,14 @@ const mapStateToProps = function(store) {
 
 const mapDispatchToProps = function(dispatch, ownProps) {
   return {
-    chooseCompagno: () => {
+    choosePartner: () => {
 			let value= 0
-			if(document.getElementById("compagno")){
-				value = document.getElementById("compagno").value
+			if(document.getElementById("partner")){
+				value = document.getElementById("partner").value
 			}
-      dispatch(chooseCompagno(value));
+      dispatch(choosePartner(value));
     }	
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ChooseCompagno);
+export default connect(mapStateToProps, mapDispatchToProps)(ChoosePartner);

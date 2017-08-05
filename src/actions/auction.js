@@ -3,9 +3,9 @@ export const playAuction = (value) => ({
   value: value
 })
 
-export const chooseCompagno = (value = null) => ({
-  type: 'CHOOSE_COMPAGNO',
-  compagno: value,
+export const choosePartner = (value = null) => ({
+  type: 'CHOOSE_PARTNER',
+  partner: value,
   newArea: undefined,
   seed: undefined
 })

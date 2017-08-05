@@ -10,6 +10,7 @@ render () {
   if(this.props.class) {
     this.className +=  " "+this.props.class;
   }
+  
 	return (
 		<div>
 		{ this.props.animate ?

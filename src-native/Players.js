@@ -11,13 +11,13 @@ render () {
 				<View style={{flex: 1}} key={player.id}>
 					<View style={{flex: 1, minHeight: 100}}>
 						<Text>{player.name}</Text>
-						<Text> {player.points} Punti</Text>
-						{ player.auction.isIn ? ( <Text> Punteggio Asta: {player.auction.points}</Text> ) : null }
+						<Text> {player.points} Points</Text>
+						{ player.auction.isIn ? ( <Text> Points Auction: {player.auction.points}</Text> ) : null }
 						{ player.auction.isIn ? ( <Text>In Auction</Text> ) : null }
-						{ player.id == this.props.match.winner ? ( <Text>Vincitore!</Text> ) : null }
-						{ player.id == this.props.auction.winner ? ( <Text>Vincitore Asta!</Text>) : null }
-						{ player.id == this.props.auction.compagno ? ( <Text>Compagno!</Text>) : null }
-						{ player.id == this.props.match.winnerTurn ? ( <Text>Winner Turno!</Text>) : null }
+						{ player.id == this.props.match.winner ? ( <Text>Winner!</Text> ) : null }
+						{ player.id == this.props.auction.winner ? ( <Text>Winner Auction/Vincitore Asta!</Text>) : null }
+						{ player.id == this.props.auction.partner ? ( <Text>Partner!</Text>) : null }
+						{ player.id == this.props.match.winnerTurn ? ( <Text>Winner Turn!</Text>) : null }
 						{ player.id == this.props.inTurn ? ( <Text style={{backgroundColor: "green", height: 20, width:"100%"}}></Text> ) : null }
 					</View>
 					<View style={{flex: 1}}>

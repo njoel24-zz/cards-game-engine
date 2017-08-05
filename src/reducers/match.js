@@ -13,9 +13,10 @@ const matchReducer = (state = [], action) => {
         {id:3, name: 'John', cards: [], points: 0, profile: "safe", auction: {points: 0, isIn: true }},
         {id:4, name: 'Tu', cards: [], points: 0, auction: {points: 0, isIn: true }}],        
         match: {  winner: undefined, winnerTurn: undefined, isTurnFinished: false, turns: 1, cardsPlayed: action.cardsPlayed },
-        auction: { winner: undefined, seed: undefined, compagno:  undefined },
+        auction: { winner: undefined, seed: undefined, partner:  undefined, partnerPlayer: undefined },
         isFinished: false,
         inTurn: 0,
+        matchStarter: 0,
         me: 4,
         area: 'auction',
         isStart: false,
@@ -32,11 +33,11 @@ const matchReducer = (state = [], action) => {
         {...state.players[2],  cards: shuffleCards.slice(16,24)},
         {...state.players[3],  cards: shuffleCards.slice(24,32)},
         {...state.players[4],  cards: shuffleCards.slice(32,40)}],
-        isStart: true
+        isStart: true,
+        matchStarter: action.matchStarter
       }
 
     case 'END_TURN':
-      console.log("End turn");
       newPlayers = [...state.players]
       newPlayers[action.winnerTurn.winner].points += action.winnerTurn.totalPoints
       return {
@@ -51,7 +52,6 @@ const matchReducer = (state = [], action) => {
       }
 
     case 'PLAY':
-      console.log("Play");
       newPlayers = [...state.players]
       newPlayers[state.inTurn].cards = newPlayers[state.inTurn].cards.map((card) => {
         if(card!==action.cardPlayed) {
@@ -70,7 +70,6 @@ const matchReducer = (state = [], action) => {
       }
 
     case 'CHANGE_TURN':
-    console.log("Change Turn")
     return {
       ...state,
       inTurn: action.inTurn,
@@ -78,16 +77,13 @@ const matchReducer = (state = [], action) => {
     }
 
     case 'SET_WINNER':
-      console.log("End Match");
       return {
         ...state,
         match: { ...state.match,  winner: action.winner },
         isStart: false
       }
 
-
     case 'PLAY_AUCTION':
-      console.log("Play Auction");
       newPlayers = [...state.players]
         newPlayers[state.inTurn].auction = action.auctionForUser
         return {
@@ -97,18 +93,16 @@ const matchReducer = (state = [], action) => {
           auction: { ...state.auction, winner: action.winnerAuction }
     }
 
-   case 'CHOOSE_COMPAGNO':
-      console.log("Choose Compagno");
+   case 'CHOOSE_PARTNER':
         return {
          ...state,
          inTurn: action.inTurn,
          area: action.area,
-         alleato: action.alleato,
-         auction: { ...state.auction, compagno: action.compagno, seed: action.seed }
+         allied: action.allied,
+         auction: { ...state.auction, partner: action.partner, seed: action.seed, partnerPlayer: action.partnerPlayer }
     }
 
     case 'PLAY_AUCTION':
-      console.log("Play Auction");
       newPlayers = [...state.players]
         newPlayers[state.inTurn].auction = action.auctionForUser
         return {
@@ -119,7 +113,6 @@ const matchReducer = (state = [], action) => {
     }
 
     case 'EXIT_AUCTION':
-      console.log("Exit Auction");
       let newPlayers = [...state.players]
       newPlayers[state.inTurn].auction.isIn = action.inAuction
       return {
@@ -130,7 +123,6 @@ const matchReducer = (state = [], action) => {
     }
 
     case 'CHANGE_TURN_AUCTION':
-      console.log("Change Turn Auction");
       return {
         ...state,
         inTurn: action.inTurn,
