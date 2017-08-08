@@ -24698,11 +24698,9 @@
 	var _Board=__webpack_require__(227);var _Board2=_interopRequireDefault(_Board);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function");}}function _possibleConstructorReturn(self,call){if(!self){throw new ReferenceError("this hasn't been initialised - super() hasn't been called");}return call&&(typeof call==="object"||typeof call==="function")?call:self;}function _inherits(subClass,superClass){if(typeof superClass!=="function"&&superClass!==null){throw new TypeError("Super expression must either be null or a function, not "+typeof superClass);}subClass.prototype=Object.create(superClass&&superClass.prototype,{constructor:{value:subClass,enumerable:false,writable:true,configurable:true}});if(superClass)Object.setPrototypeOf?Object.setPrototypeOf(subClass,superClass):subClass.__proto__=superClass;}var
 
 	App=function(_React$Component){_inherits(App,_React$Component);function App(){_classCallCheck(this,App);return _possibleConstructorReturn(this,(App.__proto__||Object.getPrototypeOf(App)).apply(this,arguments));}_createClass(App,[{key:'render',value:function render()
-
 	{
 	return _react2.default.createElement(_Board2.default,null);
 	}}]);return App;}(_react2.default.Component);exports.default=
-
 
 
 	App;
@@ -24998,6 +24996,10 @@
 	value:value};};
 
 
+	var raiseAuction=exports.raiseAuction=function raiseAuction(){return{
+	type:'RAISE_AUCTION'};};
+
+
 	var choosePartner=exports.choosePartner=function choosePartner(){var value=arguments.length>0&&arguments[0]!==undefined?arguments[0]:null;return{
 	type:'CHOOSE_PARTNER',
 	partner:value,
@@ -25218,7 +25220,6 @@
 	me:4,
 	area:'auction',
 	isStart:false,
-	alleato:undefined,
 	cards:_cards2.default};
 
 
@@ -25301,6 +25302,7 @@
 
 
 	case'PLAY_AUCTION':
+	case'RAISE_AUCTION':
 	newPlayers=[].concat(_toConsumableArray(state.players));
 	newPlayers[state.inTurn].auction=action.auctionForUser;
 	return _extends({},
@@ -25426,9 +25428,10 @@
 	action.turnFinished=matchService.isTurnFinished();
 	break;
 	case'END_TURN':
-	action.winnerTurn=matchService.getWinnerTurn();
+	var winnerTurn=matchService.getWinnerTurn();
+	action.winnerTurn=winnerTurn;
+	action.inTurn=commonService.getNextInTurn(winnerTurn);
 	action.cardsPlayed=commonService.resetCardsPlayed();
-	action.inTurn=commonService.getNextInTurn(action.winnerTurn);
 	action.turnFinished=false;
 	action.turns=commonService.getNextTurn();
 	action.finishedMatch=matchService.isMatchFinished();
@@ -25444,6 +25447,16 @@
 	case'PLAY_AUCTION':
 	action.inAuction=auctionService.isUserInAuction();
 	action.auctionForUser=auctionService.setAuctionForUser(action.value);
+	action.inTurn=commonService.getNextInTurn();
+	action.winnerAuction=auctionService.getWinnerAuction();
+	break;
+	case'RAISE_AUCTION':
+	action.inAuction=auctionService.isUserInAuction();
+	var raisedAuction=auctionService.getBiggestAuction(state.players)+5;
+	if(raisedAuction>120){
+	raisedAuction=120;
+	}
+	action.auctionForUser=auctionService.setAuctionForUser(raisedAuction);
 	action.inTurn=commonService.getNextInTurn();
 	action.winnerAuction=auctionService.getWinnerAuction();
 	break;
@@ -42563,8 +42576,9 @@
 /* 240 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	"use strict";Object.defineProperty(exports,"__esModule",{value:true});exports.MatchService=undefined;var _createClass=function(){function defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};}();var _auction=__webpack_require__(241);
-	var _common=__webpack_require__(242);function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function");}}var
+	"use strict";Object.defineProperty(exports,"__esModule",{value:true});exports.MatchService=undefined;var _createClass=function(){function defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};}();var _lodash=__webpack_require__(239);var _lodash2=_interopRequireDefault(_lodash);
+	var _auction=__webpack_require__(241);
+	var _common=__webpack_require__(242);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function");}}var
 
 	MatchService=exports.MatchService=function(){
 
@@ -42592,6 +42606,7 @@
 	}},{key:"isMatchFinished",value:function isMatchFinished()
 
 	{
+
 	return this.state.match.turns===8;
 	}},{key:"isTurnFinished",value:function isTurnFinished()
 
@@ -42673,8 +42688,8 @@
 	amITheLastOne:this.amITheLastOne(),
 	amItheFirstOne:this.amITheFirstOne(),
 	amIAlreadyWonTheMatch:this.amIAlreadyWonTheMatch(p),
-	myAllCardsByValue:_.sortBy(this.commonService.getMyAllCards(p.cards),['value']),
-	myAllCardsByPoints:_.sortBy(this.commonService.getMyAllCards(p.cards),['points']),
+	myAllCardsByValue:_lodash2.default.sortBy(this.commonService.getMyAllCards(p.cards),['value']),
+	myAllCardsByPoints:_lodash2.default.sortBy(this.commonService.getMyAllCards(p.cards),['points']),
 	myTeamIsWinningTurn:this.isOther(p)&&
 	winnerTmpTurn!==this.state.auction.winner&&winnerTmpTurn!==this.state.auction.partnerPlayer||
 	(this.isPartner(p)||this.isCaller(p))&&(winnerTmpTurn===this.state.auction.winner||winnerTmpTurn===this.state.auction.partnerPlayer)};
@@ -42908,8 +42923,8 @@
 /* 241 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	"use strict";Object.defineProperty(exports,"__esModule",{value:true});exports.AuctionService=undefined;var _typeof=typeof Symbol==="function"&&typeof(typeof Symbol==="function"?Symbol.iterator:"@@iterator")==="symbol"?function(obj){return typeof obj;}:function(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol&&obj!==(typeof Symbol==="function"?Symbol.prototype:"@@prototype")?"symbol":typeof obj;};var _createClass=function(){function defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};}();var _common=__webpack_require__(242);function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function");}}var
-
+	"use strict";Object.defineProperty(exports,"__esModule",{value:true});exports.AuctionService=undefined;var _typeof=typeof Symbol==="function"&&typeof(typeof Symbol==="function"?Symbol.iterator:"@@iterator")==="symbol"?function(obj){return typeof obj;}:function(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol&&obj!==(typeof Symbol==="function"?Symbol.prototype:"@@prototype")?"symbol":typeof obj;};var _createClass=function(){function defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};}();var _common=__webpack_require__(242);
+	var _lodash=__webpack_require__(239);var _lodash2=_interopRequireDefault(_lodash);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function");}}var
 	AuctionService=exports.AuctionService=function(){
 
 	function AuctionService(store){_classCallCheck(this,AuctionService);
@@ -43105,9 +43120,10 @@
 
 /***/ }),
 /* 242 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-	"use strict";Object.defineProperty(exports,"__esModule",{value:true});var _createClass=function(){function defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};}();function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function");}}var CommonService=exports.CommonService=function(){
+	"use strict";Object.defineProperty(exports,"__esModule",{value:true});exports.CommonService=undefined;var _createClass=function(){function defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,descriptor.key,descriptor);}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor;};}();var _lodash=__webpack_require__(239);var _lodash2=_interopRequireDefault(_lodash);function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{default:obj};}function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function");}}var
+	CommonService=exports.CommonService=function(){
 	function CommonService(store){_classCallCheck(this,CommonService);
 	this.state=store.getState();
 	}_createClass(CommonService,[{key:"getNextInTurn",value:function getNextInTurn(

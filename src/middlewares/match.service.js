@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { AuctionService } from "./auction.service";
 import { CommonService } from "./common.service";
 
@@ -27,6 +28,7 @@ export class MatchService {
     }
 
     isMatchFinished(){
+      
       return (this.state.match.turns === 8)
     }
 

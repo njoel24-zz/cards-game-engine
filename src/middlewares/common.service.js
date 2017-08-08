@@ -1,3 +1,4 @@
+import _ from 'lodash'
 export class CommonService {
 	constructor(store) {
 		this.state = store.getState();

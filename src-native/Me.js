@@ -1,38 +1,48 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { View, Text, Image, StyleSheet, Dimensions ,Animated,
+	Easing, TouchableHighlight } from 'react-native';
+	import { play } from '../src/actions/match'
 
-import { Card } from './Card'
-import { Points } from './Points'
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
 class Me extends React.Component {
 
 render () {
 	const width = Dimensions.get('window').width; 
 	return (
-		<View style={{flex: 1, flexDirection: 'row'}}>
-			<View style={{flex: 1, flexDirection: 'row'}}>
-				<Points show={(this.props.me==this.props.inTurn) && this.props.area == "auction" }  />
-			</View>
-			<View style={{flex: 1, flexDirection: 'row'}}>
-				<View style={{flex: 0.9, flexDirection: 'row'}} >
-	  			{this.props.players[this.props.me].cards.map(c =>
-					<Card card={c}  key={c} animate={(this.props.me==this.props.inTurn) && this.props.area == "match" }  />
-    			)}
-				
+		<View style ={{ flex: 1, flexDirection: 'row', minHeight: 150 }}>
+	  		{this.props.players[this.props.me].cards.map(c =>
+					<View style={{flex: 1, minHeight: 100}} key={c}>
+					{ this.props.me==this.props.inTurn && this.props.area == "match" ?
+				 		( <TouchableHighlight  onPress={(d) => this.props.play(c)}>
+								<Animated.Image style = { styles.image }  source={{uri: 'http://briscolain5.com/img/'+c+'.jpg'}} />
+					  	</TouchableHighlight>) : 
+						(<Image style = { styles.image } source={{ uri: 'http://briscolain5.com/img/'+c+'.jpg' }}/>)
+					}
 				</View>
-				<View style={{flex: 0.1, flexDirection: 'row'}}>
-					{ this.props.inTurn == this.props.me ? ( <Text>Tocca a te!</Text>) : null }
-				</View>
-			</View>
+    		)}	
 		</View>
 		)
 	}
 }  
 
+const animatedWidth = function(card) {	
+		const state = {
+      opacity: new Animated.Value(1),          
+    };
+		Animated.timing(                            
+      state.opacity,                      
+      {
+        toValue: 0,                            
+      }
+		).start();
+		
+	}
+
 const styles = StyleSheet.create({
-	container: {
-    	width: 170,
-		height: 251
+	image: {
+		maxWidth: 170,
+    width: "100%",
+		minHeight: 251
   	}
 });
 
@@ -46,4 +56,27 @@ const mapStateToProps = function(store) {
   };
 }
 
-export default connect(mapStateToProps)(Me);
+const mapDispatchToProps = function(dispatch, ownProps) {
+  return {
+	play: (c) => {
+      dispatch(play(c));
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Me);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

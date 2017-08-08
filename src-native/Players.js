@@ -1,7 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { View, Text, StyleSheet } from 'react-native';
-import { Card } from './Card'
+import { View, Text, StyleSheet, Image } from 'react-native';
 class Players extends React.Component {
 
 render () {
@@ -20,7 +19,7 @@ render () {
 						{ player.id == this.props.match.winnerTurn ? ( <Text>Winner Turn!</Text>) : null }
 						{ player.id == this.props.inTurn ? ( <Text style={{backgroundColor: "green", height: 20, width:"100%"}}></Text> ) : null }
 					</View>
-					<View style={{flex: 1}}>
+					<View style={{flex: 1, minHeight: 281}}>
 						{ this.props.match.cardsPlayed.map(card => getPlayedCard(card,player)) }
 					</View>
 				</View>
@@ -30,13 +29,22 @@ render () {
 	}
 }
 
-const getPlayedCard = function(card, player) {
-	if(player.id === card.id ){
-		return <Card card={card.value}  key={card.id}  />
-	}
-};							
-  
+const styles = StyleSheet.create({
+	image: {
+		maxWidth: 170,
+    width: "100%",
+		minHeight: 251
+  	}
+});
 
+const getPlayedCard = function(card, player) {
+	if(player.id === card.id && card.value !==0 ){
+		return <Image style = { styles.image }  key={card.id} source={{ uri: 'http://briscolain5.com/img/'+card.value+'.jpg' }}/>
+	}
+};
+
+
+  
 const mapStateToProps = function(store) {
   return {
     players: store.players,

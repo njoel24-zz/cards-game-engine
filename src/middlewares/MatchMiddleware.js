@@ -28,10 +28,11 @@ const matchMiddleware = store => next => action => {
       action.inTurn = commonService.getNextInTurn()
       action.turnFinished = matchService.isTurnFinished()
     break
-		case 'END_TURN':  
-			action.winnerTurn = matchService.getWinnerTurn()
-  		action.cardsPlayed = commonService.resetCardsPlayed()
-      action.inTurn = commonService.getNextInTurn(action.winnerTurn)
+    case 'END_TURN':  
+    const winnerTurn = matchService.getWinnerTurn()
+			action.winnerTurn = winnerTurn
+      action.inTurn = commonService.getNextInTurn(winnerTurn)
+      action.cardsPlayed = commonService.resetCardsPlayed()
       action.turnFinished = false
       action.turns = commonService.getNextTurn()
   		action.finishedMatch = matchService.isMatchFinished()
@@ -45,8 +46,18 @@ const matchMiddleware = store => next => action => {
       action.winnerAuction = auctionService.getWinnerAuction()
     break
 		case 'PLAY_AUCTION':
-    	action.inAuction = auctionService.isUserInAuction()
-			action.auctionForUser = auctionService.setAuctionForUser(action.value)
+      action.inAuction = auctionService.isUserInAuction()
+      action.auctionForUser = auctionService.setAuctionForUser(action.value)
+      action.inTurn = commonService.getNextInTurn()
+      action.winnerAuction = auctionService.getWinnerAuction()
+    break
+    case 'RAISE_AUCTION':
+      action.inAuction = auctionService.isUserInAuction()
+      let raisedAuction = auctionService.getBiggestAuction(state.players) + 5
+      if(raisedAuction > 120 ){
+        raisedAuction = 120
+      }
+      action.auctionForUser = auctionService.setAuctionForUser(raisedAuction)
       action.inTurn = commonService.getNextInTurn()
       action.winnerAuction = auctionService.getWinnerAuction()
     break

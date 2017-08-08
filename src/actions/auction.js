@@ -3,6 +3,10 @@ export const playAuction = (value) => ({
   value: value
 })
 
+export const raiseAuction = () => ({
+  type: 'RAISE_AUCTION'
+})
+
 export const choosePartner = (value = null) => ({
   type: 'CHOOSE_PARTNER',
   partner: value,

@@ -20,7 +20,6 @@ const matchReducer = (state = [], action) => {
         me: 4,
         area: 'auction',
         isStart: false,
-        alleato: undefined,
         cards: cards
       }
 
@@ -103,6 +102,7 @@ const matchReducer = (state = [], action) => {
     }
 
     case 'PLAY_AUCTION':
+    case 'RAISE_AUCTION':
       newPlayers = [...state.players]
         newPlayers[state.inTurn].auction = action.auctionForUser
         return {
