@@ -1,5 +1,5 @@
-import React from 'react'
-import Board from './Board'
+import React from 'react';
+import Board from './Board';
 
 class App extends React.Component {
 	render() {
@@ -7,4 +7,4 @@ class App extends React.Component {
 	}
 }
 
-export default App
+export default App;

@@ -1,12 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { startMatch, setWinner,  endTurn,
-		changeTurn, play, playBot} from '../actions/match'
-import { playAuctionBot, 
-	 playAuction,
-	 endAuction, 
-	 exitAuction,
-	 changeTurnAuction } from '../actions/auction'
+import { playAuction,
+	exitAuction } from '../actions/auction'
 
 class ChoosePoints extends React.Component {
 	constructor() {
@@ -31,27 +26,27 @@ class ChoosePoints extends React.Component {
 			return null
 		}
 	}
-}  
+}
 
 const mapStateToProps = function(store) {
-  return {};
+return {};
 }
 
 const mapDispatchToProps = function(dispatch, ownProps) {
 	
 	
-  return {
-    playAuction: () => {
+return {
+	playAuction: () => {
 			let value= 0
 			if(document.getElementById("range")){
 				value = document.getElementById("range").value
 			}
-      dispatch(playAuction(value));
-    },
+	dispatch(playAuction(value));
+	},
 		exitAuction: () => {
-      dispatch(exitAuction());
-    }
-  }
+	dispatch(exitAuction());
+	}
+}
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChoosePoints);

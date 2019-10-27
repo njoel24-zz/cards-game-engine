@@ -1,22 +1,22 @@
 export const initMatch = () => ({
   type: 'INIT_MATCH',
   cardsPlayed: undefined
-})
+});
 
 export const startMatch = () => ({
   type: 'START_MATCH',
   shuffleCards: undefined
-})
+});
 
 export const play = (value = null) => ({
   type: 'PLAY',
   value: value
-})
+});
 
 export const changeTurn = () => ({
   type: 'CHANGE_TURN',
   inTurn: undefined
-})
+});
 
 export const endTurn = () => ({
   type: 'END_TURN',
@@ -25,9 +25,9 @@ export const endTurn = () => ({
   cardsPlayed: undefined,
   finishedMatch: undefined,
   turns: undefined
-})
+});
 
 export const setWinner = () => ({
   type: 'SET_WINNER',
   winner: undefined
-})
+});

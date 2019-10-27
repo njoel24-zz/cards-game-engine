@@ -1,30 +1,30 @@
 // react
-import React from 'react'
-import { render } from 'react-dom'
+import React from 'react';
+import { render } from 'react-dom';
 
 // actions
-import { initMatch } from './actions/match'
+import { initMatch } from './actions/match';
 
 // redux
-import { createStore } from 'redux'
+import { createStore } from 'redux';
 
 // redux/react
-import { Provider, connect } from 'react-redux'
+import { Provider } from 'react-redux';
 
 // app
-import App from './components/App'
+import App from './components/App';
 
 // import 'stylesheets/base'
 
 // reducers
-import { applyMiddleware } from 'redux'
-import matchReducer from './reducers/match'
+import { applyMiddleware } from 'redux';
+import matchReducer from './reducers/match';
 
 // middlewares
-import matchMiddleware from './middlewares/MatchMiddleware'
-const middlewares = applyMiddleware(matchMiddleware)
+import matchMiddleware from './middlewares/MatchMiddleware';
+const middlewares = applyMiddleware(matchMiddleware);
 
-const store = createStore(matchReducer, middlewares)
+const store = createStore(matchReducer, middlewares);
 
 store.dispatch(initMatch())
 

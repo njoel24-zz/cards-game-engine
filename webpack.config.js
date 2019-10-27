@@ -31,6 +31,7 @@ module.exports = {
 		filename: 'app.js',
 		path: path.resolve(__dirname, 'dist')
 	},
+	devtool: 'source-map',
 
 	module: {
 		rules: [
@@ -41,7 +42,7 @@ module.exports = {
 
 				options: {
 					presets: [
-						["@babel/env"],"@babel/react"],
+						"@babel/env","@babel/react"],
 				}
 			}
 		]
