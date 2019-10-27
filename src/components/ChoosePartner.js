@@ -5,16 +5,16 @@ import { choosePartner } from '../actions/auction';
 class ChoosePartner extends React.Component {
 
 	createSelectItems() {
-	let items = [];
-	for (const key in this.props.allCards) {
-		if(this.props.allCards.hasOwnProperty(key)){
-			items.push(<option key={key} value={key}>{this.props.allCards[key].name + " " + this.props.allCards[key].seed}</option>);
+		let items = [];
+		for (const key in this.props.allCards) {
+			if(this.props.allCards.hasOwnProperty(key)){
+				items.push(<option key={key} value={key}>{this.props.allCards[key].name + " " + this.props.allCards[key].seed}</option>);
+			}
 		}
-	}
-	return items;
+		return items;
 	}
 
-	render () {	
+	render () {
 		if(this.props.show) {
 			return (
 				<div>
@@ -44,7 +44,7 @@ const mapDispatchToProps = function(dispatch, ownProps) {
 					value = document.getElementById("partner").value
 				}
 		dispatch(choosePartner(value));
-		};
+		}
 	}
 }
 

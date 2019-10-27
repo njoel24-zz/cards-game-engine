@@ -21,11 +21,11 @@ class Me extends React.Component {
 					</li>
 				)}
 					<li className='col-xs-2'>
-						<div className="partner">Partner</div>
+						<div className="partner">Compagno</div>
 						<Card card={this.props.partner} class="card-mini" animate="false" />
 					</li>
 					<li className='col-xs-2'>
-						<div className="partner">Winner-Vincitore</div>
+						<div className="partner">Vincitore Partita</div>
 						<div className="card card-mini ">{this.props.winnerMatch}</div>
 					</li>
 			</ul>
