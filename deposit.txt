@@ -27,4 +27,8 @@ props in constructor
 ++  AND +1
 console.log si aggiorna con lo stato
 Perform debounce in React.js
-
+machine learning
+merging native and desktop
+modernizzazione
+improve readme
+generare build folder

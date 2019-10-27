@@ -1,50 +1,75 @@
-const autoprefixer = require('autoprefixer')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const path = require('path')
+const path = require('path');
+const CopyPlugin = require('copy-webpack-plugin');
 
-const sassLoaders = [
-  'css-loader',
-  'postcss-loader',
-  'sass-loader?indentedSyntax=sass&includePaths[]=' + path.resolve(__dirname, './src')
-]
+/*
+ * SplitChunksPlugin is enabled by default and replaced
+ * deprecated CommonsChunkPlugin. It automatically identifies modules which
+ * should be splitted of chunk by heuristics using module duplication count and
+ * module category (i. e. node_modules). And splits the chunks…
+ *
+ * It is safe to remove "splitChunks" from the generated configuration
+ * and was added as an educational example.
+ *
+ * https://webpack.js.org/plugins/split-chunks-plugin/
+ *
+ */
 
-const config = {
-  entry: {
-    app: ['./src/index']
-  },
-  module: {
-    loaders: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: "babel",
-        query: {
-        	presets: ['es2015', 'react', 'stage-2']
-            } 
-      },
-      {
-        test: /\.sass$/,
-        loader: ExtractTextPlugin.extract('style-loader', sassLoaders.join('!'))
-      }
-    ]
-  },
-  output: {
-    filename: '[name].js',
-    path: path.join(__dirname, './public/build'),
-    publicPath: '/public/build'
-  },
-  plugins: [
-    new ExtractTextPlugin('[name].css')
-  ],
-  postcss: [
-    autoprefixer({
-      browsers: ['last 2 versions']
-    })
-  ],
-  resolve: {
-    extensions: ['', '.js', '.sass'],
-    root: [path.join(__dirname, './src')]
-  }
-}
+/*
+ * We've enabled HtmlWebpackPlugin for you! This generates a html
+ * page for you when you compile webpack, which will make you start
+ * developing and prototyping faster.
+ *
+ * https://github.com/jantimon/html-webpack-plugin
+ *
+ */
 
-module.exports = config
+module.exports = {
+	mode: 'development',
+	entry: './src/index.js',
+
+	output: {
+		filename: 'app.js',
+		path: path.resolve(__dirname, 'dist')
+	},
+
+	module: {
+		rules: [
+			{
+				test: /.(js|jsx)$/,
+				include: [path.resolve(__dirname, 'src')],
+				loader: 'babel-loader',
+
+				options: {
+					presets: [
+						["@babel/env"],"@babel/react"],
+				}
+			}
+		]
+	},
+	plugins: [
+		new CopyPlugin([
+		  { from: 'src/views/index.html', to: 'index.html' },
+		  { from: 'src/assets/style.css', to: 'style.css' },
+		  { from: 'src/assets/img', to: 'img' }
+		]),
+	  ],
+	optimization: {
+		splitChunks: {
+			cacheGroups: {
+				vendors: {
+					priority: -10,
+					test: /[\\/]node_modules[\\/]/
+				}
+			},
+
+			chunks: 'async',
+			minChunks: 1,
+			minSize: 30000,
+			name: true
+		}
+	},
+
+	devServer: {
+		open: true
+	}
+};

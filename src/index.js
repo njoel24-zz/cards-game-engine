@@ -3,7 +3,7 @@ import React from 'react'
 import { render } from 'react-dom'
 
 // actions
-import { initMatch } from 'actions/match'
+import { initMatch } from './actions/match'
 
 // redux
 import { createStore } from 'redux'
