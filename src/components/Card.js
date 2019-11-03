@@ -9,13 +9,17 @@ export class Card extends React.Component {
 		if(this.props.class) {
 			this.className +=  " "+this.props.class;
 		}
+		let card = this.props.card;
+		if (this.props.card === 0 || this.props.card === undefined) {
+			card = "black";
+		}
 
 		return (
 			<div>
 			{ this.props.animate ?
-			(<img id={this.props.card} className={(this.props.card === 0 || this.props.card === undefined) ? 'hidden': this.className} onClick={this.props.play}  src={'img/'+this.props.card+'.jpg'} />)
+				(<img id={card} className={this.className} onClick={this.props.play} src={'img/'+card+'.jpg'} />)
 			:
-			(<img className={(this.props.card === 0  || this.props.card === undefined) ? 'hidden': this.className}  src={'img/'+this.props.card+'.jpg'} />)
+				(<img className={this.className} src={'img/'+card+'.jpg'} />)
 			}
 			</div>
 			)

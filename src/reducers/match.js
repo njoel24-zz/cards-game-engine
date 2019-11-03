@@ -1,4 +1,4 @@
-import cards from "../constants/cards";
+import { cards } from "../constants/cards";
 
 const matchReducer = (state = [], action) => {
 
@@ -7,17 +7,18 @@ switch (action.type) {
 	case 'INIT_MATCH':
 		return {
 			players: [
-			{id:0, name: 'Pippo3',  cards: [] , points: 0, profile: "aggressive",  auction: {points: 0, isIn: true }},
-			{id:1, name: 'Ugo',  cards: [], points: 0, profile: "aggressive", auction: {points: 0, isIn: true }},
-			{id:2, name: 'Mario',  cards: [], points: 0, profile: "safe", auction: {points: 0, isIn: true }},
-			{id:3, name: 'John', cards: [], points: 0, profile: "safe", auction: {points: 0, isIn: true }},
-			{id:4, name: 'Tu', cards: [], points: 0, auction: {points: 0, isIn: true }}],        
-			match: {  winner: undefined, winnerTurn: undefined, isTurnFinished: false, turns: 1, cardsPlayed: action.cardsPlayed },
+				{id:1, name: 'Pippo',  cards: [] , points: 0, profile: "aggressive",  auction: {points: 0, isIn: true }},
+				{id:2, name: 'Ugo',  cards: [], points: 0, profile: "aggressive", auction: {points: 0, isIn: true }},
+				{id:3, name: 'Mario',  cards: [], points: 0, profile: "safe", auction: {points: 0, isIn: true }},
+				{id:4, name: 'John', cards: [], points: 0, profile: "safe", auction: {points: 0, isIn: true }},
+				{id:5, name: 'Tu', cards: [], points: 0, auction: {points: 0, isIn: true }}
+			],
+			match: { winner: undefined, winnerTurn: undefined, isTurnFinished: false, turns: 1, cardsPlayed: action.cardsPlayed },
 			auction: { winner: undefined, seed: undefined, partner:  undefined, partnerPlayer: undefined },
 			isFinished: false,
-			inTurn: 0,
-			matchStarter: 0,
-			me: 4,
+			inTurn: action.matchStarter,
+			matchStarter: action.matchStarter,
+			me: 5,
 			area: 'auction',
 			isStart: false,
 			cards: cards
@@ -32,34 +33,33 @@ switch (action.type) {
 			{...state.players[2],  cards: shuffleCards.slice(16,24)},
 			{...state.players[3],  cards: shuffleCards.slice(24,32)},
 			{...state.players[4],  cards: shuffleCards.slice(32,40)}],
-			isStart: true,
-			matchStarter: action.matchStarter
+			isStart: true
 		};
 
 	case 'END_TURN':
 		newPlayers = [...state.players]
-		newPlayers[action.winnerTurn.winner].points += action.winnerTurn.totalPoints;
+		newPlayers[action.winnerTurn.winner - 1].points += action.winnerTurn.totalPoints;
 		return {
 			...state,
-			match: { ...state.match, 
-					winnerTurn: action.winnerTurn.winner,
-					cardsPlayed: action.cardsPlayed,
-					turns: action.turns, isTurnFinished: false },
-					players: newPlayers,
-					isFinished: action.finishedMatch,
-					inTurn: action.inTurn
+			match: { ...state.match,
+				winnerTurn: action.winnerTurn.winner,
+				cardsPlayed: action.cardsPlayed,
+				turns: action.turns, isTurnFinished: false },
+				players: newPlayers,
+				isFinished: action.finishedMatch,
+				inTurn: action.inTurn
 		};
 
 	case 'PLAY':
 		newPlayers = [...state.players]
-		newPlayers[state.inTurn].cards = newPlayers[state.inTurn].cards.map((card) => {
+		newPlayers[state.inTurn - 1].cards = newPlayers[state.inTurn - 1].cards.map((card) => {
 			if(card!==action.cardPlayed) {
-			return card;
+				return card;
 			}
 		});
 
 		let  newCardsPlayed = [...state.match.cardsPlayed]
-		newCardsPlayed[state.inTurn].value = action.cardPlayed;
+		newCardsPlayed[state.inTurn - 1].value = action.cardPlayed;
 
 		return {
 			...state,
@@ -84,7 +84,7 @@ switch (action.type) {
 
 	case 'PLAY_AUCTION':
 		newPlayers = [...state.players]
-			newPlayers[state.inTurn].auction = action.auctionForUser
+			newPlayers[state.inTurn - 1].auction = action.auctionForUser
 		return {
 			...state,
 			inTurn: action.inTurn,
@@ -104,7 +104,7 @@ switch (action.type) {
 	case 'PLAY_AUCTION':
 	case 'RAISE_AUCTION':
 		newPlayers = [...state.players]
-			newPlayers[state.inTurn].auction = action.auctionForUser;
+			newPlayers[state.inTurn - 1].auction = action.auctionForUser;
 		return {
 			...state,
 			inTurn: action.inTurn,
@@ -114,7 +114,7 @@ switch (action.type) {
 
 	case 'EXIT_AUCTION':
 		let newPlayers = [...state.players];
-		newPlayers[state.inTurn].auction.isIn = action.inAuction;
+		newPlayers[state.inTurn - 1].auction.isIn = action.inAuction;
 		return {
 			...state,
 			players: newPlayers,

@@ -9,13 +9,12 @@ import { playAuction, choosePartner,  changeTurnAuction } from '../actions/aucti
 class Board extends React.Component {
 	
 	render() {
-		
-		if(this.props.inTurn !== this.props.me
-		|| (this.props.inTurn === this.props.me && this.props.area === "auction"
-			&& !this.props.players[this.props.me].auction.isIn)
-			|| (this.props.inTurn === this.props.me && this.props.area === "match"
-			&& this.props.match.isTurnFinished)) {
-		this.prepareAsyncAction(1500)  
+		const ismyTurnInAuctionAndImOutOfAuction = this.props.inTurn === this.props.me && this.props.area === "auction" && !this.props.players[this.props.me - 1].auction.isIn;
+		const isNotMyTurn = this.props.inTurn !== this.props.me;
+		const isMyTurnInMatchAndTUrnIsFinished = this.props.inTurn === this.props.me && this.props.area === "match" && this.props.match.isTurnFinished;
+
+		if (isNotMyTurn || ismyTurnInAuctionAndImOutOfAuction || isMyTurnInMatchAndTUrnIsFinished) {
+			this.prepareAsyncAction(500);
 		}
 
 		return (
@@ -31,24 +30,25 @@ class Board extends React.Component {
 	prepareAsyncAction (timeout) {
 		let id = window.setTimeout(function() {}, 0);
 		while (id--) {
-		window.clearTimeout(id); // will do nothing if no timeout with id is present
+			window.clearTimeout(id); // will do nothing if no timeout with id is present
 		}
 		if (this.props.isStart && this.props.area === "auction") {
-		if (this.props.auction.winner !== undefined) {
-			setTimeout(this.props.choosePartner.bind(this), timeout);
-		} else {
-			setTimeout(this.props.playAuction.bind(this), timeout);
-		}
+			if (this.props.auction.winner !== undefined) {
+				setTimeout(this.props.choosePartner.bind(this), timeout);
+			} else {
+				setTimeout(this.props.playAuction.bind(this), timeout);
+			}
 		} else if (this.props.isStart && this.props.area === "match") {
-		if(this.props.isFinished) {
-			setTimeout(this.props.setWinner.bind(this), timeout);
+			if(this.props.isFinished) {
+				setTimeout(this.props.setWinner.bind(this), timeout);
 			} else if(this.props.match.isTurnFinished) {
-			setTimeout(this.props.endTurn.bind(this), timeout);
-		} else  {
-			setTimeout(this.props.play.bind(this), timeout);
-		}
+				setTimeout(this.props.endTurn.bind(this), timeout);
+			} else  {
+				setTimeout(this.props.play.bind(this), timeout);
+			}
 		} else if (!this.props.isStart && this.props.area === "match") {
-			setTimeout(this.props.initMatch.bind(this), 5000);
+			const matchStarter = (this.props.matchStarter+1)%6;
+			setTimeout(this.props.initMatch.bind(this, matchStarter), 5000);
 		}
 	}
 }
@@ -62,15 +62,16 @@ const mapStateToProps = function(store) {
 			inTurn: store.inTurn,
 			auction: store.auction,
 		isFinished: store.isFinished,
-		players: store.players
+		players: store.players,
+		matchStarter: store.matchStarter
 	};
 }
 
 
 const mapDispatchToProps = function(dispatch) {
 	return {
-		initMatch: () => {
-			dispatch(initMatch());
+		initMatch: (matchStarter) => {
+			dispatch(initMatch(matchStarter));
 		},
 		setWinner: () => {
 			dispatch(setWinner());

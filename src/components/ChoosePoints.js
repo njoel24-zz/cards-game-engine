@@ -18,7 +18,7 @@ class ChoosePoints extends React.Component {
 					<input id="range" type="range" min={70} max={120} defaultValue={70} step={1} onChange={this.updateValue.bind(this)}  />
 					<span id="value"></span>
 					<button onClick={ this.props.playAuction}>Ok</button>
-					<button onClick={ this.props.exitAuction}>Exit</button>
+					<button onClick={ this.props.exitAuction}>Esci</button>
 				</div>
 			)
 		} else {

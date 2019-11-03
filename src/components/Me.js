@@ -8,27 +8,31 @@ class Me extends React.Component {
 
 	render () {
 		return (
-			<ul className='row me'>
-					<li>
-						<ChoosePartner show={(this.props.me==this.props.inTurn) && this.props.area == "auction" && this.props.winnerAuction !== undefined }  />
-					</li>
-					<li>
-						<ChoosePoints show={(this.props.me==this.props.inTurn) && this.props.area == "auction"  && this.props.winnerAuction == undefined }  />
-					</li>
-				{this.props.players[this.props.me].cards.map(c =>
-					<li className='col-xs-1' key={c}>
-						<Card card={c} animate={(this.props.me==this.props.inTurn) && this.props.area == "match" } />
-					</li>
-				)}
-					<li className='col-xs-2'>
-						<div className="partner">Compagno</div>
+			<div>
+				<ul className='row me'>
+						<li>
+							<ChoosePartner show={(this.props.me==this.props.inTurn) && this.props.area == "auction" && this.props.winnerAuction !== undefined }  />
+						</li>
+						<li>
+							<ChoosePoints show={(this.props.me==this.props.inTurn) && this.props.area == "auction"  && this.props.winnerAuction == undefined }  />
+						</li>
+					{this.props.players[this.props.me - 1].cards.map(c =>
+						<li className='col-xs-1' key={c}>
+							<Card card={c} animate={(this.props.me==this.props.inTurn) && this.props.area == "match" } />
+						</li>
+					)}
+				</ul>
+				<div className='extra-me-data-container'>
+					<div className="extra-me-data">
+						<div>Compagno</div>
 						<Card card={this.props.partner} class="card-mini" animate="false" />
-					</li>
-					<li className='col-xs-2'>
-						<div className="partner">Vincitore Partita</div>
-						<div className="card card-mini ">{this.props.winnerMatch}</div>
-					</li>
-			</ul>
+					</div>
+					<div className="extra-me-data">
+						<div>Vincitore Partita</div>
+						<div className="vincitore ">{this.props.winnerMatch}</div>
+					</div>
+				</div>
+			</div>
 			)
 		}
 }

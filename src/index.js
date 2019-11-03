@@ -1,22 +1,9 @@
-// react
 import React from 'react';
 import { render } from 'react-dom';
-
-// actions
 import { initMatch } from './actions/match';
-
-// redux
 import { createStore } from 'redux';
-
-// redux/react
 import { Provider } from 'react-redux';
-
-// app
 import App from './components/App';
-
-// import 'stylesheets/base'
-
-// reducers
 import { applyMiddleware } from 'redux';
 import matchReducer from './reducers/match';
 
@@ -26,7 +13,7 @@ const middlewares = applyMiddleware(matchMiddleware);
 
 const store = createStore(matchReducer, middlewares);
 
-store.dispatch(initMatch())
+store.dispatch(initMatch());
 
 render(
 	<Provider store={store}>

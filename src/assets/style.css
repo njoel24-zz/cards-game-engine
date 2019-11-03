@@ -23,9 +23,13 @@ li {
 	margin-left: 2px;
 }
 
-.compagno {
+.extra-me-data-container {
 	float: right;
-	clear: both;
+}
+
+.extra-me-data {
+	float: left;
+	margin: 0 5px;
 }
 
 .card {
@@ -38,6 +42,13 @@ li {
 	width: 65px;
 	float: right;
 	clear: both;
+	border: 0;
+	margin-top: 10px;
+}
+
+.vincitore {
+	background-color: black;
+	text-align: center;
 }
 
 .me {
@@ -49,7 +60,12 @@ li {
 	height: 145px;
 	display: block;
 	clear: both;
-	margin: 15px 0;
+	margin: 15px 0 !important;
+}
+
+.common .card {
+	width: 200px;
+	margin-right: 2px;
 }
 
 .players li {

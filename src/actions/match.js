@@ -1,6 +1,7 @@
-export const initMatch = () => ({
+export const initMatch = (matchStarter = 1) => ({
   type: 'INIT_MATCH',
-  cardsPlayed: undefined
+  cardsPlayed: undefined,
+  matchStarter: matchStarter
 });
 
 export const startMatch = () => ({

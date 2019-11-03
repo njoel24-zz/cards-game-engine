@@ -5,13 +5,13 @@ export class CommonService {
 		this.state = store.getState();
 	}
 	getNextInTurn(winnerTurn) {
-		if(this.state.area == "auction" && this.state.auction.winner != undefined){
-		return this.state.auction.winner;
+		if (this.state.area == "auction" && this.state.auction.winner !== undefined){
+			return this.state.auction.winner;
 		}
-		if(this.state.area == "match" && this.state.match.isTurnFinished ){
-		return winnerTurn.winner;
+		if (this.state.area == "match" && this.state.match.isTurnFinished ){
+			return winnerTurn.winner;
 		}
-		const next = (this.state.inTurn+1)%5;
+		const next = (this.state.inTurn+1)%6 > 0 ? (this.state.inTurn+1)%6 : 1;
 		return next;
 	}
 
@@ -21,7 +21,7 @@ export class CommonService {
 	}
 
 	resetCardsPlayed() {
-		return [{id:0, value:0},{id:1, value:0},{id:2, value:0},{id:3, value:0},{id:4, value:0}];
+		return [{id:1, value:0},{id:2, value:0},{id:3, value:0},{id:4, value:0},{id:5, value:0}];
 	}
 
 	shuffleCards() {
@@ -60,16 +60,26 @@ export class CommonService {
 		const myNewAllCards = [];
 		for(i=0; i<myAllCards.length; i++){
 			if(myAllCards[i].seed === this.state.auction.seed){
-			const tmpObject = { 
-				value: myAllCards[i].value+100, 
-				points: myAllCards[i].points, 
-				seed: myAllCards[i].seed, 
-				name: myAllCards[i].name};
-			myNewAllCards.push(tmpObject);
+				const tmpObject = { 
+					value: myAllCards[i].value+100, 
+					points: myAllCards[i].points, 
+					seed: myAllCards[i].seed, 
+					name: myAllCards[i].name};
+				myNewAllCards.push(tmpObject);
 			}else{
-			myNewAllCards.push(myAllCards[i]);
+				myNewAllCards.push(myAllCards[i]);
 			}
 		}
+	}
+
+	create_UUID(){
+		var dt = new Date().getTime();
+		var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+			var r = (dt + Math.random()*16)%16 | 0;
+			dt = Math.floor(dt/16);
+			return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+		});
+		return uuid;
 	}
 }
 

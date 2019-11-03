@@ -1,8 +1,7 @@
 import _ from 'lodash';
-import { MatchService } from "./match.service";
-import { AuctionService } from "./auction.service";
-import { CommonService } from "./common.service";
-let matchStarter = 0;
+import { MatchService } from "../services/match.service";
+import { AuctionService } from "../services/auction.service";
+import { CommonService } from "../services/common.service";
 const matchMiddleware = store => next => action => {
 	const state = store.getState();
 	const commonService = new CommonService(store);
@@ -12,13 +11,12 @@ const matchMiddleware = store => next => action => {
 		case 'INIT_MATCH':
 			action.cardsPlayed = commonService.resetCardsPlayed();
 		break;
-			case 'START_MATCH':
-				action.shuffleCards = commonService.shuffleCards();
+		case 'START_MATCH':
+			action.shuffleCards = commonService.shuffleCards();
 			action.cardsPlayed = commonService.resetCardsPlayed();
-			action.matchStarter = ((matchStarter) % 5),
-			action.inTurn = ((matchStarter) % 5);
+			action.inTurn = ((state.matchStarter + 1) % 5);
 		break;
-			case 'PLAY':
+		case 'PLAY':
 			const card = matchService.playCardOnTheTable(action.value);
 			action.cardPlayed = card;
 			action.inTurn = commonService.getNextInTurn();
@@ -61,7 +59,7 @@ const matchMiddleware = store => next => action => {
 			action.inTurn = commonService.getNextInTurn();
 			action.winnerAuction = auctionService.getWinnerAuction();
 		break;
-			case 'CHOOSE_PARTNER':
+		case 'CHOOSE_PARTNER':
 			const choosenCard = auctionService.choosePartner(action.partner);
 			action.partner = choosenCard.id;
 			action.inTurn = state.matchStarter;

@@ -12,18 +12,17 @@ export class MatchService {
 	
 	setWinnerMatch() {
 		let team1=0,team2=0;
-		for(let i=0; i<this.state.players.length; i++ ) {
-			let player = this.state.players[i];
+		this.state.players.map((player) => {
 			if(player.id === this.state.auction.winner || player.id === this.state.auction.partnerPlayer) {
 				team1 += player.points;
 			} else {
 				team2 += player.points;
 			}
-		}
+		});
 		if(team1 > team2) {
-			return "caller";
+			return "chiamante";
 		} else {
-			return "others";
+			return "altri";
 		}
 	}
 
@@ -50,23 +49,23 @@ export class MatchService {
 		}
 
 		for( let i = startFrom; i< 5+startFrom; i++ ) {
-			let indexPlayer = i%5;
-			let c = this.state.match.cardsPlayed[indexPlayer];
-			let valueCurrentcard =  0
+			const indexPlayer = i%6 > 0 ? i%6 : 1 ;
+			const c = this.state.match.cardsPlayed[indexPlayer-1];
+			let valueCurrentcard = 0;
 			if(c.value) {
 				if(this.state.auction.seed === this.state.cards[c.value].seed ) {
-				valueCurrentcard = this.state.cards[c.value].value + 1000;
+					valueCurrentcard = this.state.cards[c.value].value + 1000;
 				} else if(i===startFrom) {
-				valueCurrentcard = this.state.cards[c.value].value + 100;
-				} else if(this.state.cards[c.value].seed === this.state.cards[this.state.match.cardsPlayed[startFrom].value].seed) {
-				valueCurrentcard = this.state.cards[c.value].value + 100;
+					valueCurrentcard = this.state.cards[c.value].value + 100;
+				} else if(this.state.cards[c.value].seed === this.state.cards[this.state.match.cardsPlayed[indexPlayer-1].value].seed) {
+					valueCurrentcard = this.state.cards[c.value].value + 100;
 				} else {
-				valueCurrentcard = this.state.cards[c.value].value;
+					valueCurrentcard = this.state.cards[c.value].value;
 				}
 
 				if(valueCurrentcard > maxValue) {            
-				maxValue = valueCurrentcard;
-				winner = c.id;
+					maxValue = valueCurrentcard;
+					winner = c.id;
 				} 
 				totalPoints += this.state.cards[c.value].points;
 			}
@@ -98,7 +97,7 @@ export class MatchService {
 		return {
 			maxValuePlayed: this.getMaxValueFromCardsPlayed(),
 			tmpSumPoints: this.getTmpMaxPointsTurn(),
-			auctionValue:  this.state.players[this.state.auction.winner].auction.points,
+			auctionValue:  this.state.players[this.state.auction.winner-1].auction.points,
 			puntiConsumedByTeam: this.getPuntiConsumedByTeam(),
 			tmpWinnerTeamTurn: winnerTmpTurn,
 			lastOneToPlay: this.whichIsTheLastOneToPlay(),
@@ -121,7 +120,7 @@ export class MatchService {
 		const myAllCardsByPoints = context.myAllCardsByPoints;
 		for(let i=0; i<myAllCardsByPoints.length-1; i++) {
 			if(myAllCardsByPoints[myAllCardsByPoints.length-1].seed !== this.state.auction.seed){
-			return myAllCardsByPoints[myAllCardsByPoints.length-1].id
+				return myAllCardsByPoints[myAllCardsByPoints.length-1].id;
 			}
 		}
 		return myAllCardsByPoints[myAllCardsByPoints.length-1].id;
@@ -135,15 +134,15 @@ export class MatchService {
 
 		if(context.amItheFirstOne){
 			if(context.isOther) {
-			return this.addPoints(context);
+				return this.addPoints(context);
 			} else {
-			return this.playSafe(context);
+				return this.playSafe(context);
 			}
 		} else if (context.amITheLastOne) {
 			if (context.myTeamIsWinningTurn) {
-			return this.addPoints(context);
+				return this.addPoints(context);
 			} else {
-			const tryToWinCard = this.tryToWin(context)
+				const tryToWinCard = this.tryToWin(context);
 			if (!tryToWinCard) {
 				return this.playSafe(context);
 			} else {
@@ -157,15 +156,15 @@ export class MatchService {
 		} else {
 			const tryToWinCard = this.tryToWin(context)
 			if (!tryToWinCard) {
-			return this.playSafe(context);
+				return this.playSafe(context);
 			} else {
-			return tryToWinCard;
+				return tryToWinCard;
 			}
 		}
 	}
 
 	getInTurnPlayer() {
-		return this.state.players.filter( p => { return p.id == this.state.inTurn } )[0]
+		return this.state.players.filter( p => { return p.id == this.state.inTurn })[0];
 	}
 	
 	getCardToPlay() {
@@ -187,29 +186,29 @@ export class MatchService {
 	tryToWin(context) {
 		const myAllCardsByValue = context.myAllCardsByValue;
 		for(let i =0; i<myAllCardsByValue.length; i++) {
-		let tmpVal = myAllCardsByValue[i].value;
-		const firstPlayedSeed = this.getFirstPlayedSeed();
-		if(firstPlayedSeed && (myAllCardsByValue[i].seed == firstPlayedSeed)  && (myAllCardsByValue[i].seed != this.state.auction.seed)) {
-			tmpVal += 100;
-		} else if(myAllCardsByValue[i].seed == this.state.auction.seed){
-			tmpVal += 1000;
-		}
-		if(tmpVal > context.maxValuePlayed) {
-			return myAllCardsByValue[i].id;
-		}
+			let tmpVal = myAllCardsByValue[i].value;
+			const firstPlayedSeed = this.getFirstPlayedSeed();
+			if(firstPlayedSeed && (myAllCardsByValue[i].seed == firstPlayedSeed)  && (myAllCardsByValue[i].seed != this.state.auction.seed)) {
+				tmpVal += 100;
+			} else if(myAllCardsByValue[i].seed == this.state.auction.seed){
+				tmpVal += 1000;
+			}
+			if(tmpVal > context.maxValuePlayed) {
+				return myAllCardsByValue[i].id;
+			}
 		}
 	}
 
 
 	getFirstPlayedSeed() {
 		for(let i=0; i<this.state.match.cardsPlayed.length; i++) {
-		const currentIndexCard = this.state.match.cardsPlayed[i].value;
-		const player = this.state.match.cardsPlayed[i].id;
+			const currentIndexCard = this.state.match.cardsPlayed[i].value;
+			const player = this.state.match.cardsPlayed[i].id;
 			if(currentIndexCard > 0 ) {
-				if(this.state.match.winnerTurn && this.state.match.winnerTurn === player ) {
-				return currentIndexCard;
+				if((this.state.match.winnerTurn) && this.state.match.winnerTurn === player ) {
+					return currentIndexCard;
 				} else if (this.state.auction.winner && this.state.auction.winner === player ) {
-				return currentIndexCard;
+					return currentIndexCard;
 				}
 			}
 		}
@@ -233,7 +232,7 @@ export class MatchService {
 
 	whichIsTheLastOneToPlay(){
 		if(this.state.turns == 1){
-			return 5
+			return (this.state.matchStarter + 5) % 6;
 		} else {
 			return this.state.players[this.state.match.winnerTurn-1];
 		}
@@ -248,7 +247,7 @@ export class MatchService {
 	}
 
 	getPuntiConsumedByTeam() {
-		let sumPoints = {allied: 0, others: 0}
+		let sumPoints = {allied: 0, others: 0};
 		this.state.players.map(p => {
 			if(p.id === this.state.auction.winner ||  p.id == this.state.auction.partnerPlayer){
 				sumPoints.allied += p.points;
@@ -264,19 +263,19 @@ export class MatchService {
 	}
 
 	isPartner(p) {
-		return this.state.auction.partnerPlayer === p.id
+		return this.state.auction.partnerPlayer === p.id;
 	} 
 
 	isCaller(p){
-		return this.state.auction.winner === p.id 
+		return this.state.auction.winner === p.id;
 	}
 
-	getProportionValueByPoints (p, context) {
+	getProportionValueByPoints (context) {
 		const pointsOnTable = context.tmpSumPoints;
 		const myOrderedValues = context.myAllCardsByValue;
 		
 		if (pointsOnTable < 10) {
-			return myOrderedValues[0]
+			return myOrderedValues[0];
 		} else if (pointsOnTable < 20) {
 			return myOrderedValues[myOrderedValues.length-1];
 		} else {
@@ -297,15 +296,15 @@ export class MatchService {
 	getTmpMaxPointsTurn() {
 		let sumPoints = 0;
 		this.state.match.cardsPlayed.map(card => {
-		if(card.value > 0 ) {
-			sumPoints += this.state.cards[card.value].points;
-		}
-		})
+			if(card.value > 0 ) {
+				sumPoints += this.state.cards[card.value].points;
+			}
+		});
 		return sumPoints;
 	}
 
 	getMaxValueFromCardsPlayed() {
-		let maxValue = 0
+		let maxValue = 0;
 		let startFrom = 0;
 		if(this.state.match.winnerTurn) {
 			startFrom = this.state.match.winnerTurn;
@@ -314,27 +313,27 @@ export class MatchService {
 		}
 
 		for( let i = startFrom; i< 5+startFrom; i++ ) {
-			let indexPlayer = i%5;
-			let c = this.state.match.cardsPlayed[indexPlayer]
+			const indexPlayer = i%6 > 0 ? i%6 : 1 ;
+			const c = this.state.match.cardsPlayed[indexPlayer-1];
 
-			let valueCurrentcard =  0
+			let valueCurrentcard = 0;
 			if(c.value) {
 				if(this.state.auction.seed === this.state.cards[c.value].seed ) {
-				valueCurrentcard = this.state.cards[c.value].value + 1000;
+					valueCurrentcard = this.state.cards[c.value].value + 1000;
 				} else if(i===startFrom) {
-				valueCurrentcard = this.state.cards[c.value].value + 100;
-				} else if(this.state.cards[c.value].seed === this.state.cards[this.state.match.cardsPlayed[startFrom].value].seed) {
-				valueCurrentcard = this.state.cards[c.value].value + 100;
+					valueCurrentcard = this.state.cards[c.value].value + 100;
+				} else if(this.state.cards[c.value].seed === this.state.cards[this.state.match.cardsPlayed[startFrom-1].value].seed) {
+					valueCurrentcard = this.state.cards[c.value].value + 100;
 				} else {
-				valueCurrentcard = this.state.cards[c.value].value;
+					valueCurrentcard = this.state.cards[c.value].value;
 				}
 				if(valueCurrentcard > maxValue) {
-				maxValue = valueCurrentcard;
-				} 
+					maxValue = valueCurrentcard;
+				}
 			}
 		}
 		return maxValue;
-		}
+	}
 }
 
 export default MatchService;
