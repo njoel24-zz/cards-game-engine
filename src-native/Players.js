@@ -15,7 +15,7 @@ render () {
 						{ player.auction.isIn ? ( <Text>In Auction</Text> ) : null }
 						{ player.id == this.props.match.winner ? ( <Text>Winner!</Text> ) : null }
 						{ player.id == this.props.auction.winner ? ( <Text>Winner Auction/Vincitore Asta!</Text>) : null }
-						{ player.id == this.props.auction.partner ? ( <Text>Partner!</Text>) : null }
+						{ player.id == this.props.auction.partnerPlayer ? ( <Text>Partner!</Text>) : null }
 						{ player.id == this.props.match.winnerTurn ? ( <Text>Winner Turn!</Text>) : null }
 						{ player.id == this.props.inTurn ? ( <Text style={{backgroundColor: "green", height: 20, width:"100%"}}></Text> ) : null }
 					</View>

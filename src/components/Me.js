@@ -25,7 +25,7 @@ class Me extends React.Component {
 				<div className='extra-me-data-container'>
 					<div className="extra-me-data">
 						<div>Compagno</div>
-						<Card card={this.props.partner} class="card-mini" animate="false" />
+						<Card card={this.props.partnerCard} class="card-mini" animate="false" />
 					</div>
 					<div className="extra-me-data">
 						<div>Vincitore Partita</div>
@@ -45,7 +45,7 @@ return {
 		area: store.area,
 		winnerAuction: store.auction.winner,
 		seed: store.auction.seed,
-		partner: store.auction.partner,
+		partnerCard: store.auction.partnerCard,
 		winnerMatch: store.match.winner
 };
 }

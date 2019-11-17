@@ -1,12 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Card } from './Card';
-import StartMatch from './StartMatch' ;
 
 class Common extends React.Component {
 
 	render () {
-		const renderStartMatch = this.getStartMatch();
 		return (
 			<ul className='row common'>
 				{ this.props.match.cardsPlayed.map(card => 
@@ -14,17 +12,8 @@ class Common extends React.Component {
 							<Card card={card.value} />
 						</li>
 				)}
-				{ renderStartMatch }
 			</ul>
 		)
-	}
-
-	getStartMatch() {
-		if (!this.props.isStart) {
-			return <StartMatch/>;
-		} else {
-			return null;
-		}
 	}
 }
 
@@ -32,7 +21,7 @@ const mapStateToProps = function(store) {
 	return {
 		match: store.match,
 		auction: store.auction,
-			isStart: store.isStart
+		isStart: store.isStart
 	};
 }
 

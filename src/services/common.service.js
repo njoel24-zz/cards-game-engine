@@ -2,21 +2,21 @@ import _ from 'lodash';
 
 export class CommonService {
 	constructor(store) {
-		this.state = store.getState();
+		this.store = store;
 	}
-	getNextInTurn(winnerTurn) {
-		if (this.state.area == "auction" && this.state.auction.winner !== undefined){
-			return this.state.auction.winner;
+	getNextInTurn(state, winnerTurn) {
+		if (state.area == "auction" && state.auction.winner !== undefined){
+			return state.auction.winner;
 		}
-		if (this.state.area == "match" && this.state.match.isTurnFinished ){
+		if (state.area == "match" && state.match.isTurnFinished ){
 			return winnerTurn.winner;
 		}
-		const next = (this.state.inTurn+1)%6 > 0 ? (this.state.inTurn+1)%6 : 1;
+		const next = (state.inTurn+1)%6 > 0 ? (state.inTurn+1)%6 : 1;
 		return next;
 	}
 
-	getNextTurn() {
-		const next = (this.state.match.turns+1)%9;
+	getNextTurn(state) {
+		const next = (state.match.turns+1)%9;
 		return next;
 	}
 
@@ -39,8 +39,8 @@ export class CommonService {
 		return array;
 	}
 
-	getMyAllCards(cards){
-		const allCards = this.state.cards;
+	getMyAllCards(state, cards){
+		const allCards = state.cards;
 		const myAllCards = []
 		for(let i=0; i<cards.length; i++){
 			if(cards[i]) {
@@ -54,32 +54,6 @@ export class CommonService {
 			}
 		}
 		return myAllCards;
-	}
-
-	addBriscolaValueToMyAllCards(myAllCards) {
-		const myNewAllCards = [];
-		for(i=0; i<myAllCards.length; i++){
-			if(myAllCards[i].seed === this.state.auction.seed){
-				const tmpObject = { 
-					value: myAllCards[i].value+100, 
-					points: myAllCards[i].points, 
-					seed: myAllCards[i].seed, 
-					name: myAllCards[i].name};
-				myNewAllCards.push(tmpObject);
-			}else{
-				myNewAllCards.push(myAllCards[i]);
-			}
-		}
-	}
-
-	create_UUID(){
-		var dt = new Date().getTime();
-		var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-			var r = (dt + Math.random()*16)%16 | 0;
-			dt = Math.floor(dt/16);
-			return (c=='x' ? r :(r&0x3|0x8)).toString(16);
-		});
-		return uuid;
 	}
 }
 

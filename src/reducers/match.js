@@ -14,7 +14,7 @@ switch (action.type) {
 				{id:5, name: 'Tu', cards: [], points: 0, auction: {points: 0, isIn: true }}
 			],
 			match: { winner: undefined, winnerTurn: undefined, isTurnFinished: false, turns: 1, cardsPlayed: action.cardsPlayed },
-			auction: { winner: undefined, seed: undefined, partner:  undefined, partnerPlayer: undefined },
+			auction: { winner: undefined, seed: undefined, partnerCard:  undefined, partnerPlayer: undefined },
 			isFinished: false,
 			inTurn: action.matchStarter,
 			matchStarter: action.matchStarter,
@@ -98,7 +98,7 @@ switch (action.type) {
 			inTurn: action.inTurn,
 			area: action.area,
 			allied: action.allied,
-			auction: { ...state.auction, partner: action.partner, seed: action.seed, partnerPlayer: action.partnerPlayer }
+			auction: { ...state.auction, partnerCard: action.partnerCard, partnerPlayer: action.partnerPlayer, seed: action.seed }
 	};
 
 	case 'PLAY_AUCTION':

@@ -1,12 +1,10 @@
 import _ from 'lodash';
-import { MatchService } from "../services/match.service";
-import { AuctionService } from "../services/auction.service";
-import { CommonService } from "../services/common.service";
+import { singleton } from '../services/singleton.service';
 const matchMiddleware = store => next => action => {
 	const state = store.getState();
-	const commonService = new CommonService(store);
-	const matchService = new MatchService(store);
-	const auctionService = new AuctionService(store);
+	const commonService = singleton().create("common", store);
+	const matchService = singleton().create("match", store);
+	const auctionService= singleton().create("auction", store);
 	switch(action.type){
 		case 'INIT_MATCH':
 			action.cardsPlayed = commonService.resetCardsPlayed();
@@ -17,60 +15,60 @@ const matchMiddleware = store => next => action => {
 			action.inTurn = ((state.matchStarter + 1) % 5);
 		break;
 		case 'PLAY':
-			const card = matchService.playCardOnTheTable(action.value);
+			const card = matchService.playCardOnTheTable(state, action.value);
 			action.cardPlayed = card;
-			action.inTurn = commonService.getNextInTurn();
-			action.turnFinished = matchService.isTurnFinished();
+			action.inTurn = commonService.getNextInTurn(state);
+			action.turnFinished = matchService.isTurnFinished(state);
 		break;
 		case 'CHANGE_TURN':
-			action.inTurn = commonService.getNextInTurn();
-			action.turnFinished = matchService.isTurnFinished();
+			action.inTurn = commonService.getNextInTurn(state);
+			action.turnFinished = matchService.isTurnFinished(state);
 		break;
 		case 'END_TURN':  
-			const winnerTurn = matchService.getWinnerTurn();
+			const winnerTurn = matchService.getWinnerTurn(state);
 			action.winnerTurn = winnerTurn;
-			action.inTurn = commonService.getNextInTurn(winnerTurn);
+			action.inTurn = commonService.getNextInTurn(state, winnerTurn);
 			action.cardsPlayed = commonService.resetCardsPlayed();
 			action.turnFinished = false;
-			action.turns = commonService.getNextTurn();
-			action.finishedMatch = matchService.isMatchFinished();
+			action.turns = commonService.getNextTurn(state);
+			action.finishedMatch = matchService.isMatchFinished(state);
 		break;
 		case 'SET_WINNER':
-			action.winner = matchService.setWinnerMatch();
+			action.winner = matchService.setWinnerMatch(state);
 			action.cardsPlayed = commonService.resetCardsPlayed();
 		break;
 		case 'CHANGE_TURN_AUCTION':
-			action.inTurn = commonService.getNextInTurn();
-			action.winnerAuction = auctionService.getWinnerAuction();
+			action.inTurn = commonService.getNextInTurn(state);
+			action.winnerAuction = auctionService.getWinnerAuction(state);
 		break;
 		case 'PLAY_AUCTION':
-			action.inAuction = auctionService.isUserInAuction();
-			action.auctionForUser = auctionService.setAuctionForUser(action.value);
-			action.inTurn = commonService.getNextInTurn();
-			action.winnerAuction = auctionService.getWinnerAuction();
+			action.inAuction = auctionService.isUserInAuction(state);
+			action.auctionForUser = auctionService.setAuctionForUser(state, action.value);
+			action.inTurn = commonService.getNextInTurn(state);
+			action.winnerAuction = auctionService.getWinnerAuction(state);
 		break;
 		case 'RAISE_AUCTION':
-			action.inAuction = auctionService.isUserInAuction();
+			action.inAuction = auctionService.isUserInAuction(state);
 			let raisedAuction = auctionService.getBiggestAuction(state.players) + 5;
 			if(raisedAuction > 120 ){
 				raisedAuction = 120;
 			}
-			action.auctionForUser = auctionService.setAuctionForUser(raisedAuction);
-			action.inTurn = commonService.getNextInTurn();
-			action.winnerAuction = auctionService.getWinnerAuction();
+			action.auctionForUser = auctionService.setAuctionForUser(state, raisedAuction);
+			action.inTurn = commonService.getNextInTurn(state);
+			action.winnerAuction = auctionService.getWinnerAuction(state);
 		break;
 		case 'CHOOSE_PARTNER':
-			const choosenCard = auctionService.choosePartner(action.partner);
-			action.partner = choosenCard.id;
+			const choice = auctionService.choosePartner(action.partner, state);
+			action.partnerPlayer = choice.idPlayer;
+			action.partnerCard = choice.idCard;
 			action.inTurn = state.matchStarter;
 			action.area = 'match';
-			action.seed = choosenCard.seed;
-			action.partnerPlayer = auctionService.getAllied(choosenCard.id);
+			action.seed = choice.seed;
 		break;
 		case 'EXIT_AUCTION':
 			action.inAuction = false;
-			action.inTurn = commonService.getNextInTurn();
-			action.winnerAuction = auctionService.getWinnerAuction();
+			action.inTurn = commonService.getNextInTurn(state);
+			action.winnerAuction = auctionService.getWinnerAuction(state);
 		break;
 	}
 

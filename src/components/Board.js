@@ -1,9 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Players from './Players';
+import RestartMatch from './RestartMatch';
 import Common from './Common';
 import Me from './Me';
-import { initMatch,  setWinner,  endTurn, changeTurn, play} from '../actions/match';
+import { setWinner,  endTurn, changeTurn, play} from '../actions/match';
 import { playAuction, choosePartner,  changeTurnAuction } from '../actions/auction';
 
 class Board extends React.Component {
@@ -14,16 +15,16 @@ class Board extends React.Component {
 		const isMyTurnInMatchAndTUrnIsFinished = this.props.inTurn === this.props.me && this.props.area === "match" && this.props.match.isTurnFinished;
 
 		if (isNotMyTurn || ismyTurnInAuctionAndImOutOfAuction || isMyTurnInMatchAndTUrnIsFinished) {
-			this.prepareAsyncAction(500);
+			this.prepareAsyncAction(1500);
 		}
-
 		return (
-		<div className='board'>
-		<img className="logo" src="img/titolo.png"/>
-			<Players/>
-			<Common />
+			<div className='board'>
+				<img className="logo" src="img/titolo.png"/>
+				<RestartMatch/>;
+				<Players/>
+				<Common />
 				<Me/>
-		</div>
+			</div>
 		)
 	}
 
@@ -32,7 +33,7 @@ class Board extends React.Component {
 		while (id--) {
 			window.clearTimeout(id); // will do nothing if no timeout with id is present
 		}
-		if (this.props.isStart && this.props.area === "auction") {
+		if (this.props.isStart && this.props.area === "auction" && this.props.players.filter((player) => player.auction.isIn).length > 0) {
 			if (this.props.auction.winner !== undefined) {
 				setTimeout(this.props.choosePartner.bind(this), timeout);
 			} else {
@@ -46,9 +47,6 @@ class Board extends React.Component {
 			} else  {
 				setTimeout(this.props.play.bind(this), timeout);
 			}
-		} else if (!this.props.isStart && this.props.area === "match") {
-			const matchStarter = (this.props.matchStarter+1)%6;
-			setTimeout(this.props.initMatch.bind(this, matchStarter), 5000);
 		}
 	}
 }
@@ -58,21 +56,17 @@ const mapStateToProps = function(store) {
 		isStart: store.isStart,
 		area: store.area,
 		match: store.match,
-			me: store.me,
-			inTurn: store.inTurn,
-			auction: store.auction,
+		me: store.me,
+		inTurn: store.inTurn,
+		auction: store.auction,
 		isFinished: store.isFinished,
-		players: store.players,
-		matchStarter: store.matchStarter
+		players: store.players
 	};
 }
 
 
 const mapDispatchToProps = function(dispatch) {
 	return {
-		initMatch: (matchStarter) => {
-			dispatch(initMatch(matchStarter));
-		},
 		setWinner: () => {
 			dispatch(setWinner());
 		},

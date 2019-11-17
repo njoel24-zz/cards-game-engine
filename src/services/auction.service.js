@@ -1,18 +1,18 @@
-import { CommonService } from "./common.service";
 import _ from 'lodash';
+import { singleton } from './singleton.service';
 
 export class AuctionService {
 
 	constructor(store) {
-		this.state = store.getState();
-		this.commonService = new CommonService(store);
+		this.store = store;
+		this.commonService = singleton().create("common", store);
 	}
 
-	choosePartner(card) {
+	choosePartner(card, state) {
 		if(card){
-			return this.state.cards[card];
+			return { idCard: state.cards[card], idPlayer: state.me, seed: maxSeed };
 		} else {
-			const cardsBySeed = this.getCardsBySeed(this.state.players[this.state.auction.winner-1].cards);
+			const cardsBySeed = this.getCardsBySeed(state, state.players[state.auction.winner-1].cards);
 			const valuesBySeed = {"coppe": 0, "spade": 0, "denari": 0, "bastoni": 0};
 
 			for (const key in cardsBySeed) {
@@ -21,41 +21,32 @@ export class AuctionService {
 				}
 			}
 			const maxSeed = this.getBiggestSeedValueFromValuesBySeed(valuesBySeed);
-			const choosenCard = this.getHighestValuedCardFromBiggestSeed(maxSeed, cardsBySeed);
-			return this.state.cards[choosenCard];
+			const choosenCard = this.getHighestValuedCardFromBiggestSeed(maxSeed, cardsBySeed, state);
+			const compagno = state.players.filter((player) => player.cards.includes(parseInt(choosenCard)))[0];
+			return { idCard: choosenCard, idPlayer: compagno.id, seed: maxSeed};
 		}
 	}
 
-	getHighestValuedCardFromBiggestSeed(maxSeed, cardsBySeed) {
-		const cards = cardsBySeed[maxSeed]
+	getHighestValuedCardFromBiggestSeed(maxSeed, cardsBySeed, state) {
+		const cards = cardsBySeed[maxSeed];
 		for(let i=10; i>=1; i-- ){
 			if(cards.filter((card) => {
 				return card.value == i;
 			}).length==0){
-			const allCards = this.state.cards;
-			for (const key in allCards) {
-				if(allCards.hasOwnProperty(key)){
-				if(allCards[key].value == i && allCards[key].seed == maxSeed){
-					return key;
+				const allCards = state.cards;
+				for (const key in allCards) {
+					if(allCards.hasOwnProperty(key)){
+						if(allCards[key].value == i && allCards[key].seed == maxSeed){
+							return key;
+						}
+					}
 				}
-				}
-			}
 			}
 		}
 	}
 
-	getAllied(cardId) {
-		return this.state.players.map((player) => {
-			return player.cards.map((card) => {
-				if(card == cardId) {
-					return player.id;
-				}
-			})
-		})
-	}
-
-	getWinnerAuction() {
-		let playersInAuction = this.state.players.filter( p => p.auction.isIn === true );
+	getWinnerAuction(state) {
+		let playersInAuction = state.players.filter( p => p.auction.isIn === true );
 		if( playersInAuction.length == 1) {
 			return playersInAuction[0].id;
 		} else {
@@ -63,40 +54,41 @@ export class AuctionService {
 		}
 	}
 
-	isUserInAuction(){
-		return this.state.players[this.state.inTurn-1].auction.isIn;
+	isUserInAuction(state){
+		return state.players[state.inTurn-1].auction.isIn;
 	}
 
-	setAuctionForUser(value = null) {
-		const biggestAuction = this.getBiggestAuction(this.state.players);
+	setAuctionForUser(state, value) {
+		const biggestAuction = this.getBiggestAuction(state.players);
 
 		if(value){
-		if(value > biggestAuction) {
-			return  {points:value, isIn:true};
-		} else {
-			return {points:value, isIn:false};
-		}
+			if(value > biggestAuction) {
+				return  {points:value, isIn:true};
+			} else {
+				return {points:value, isIn:false};
+			}
 		}
 
-		if(this.state.players[this.state.inTurn-1].auction.isIn === true) {
-			return this.getAIChoice(this.state.players[this.state.inTurn-1].auction, biggestAuction);
+		if(state.players[state.inTurn-1].auction.isIn === true) {
+			return this.getAIChoice(state, biggestAuction);
 		} else {
-			return this.state.players[this.state.inTurn-1].auction;
+			return state.players[state.inTurn-1].auction;
 		}
 	}
 
 	getBiggestAuction(players) {
 		let tmpMax = 60;
 		players.map((player) => {
-		if(player.auction.points > tmpMax ){
-			tmpMax = player.auction.points;
-		} 
-		})
+			if(player.auction.points > tmpMax ){
+				tmpMax = player.auction.points;
+			} 
+		});
 		return tmpMax;
 	}
 
-	getAIChoice(auction, biggestAuction) {
-		let tmpVal = this.getAuctionValue(this.state.players[this.state.inTurn-1].cards);
+	getAIChoice(state, biggestAuction) {
+		const auction =  state.players[state.inTurn-1].auction;
+		let tmpVal = this.getAuctionValue(state, state.players[state.inTurn-1].cards);
 		if(tmpVal < biggestAuction) {
 			auction.isIn = false;
 			auction.points = tmpVal;
@@ -108,11 +100,11 @@ export class AuctionService {
 	}
 
 
-	getCardsBySeed(cards) {
-		const myAllcards = this.commonService.getMyAllCards(cards)
-		const cardsBySeed = {"coppe": [], "spade": [], "denari": [], "bastoni": []}
+	getCardsBySeed(state, cards) {
+		const myAllcards = this.commonService.getMyAllCards(state, cards);
+		const cardsBySeed = {"coppe": [], "spade": [], "denari": [], "bastoni": []};
 		myAllcards.map((card) => {
-			cardsBySeed[card.seed].push(card)  
+			cardsBySeed[card.seed].push(card);
 		});
 		return cardsBySeed;
 	}
@@ -139,7 +131,7 @@ export class AuctionService {
 
 	getBiggestSeedValueFromValuesBySeed(valueBySeed){
 		let biggestSeed = null;
-		let biggestValue = 0
+		let biggestValue = 0;
 		for (const key in valueBySeed) {
 			if(valueBySeed.hasOwnProperty(key)){
 			if(valueBySeed[key] > biggestValue ){
@@ -151,8 +143,8 @@ export class AuctionService {
 		return biggestSeed;
 	}
 
-	getAuctionValue(cards){
-		const cardsBySeed = this.getCardsBySeed(cards)
+	getAuctionValue(state, cards){
+		const cardsBySeed = this.getCardsBySeed(state, cards);
 		const valueBySeed = {"coppe": 0, "spade": 0, "denari": 0, "bastoni": 0};
 		for (const key in cardsBySeed) {
 			if(valueBySeed.hasOwnProperty(key)){
