@@ -11,3 +11,6 @@ package.json
 /ios
 /node_modules-native/*
 /node_modules-desktop/*
+firebase*
+.firebaserc
+hosting*
