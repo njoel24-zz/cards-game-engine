@@ -1,32 +1,19 @@
 {
-  "name": "briscola-in-5-desktop",
+  "name": "cards-game-engine",
   "version": "1.0.0",
-  "main": "public/index.html",
-  "scripts": {
-    "start": "webpack-dev-server",
-    "build": "webpack"
-  },
   "author": "Cristiano Anselmi",
   "license": "MIT",
   "dependencies": {
-    "bootstrap": "^3.3.7",
     "lodash": "^4.17.4",
     "react": "16.0.0-alpha.6",
-    "react-dom": "15.4.0",
     "react-redux": "^5.0.4",
-    "react-slider": "^0.7.0",
     "redux": "^3.6.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
     "@babel/preset-env": "^7.6.3",
     "@babel/preset-react": "^7.6.3",
-    "@webpack-cli/init": "^0.2.2",
     "babel-loader": "^8.0.6",
-    "copy-webpack-plugin": "^5.0.4",
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.9",
-    "webpack-dev-server": "^3.9.0"
   },
   "description": "Briscola in 5 online"
 }
