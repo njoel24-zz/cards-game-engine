@@ -10,7 +10,8 @@ export class AuctionService {
 
 	choosePartner(card, state) {
 		if(card){
-			return { idCard: state.cards[card], idPlayer: state.me, seed: maxSeed };
+			const compagno = state.players.filter((player) => player.cards.includes(parseInt(card)))[0];
+			return { idCard: card, idPlayer: compagno.id, seed: state.cards[parseInt(card)].seed};
 		} else {
 			const cardsBySeed = this.getCardsBySeed(state, state.players[state.auction.winner-1].cards);
 			const valuesBySeed = {"coppe": 0, "spade": 0, "denari": 0, "bastoni": 0};

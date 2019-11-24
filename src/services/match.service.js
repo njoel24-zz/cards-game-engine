@@ -41,18 +41,21 @@ export class MatchService {
 		let winner = 1;
 		let totalPoints = 0;
 		let startFrom = state.match.winnerTurn ? state.match.winnerTurn : state.matchStarter;
+		if(!state.match.cardsPlayed.filter((card) => !!card.value).length) {
+			return { winner: startFrom, totalPoints: 0 };
+		}
+		const seedFirstPlayerInCurrentTurn = state.cards[state.match.cardsPlayed.filter((card) => card.id === startFrom)[0].value].seed;
 
 		state.match.cardsPlayed.map((card) => {
 			const idCard = card.value;
 			const player = card.id;
 			let valueCurrentcard = 0;
-
 			if (idCard) {
 				if(state.auction.seed === state.cards[idCard].seed ) {
 					valueCurrentcard = state.cards[idCard].value + 1000;
 				} else if(player===startFrom) {
 					valueCurrentcard = state.cards[idCard].value + 100;
-				} else if(state.cards[idCard].seed === state.cards[state.match.cardsPlayed[startFrom - 1].id].seed) {
+				} else if(state.cards[idCard].seed === seedFirstPlayerInCurrentTurn) {
 					valueCurrentcard = state.cards[idCard].value + 100;
 				}else {
 					valueCurrentcard = state.cards[idCard].value;
@@ -68,40 +71,49 @@ export class MatchService {
 		return { winner: winner, totalPoints: totalPoints };
 	}
 
-	playCardOnTheTable(state, cardToPlay){
-		let c = null;
-		if (!cardToPlay) {
-			return this.getCardToPlay(state);
-		} else {
-			return cardToPlay;
-		}
+	playCard(state){
+		const context = this.getCurrentContext(state.players.filter( p => { return p.id == state.inTurn })[0], state);
+		return this.getStrategy(context, state);
 	}
 
 	amITheFirstOne(state) {
 		const cardsPlayed = state.match.cardsPlayed;
-		return cardsPlayed.filter( c => { return c.value !== 0 } ).length === 0;
+		return cardsPlayed.filter( c => c.value !== 0 ).length === 0;
+	}
+
+	amITheSecondOne(state) {
+		const cardsPlayed = state.match.cardsPlayed;
+		return cardsPlayed.filter( c => c.value !== 0 ).length === 1;
+	}
+
+	amITheThirdOne(state) {
+		const cardsPlayed = state.match.cardsPlayed;
+		return cardsPlayed.filter( c => c.value !== 0 ).length === 2;
 	}
 
 	amITheLastOne(state) {
 		const cardsPlayed = state.match.cardsPlayed;
-		return cardsPlayed.filter( c => { return c.value !== 0 } ).length == 4;
+		return cardsPlayed.filter( c => c.value !== 0).length == 4;
 	}
 
 	getCurrentContext(p, state){
 		const winnerTmpTurn = this.getWinnerTurn(state).winner;
 		return {
 			maxValuePlayed: this.getMaxValueFromCardsPlayed(state),
+			isBriscolaPlayed: this.isBriscolaAlreadyPlayed(state),
 			tmpSumPoints: this.getTmpMaxPointsTurn(state),
 			auctionValue:  state.players[state.auction.winner-1].auction.points,
 			puntiConsumedByTeam: this.getPuntiConsumedByTeam(state),
 			tmpWinnerTeamTurn: winnerTmpTurn,
-			lastOneToPlay: this.whichIsTheLastOneToPlay(state),
+			lastOneToPlay: this.getLastOneToPlay(state),
 			isOther: this.isOther(p, state),
 			isCaller: this.isCaller(p, state),
 			isPartner: this.isPartner(p, state),
 			currentTurn: state.match.turns,
 			amITheLastOne: this.amITheLastOne(state),
 			amItheFirstOne: this.amITheFirstOne(state),
+			amItheSecondOne: this.amITheSecondOne(state),
+			amItheThirdOne: this.amITheThirdOne(state),
 			amIAlreadyWonTheMatch: this.amIAlreadyWonTheMatch(p, state),
 			myAllCardsByValue: _.sortBy(this.commonService.getMyAllCards(state, p.cards), ['value']),
 			myAllCardsByPoints: _.sortBy(this.commonService.getMyAllCards(state, p.cards), ['points']).reverse(),
@@ -134,17 +146,27 @@ export class MatchService {
 				return addPoints.length >0  ? addPoints[0].id : this.playSafe(context, state) ;
 			} else {
 				const tryToWinCard = this.tryToWin(context, state);
-			if (!tryToWinCard) {
-				return this.playSafe(context, state);
-			} else {
-				return tryToWinCard;
-			} 
+				return !tryToWinCard? this.playSafe(context, state) : tryToWinCard;
 			}
-		} 
+		} else if (context.amITheSecondOne || context.amITheThirdOne) {
+			if (context.isCaller || context.isPartner) {
+				if (context.isBriscolaPlayed && context.myTeamIsWinningTurn) {
+					const addPoints = this.addPoints(context, state);
+					return addPoints.length >0  ? addPoints[0].id : this.playSafe(context, state);
+				} else if(context.myTeamIsWinningTurn) {
+					const tryToWinWithBriscola = this.tryToWinWithBriscola(context, state);
+					return !tryToWinWithBriscola ? this.playSafe(context, state) : tryToWinWithBriscola;
+				}
+			}
+		}
 		
 		if (context.myTeamIsWinningTurn) {
-			const addPoints = this.addPoints(context, state);
-			return addPoints.length > 0 ? addPoints[0].id : this.playSafe(context, state);
+			if(context.isOther && context.lastOneToPlay === state.auction.winner && state.turns < 5 && context.tmpSumPoints > 19) {
+				return this.playSafe(context, state);
+			} else {
+				const addPoints = this.addPoints(context, state);
+				return addPoints.length > 0 ? addPoints[0].id : this.playSafe(context, state);
+			}
 		} else {
 			const tryToWinCard = this.tryToWin(context, state);
 			if (!tryToWinCard) {
@@ -155,25 +177,27 @@ export class MatchService {
 		}
 	}
 
-	getInTurnPlayer(state) {
-		return state.players.filter( p => { return p.id == state.inTurn })[0];
-	}
-	
-	getCardToPlay(state) {
-		const p = this.getInTurnPlayer(state);
-		if(p) {
-			const context = this.getCurrentContext(p, state);
-			return this.getStrategy(context, state);
-		}
-		return 1;
-	}
+	tryToWinWithBriscola(context, state) {
+		const filteredArray =  context.myAllCardsByValue.filter((card) => {
+			let tmpVal = card.value;
+			 if(card.seed === state.auction.seed){
+				tmpVal += 1000;
+			}
+			if(tmpVal > context.maxValuePlayed) {
+				return card;
+			}
+		});
 
+		if(filteredArray.length) {
+			return filteredArray[0].id;
+		}
+	}
 
 	tryToWin(context, state) {
 		const filteredArray =  context.myAllCardsByValue.filter((card) => {
 			let tmpVal = card.value;
 			const firstPlayedSeed = this.getFirstPlayedSeed(state);
-			if(firstPlayedSeed && (card.seed === firstPlayedSeed) && (card.seed != state.auction.seed)) {
+			if(firstPlayedSeed.length && (card.seed === state.cards[firstPlayedSeed[0].value]) && (card.seed != state.auction.seed)) {
 				tmpVal += 100;
 			} else if(card.seed === state.auction.seed){
 				tmpVal += 1000;
@@ -188,26 +212,24 @@ export class MatchService {
 		}
 	}
 
+	isBriscolaAlreadyPlayed(state) {
+		return state.match.cardsPlayed.filter((card) => {
+			return card.value && state.cards[card.value].seed === state.auction.seed;
+		});
+	}
+
 
 	getFirstPlayedSeed(state) {
-		for(let i=0; i<state.match.cardsPlayed.length; i++) {
-			const currentIndexCard = state.match.cardsPlayed[i].value;
-			const player = state.match.cardsPlayed[i].id;
-			if(currentIndexCard > 0 ) {
-				if((state.match.winnerTurn) && state.match.winnerTurn === player ) {
-					return currentIndexCard;
-				} else if (state.auction.winner && state.auction.winner === player ) {
-					return currentIndexCard;
-				}
-			}
-		}
+		return state.match.cardsPlayed.filter((card) => {
+			return (card.value && state.match.winnerTurn === card.id || state.auction.winner === card.id);
+		});
 	}
 
-	playSafe(context, state){
-		return context.myAllCardsByValue.filter((card) => card.seed !== state.auction.seed)[0].id;
+	playSafe(context){
+		return context.myAllCardsByValue[0].id;
 	}
 
-	whichIsTheLastOneToPlay(state){
+	getLastOneToPlay(state){
 		const lastInFirstTurn = (state.matchStarter - 1)  === 0 ? 5 : (state.matchStarter - 1 );
 		const lastInOtherTurn = (state.match.winnerTurn - 1)  === 0 ? 5 : (state.match.winnerTurn - 1 );
 		return (state.match.turns === 1) ? lastInFirstTurn : lastInOtherTurn;

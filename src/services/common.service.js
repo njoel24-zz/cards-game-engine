@@ -40,20 +40,7 @@ export class CommonService {
 	}
 
 	getMyAllCards(state, cards){
-		const allCards = state.cards;
-		const myAllCards = []
-		for(let i=0; i<cards.length; i++){
-			if(cards[i]) {
-				for (const key in allCards) {
-					if(allCards.hasOwnProperty(key)){
-						if(allCards[key].id == cards[i]){
-							myAllCards.push(allCards[key]);
-						}
-					}
-				}
-			}
-		}
-		return myAllCards;
+		return Object.values(state.cards).filter((c) => cards.includes(c.id));
 	}
 }
 

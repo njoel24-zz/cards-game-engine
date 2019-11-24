@@ -97,7 +97,6 @@ switch (action.type) {
 			...state,
 			inTurn: action.inTurn,
 			area: action.area,
-			allied: action.allied,
 			auction: { ...state.auction, partnerCard: action.partnerCard, partnerPlayer: action.partnerPlayer, seed: action.seed }
 	};
 

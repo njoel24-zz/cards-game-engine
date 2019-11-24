@@ -44,7 +44,7 @@ class Board extends React.Component {
 				setTimeout(this.props.setWinner.bind(this), timeout);
 			} else if(this.props.match.isTurnFinished) {
 				setTimeout(this.props.endTurn.bind(this), timeout);
-			} else  {
+			} else {
 				setTimeout(this.props.play.bind(this), timeout);
 			}
 		}

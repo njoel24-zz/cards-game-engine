@@ -15,7 +15,10 @@ const matchMiddleware = store => next => action => {
 			action.inTurn = ((state.matchStarter + 1) % 5);
 		break;
 		case 'PLAY':
-			const card = matchService.playCardOnTheTable(state, action.value);
+			let card = action.value;
+			if(!card) {
+				card = matchService.playCard(state);
+			}
 			action.cardPlayed = card;
 			action.inTurn = commonService.getNextInTurn(state);
 			action.turnFinished = matchService.isTurnFinished(state);
@@ -24,7 +27,7 @@ const matchMiddleware = store => next => action => {
 			action.inTurn = commonService.getNextInTurn(state);
 			action.turnFinished = matchService.isTurnFinished(state);
 		break;
-		case 'END_TURN':  
+		case 'END_TURN':
 			const winnerTurn = matchService.getWinnerTurn(state);
 			action.winnerTurn = winnerTurn;
 			action.inTurn = commonService.getNextInTurn(state, winnerTurn);
