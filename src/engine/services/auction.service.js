@@ -84,7 +84,7 @@ export class AuctionService {
 				tmpMax = player.auction.points;
 			} 
 		});
-		return tmpMax;
+		return parseInt(tmpMax);
 	}
 
 	getAIChoice(state, biggestAuction) {
@@ -176,7 +176,7 @@ export class AuctionService {
 			myMaxAuction = 110;
 		}
 
-		if(maxValue == 70 ){
+		if(maxValue === 70 ){
 			myMaxAuction = 120;
 		}
 

@@ -10,15 +10,10 @@ export class MatchService {
 	}
 	
 	setWinnerMatch(state) {
-		let team1=0,team2=0;
-		state.players.map((player) => {
-			if(player.id === state.auction.winner || player.id === state.auction.partnerPlayer) {
-				team1 += player.points;
-			} else {
-				team2 += player.points;
-			}
-		});
-		if(team1 > team2) {
+		const team1Points = state.players.filter((player) => player.id === state.auction.winner || player.id === state.auction.partnerPlayer)
+			.reduce((acc, player) => player.points + acc, 0);
+
+		if(team1Points >= this.auctionService.getBiggestAuction(state.players)) {
 			return "chiamante";
 		} else {
 			return "altri";
